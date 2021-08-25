@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../Buttons/Button";
 import './Navbar.css';
+import FlagButton from "../../components/Buttons/flag/FlagButton";
+import SearchBar from "../SearchBar/SearchBar";
 
 //rfce
 function Navbar() {
@@ -26,9 +28,16 @@ function Navbar() {
     <>
       <nav className="navbar">
         <div className="navbar-container-left">
+          <div className="home-button">
+            <FlagButton height={50} width={50} flagIcon={"europe"}/>
+          </div>
+
           <Link to="/" className="navbar-logo">
             Covid19 Visualyzer
           </Link>
+
+          <SearchBar/>
+
         </div>
 
         <div className="navbar-container-right">
@@ -47,7 +56,7 @@ function Navbar() {
             </li>
             <li className="nav-item">
               <Link
-                to="/vaccinations"
+                to="/"
                 className="nav-links"
                 onClick={() => setClick(false)}
               >
@@ -56,10 +65,11 @@ function Navbar() {
             </li>
             <li className="nav-item">
               <Link
+                to="/"
                 className="nav-links"
                 onClick={() => setClick(false)}
               >
-                <i class="far fa-calendar-alt" /> 10 May 2021 - 20 May 2021
+                <i className="far fa-calendar-alt" /> 10 May 2021 - 20 May 2021
               </Link>
             </li>
           </ul>

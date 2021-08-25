@@ -1,0 +1,25 @@
+.input-group {
+    overflow: hidden;
+    display: inline-block;
+    border-width: 1;
+    border-radius: 10px;
+    border-style: solid;
+    margin-left: 10px;
+    background-color: #F7F8FD
+}
+
+.input-group:hover {
+    background-color: #F7F8FD
+}
+
+.input-field {
+    border-width: 0;
+    padding: 5;
+    width: 240px;
+    margin-left: 10px;
+    background: #F7F8FD;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+}

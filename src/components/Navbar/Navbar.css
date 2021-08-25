@@ -18,7 +18,13 @@
   .navbar-container-left{
     display: flex;
     justify-content: flex-start;
+    align-items: center;
     width: 50vw;
+    margin-left: 5px;
+  }
+  
+  .home-button {
+    margin-left: 10;
   }
 
   .navbar-logo {
@@ -27,7 +33,9 @@
     font-size: 1.5rem;
     list-style: none;
     justify-content: space-between;
-    margin-left: 60px;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 10px;
   }
   
   .fa-calendar-alt {

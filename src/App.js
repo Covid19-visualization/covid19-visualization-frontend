@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Cases from "./views/cases/cases";
+import Home from "./views/home/Home";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Switch>
           <Route path="/" exact />
         </Switch>
-        <Cases />
+        <Home />
       </Router>
     </>
   );
