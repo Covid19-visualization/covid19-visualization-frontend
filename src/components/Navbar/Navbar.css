@@ -10,29 +10,29 @@
     z-index: 999;
   }
   
-  .navbar-container {
+  .navbar-container-right{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80px;
-    max-width: 1500px;
   }
-  
+  .navbar-container-left{
+    display: flex;
+    justify-content: flex-start;
+    width: 50vw;
+  }
+
   .navbar-logo {
     color: #fff;
-    justify-self: start;
-    cursor: pointer;
     text-decoration: none;
     font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-
+    list-style: none;
+    justify-content: space-between;
+    margin-left: 60px;
   }
   
   .fa-calendar-alt {
     margin-right: 0.5rem;
     font-size: 1.2rem;
-
   }
   
   .nav-menu {
@@ -41,7 +41,7 @@
     grid-gap: 10px;
     list-style: none;
     text-align: center;
-    width: 60vw;
+    width: 50vw;
     justify-content: end;
     margin-right: 2rem;
   }
@@ -74,6 +74,7 @@
   
   .menu-icon {
     display: none;
+
   }
   
   @media screen and (max-width: 960px) {
@@ -126,7 +127,7 @@
       position: absolute;
       top: 0;
       right: 0;
-      transform: translate(-100%, 60%);
+      transform: translate(-100%, 40%);
       font-size: 1.8rem;
       cursor: pointer;
     }

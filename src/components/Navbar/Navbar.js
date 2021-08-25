@@ -25,14 +25,11 @@ function Navbar() {
   return (
     <>
       <nav className="navbar">
-     {/*    <div className="container">
-
-        </div>
         <div className="navbar-container-left">
           <Link to="/" className="navbar-logo">
             Covid19 Visualyzer
           </Link>
-        </div> */}
+        </div>
 
         <div className="navbar-container-right">
           <div className="menu-icon" onClick={handleClick}>
