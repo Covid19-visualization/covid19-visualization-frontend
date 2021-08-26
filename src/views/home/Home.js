@@ -9,7 +9,8 @@ const Home = () => {
     return (
         <>
             <div className="container" >
-                <div className="container_graph" style={{ borderRadius: 5, padding: 10}}>
+                <div className="container_graph" style={{ borderRadius: 5, padding: 10 }}>
+                  
                 </div>
             </div>
         </>
