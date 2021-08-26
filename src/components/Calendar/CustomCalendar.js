@@ -10,7 +10,7 @@ const CustomCalendar = (props) => {
     //TODO: week/month/year selector
     return (
         <div>    
-            <p style={{ borderLeft: "6px solid #1C1B1B", borderRight: "6px solid #1C1B1B",}}>last week | last month | last year</p>
+            <p style={{ borderLeft: "6px solid #1C1B1B", borderRight: "6px solid #1C1B1B"}}>last week | last month | last year</p>
             <Calendar
                 onChange={onChange}
                 value={value}

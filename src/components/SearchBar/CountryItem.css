@@ -1,0 +1,35 @@
+.country-wrapper {
+    margin-bottom: 5px;
+    list-style: outside none none;
+}
+
+.country-info {
+    list-style: outside none none;
+    font-family: "PT Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 700;
+    line-height: 14.4px;
+}
+
+.line-wrapper {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+}
+
+.line-wrapper:hover {
+    border-radius: 5px;
+    background-color: rgba(196, 196, 196, 0.2)
+}
+
+.line-element {
+    float: left;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle 
+}

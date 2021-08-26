@@ -37,6 +37,7 @@ const FlagButton = (props) => {
                     alignItems: "center",
                     margin: "auto",
                     objectFit: "cover",
+                    border: "2px solid #1C1B1B"
                 }}
                 src={`images/${flagIcon}.png`}
                 alt="logo"
