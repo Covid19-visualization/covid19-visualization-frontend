@@ -7,6 +7,9 @@ import SearchBar from "../SearchBar/SearchBar";
 import CustomCalendar from "../Calendar/CustomCalendar";
 import { DateHandler } from "../../utils/utility";
 
+var height = window.innerHeight;
+var width = window.innerWidth;
+
 //rfce
 function Navbar() {
   const [click, setClick] = useState(false);
@@ -15,6 +18,7 @@ function Navbar() {
   const [value, setValue] = useState(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [fromHasChanged, setFromHasChanged] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date(),
@@ -40,13 +44,13 @@ function Navbar() {
 
   function onChange(newDate) {
     if (fromHasChanged) {
-      if(newDate > selectedPeriod.from && newDate < selectedPeriod.to) changeTo(newDate)
-      else if(newDate >= selectedPeriod.to) changeTo(newDate)
+      if (newDate > selectedPeriod.from && newDate < selectedPeriod.to) changeTo(newDate)
+      else if (newDate >= selectedPeriod.to) changeTo(newDate)
       else changeFrom(newDate)
       setFromHasChanged(false);
     }
     else {
-      if(newDate < selectedPeriod.to) changeFrom(newDate)
+      if (newDate < selectedPeriod.to) changeFrom(newDate)
       else {
         changeFrom(selectedPeriod.to);
         changeTo(newDate);
@@ -60,16 +64,17 @@ function Navbar() {
     setCalendarVisible(!calendarVisible);
   };
 
-  const showButton = () => {
-    //window.innerWidth < 960 ? setButton(false) : setButton(true);
+  const handleResize = () => {
     if (window.innerWidth <= 960) {
+      setVisible(false);
       setButton(false);
     } else {
+      setVisible(true);
       setButton(true);
     }
   };
 
-  window.addEventListener('resize', showButton)
+  window.addEventListener('resize', handleResize)
   return (
     <>
       <nav className="navbar">
@@ -82,7 +87,7 @@ function Navbar() {
             Covid19 Visualyzer
           </Link>
 
-          <SearchBar />
+          <SearchBar visible={visible} />
 
         </div>
 

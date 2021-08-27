@@ -8,9 +8,7 @@ import "./CountryList.css"
 
 const CountryList = (props) => {
 
-    const context = useContext(Context);
-
-    const list = context.countries
+    const list = props.list;
 
     return (
         <>
@@ -20,7 +18,7 @@ const CountryList = (props) => {
                         return <CountryItem
                             name={item.name}
                             population={item.population}
-                            cases={item.cases ? item.cases : 0} />
+                            cases={item.total_cases ? item.total_cases : 0} />
                     })
                     : <Loader
                         type="Rings"
