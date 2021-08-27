@@ -1,10 +1,7 @@
-import { FETCH_ERROR, FETCH_LOADED, FETCH_LOADING } from "./API";
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default (data, method, url) => (dispatch) => {
-    dispatch({
-        type: FETCH_LOADING,
-    })
+export const fetchHandler = (data, method, url, callback) => {
+
     fetch(url, {
         mode: 'cors',
         method: method,
@@ -17,16 +14,10 @@ export default (data, method, url) => (dispatch) => {
         .then((response) => response.json())
         .then((response) => {
             //console.log(`${url} -> ${response.status}`);
-            dispatch({
-                type: FETCH_LOADED,
-                payload: response.data,
-            })
+            callback(response.data)
         })
         .catch((error) => {
-            dispatch({
-                type: FETCH_ERROR,
-                payload: error,
-            })
+
             console.error(error);
         });
 }
