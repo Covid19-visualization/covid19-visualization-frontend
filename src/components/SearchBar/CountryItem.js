@@ -10,7 +10,7 @@ const CountryItem = (props) => {
         <div>
             <ul className="line-wrapper">
                 <li className="line-element" style={{margin: 4}}>
-                    <FlagButton height={30} width={30} flagIcon={name.toLowerCase()} />
+                    <FlagButton height={30} width={30} flagIcon={name? name.toLowerCase() : "europe" } />
                 </li>
                 <li className="line-element">
                     <ul className="country-wrapper">
