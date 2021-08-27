@@ -31,7 +31,6 @@ const SearchBar = (props) => {
         else {
             setFilteredList(unfiltredList.filter((item) => item.name.toLowerCase().includes(string)));
         }
-
     }
 
     return (

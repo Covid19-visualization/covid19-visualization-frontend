@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Context } from "../../../context/Provider";
+import { CONST } from "../../../utils/const";
 import './FlagButton.css';
 
 const FlagButton = (props) => {
+    const { selectedCountries, setSelectedCountries } = useContext(Context);
 
     const height = props.height;
     const width = props.width;
     const flagIcon = props.flagIcon;
+    const type = props.type;
+    const marginBottom = props.marginBottom;
 
     const [touched, setTouched] = useState(false);
 
@@ -20,12 +25,18 @@ const FlagButton = (props) => {
         }, 150);
     }
 
+    const removeCountry = () => {
+        let selectionAux = selectedCountries;
+        setSelectedCountries([...selectionAux.filter((country) => country != flagIcon)])
+
+    }
 
     return (
         <div
             className={touched ? "flag_icon touched" : "flag icon"}
-            onMouseDown={toggleTouched}
-            onMouseUp={handleMouseUp}
+            onMouseEnter={toggleTouched}
+            onMouseLeave={toggleTouched}
+            style={marginBottom ? { marginBottom: marginBottom } : {}}
         >
             <img
                 style={{
@@ -42,6 +53,9 @@ const FlagButton = (props) => {
                 src={`images/${flagIcon}.png`}
                 alt="logo"
             />
+            {type == CONST.FLAG_BUTTON.TYPE.SIDE
+                ? <div className="cancel-selection"><i class="fas fa-times" onClick={removeCountry} style={{textShadow: "0px 0px 3px #1C1B1B", color: 'white', }}></i> </div>
+                : null}
         </div>
     );
 }

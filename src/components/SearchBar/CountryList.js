@@ -18,7 +18,8 @@ const CountryList = (props) => {
                         return <CountryItem
                             name={item.name}
                             population={item.population}
-                            cases={item.total_cases ? item.total_cases : 0} />
+                            cases={item.total_cases ? item.total_cases : 0}
+                            key={`${item.name}_${Date.now()}`} />
                     })
                     : <Loader
                         type="Rings"

@@ -11,10 +11,14 @@ import { API } from "./utils/API";
 
 function App() {
 
-  const [countries, setCountries] = useState({});
+  const [countries, setCountries] = useState([]);
+  const [selectedCountries, setSelectedCountries] = useState([]);
+
   const AppContext = {
     countries: countries,
     setCountries: setCountries,
+    selectedCountries: selectedCountries,
+    setSelectedCountries: setSelectedCountries
   }
 
   useEffect(() => {

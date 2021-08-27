@@ -21,3 +21,21 @@
 .touched {
     opacity: 0.5;
 }
+
+.cancel-selection {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    margin-left: 38px;
+    margin-top: -40px;
+    justify-content: center;
+    align-items: center;
+    align-self: center;    
+}
+.cancel-selection-icon {
+    justify-content: center;
+    align-items: center;
+    align-self: center; 
+    text-align: center;
+    vertical-align: middle
+}

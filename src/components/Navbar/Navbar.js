@@ -6,6 +6,7 @@ import FlagButton from "../../components/Buttons/flag/FlagButton";
 import SearchBar from "../SearchBar/SearchBar";
 import CustomCalendar from "../Calendar/CustomCalendar";
 import { DateHandler } from "../../utils/utility";
+import { CONST } from "../../utils/const";
 
 var height = window.innerHeight;
 var width = window.innerWidth;
@@ -80,7 +81,7 @@ function Navbar() {
       <nav className="navbar">
         <div className="navbar-container-left">
           <div className="home-button">
-            <FlagButton height={50} width={50} flagIcon={"europe"} />
+            <FlagButton height={50} width={50} flagIcon={"europe"} type={CONST.FLAG_BUTTON.TYPE.HOME} />
           </div>
 
           <Link to="/" className="navbar-logo">
