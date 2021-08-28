@@ -16,6 +16,6 @@ function addZeros(date) {
 
 export function getLastPeriod(year, month, day) {
     var today = new Date();
-    let lastPeriod = new Date(`${today.getFullYear() - year}-${today.getMonth() - month}-${today.getDate() - day}`)
+    let lastPeriod = new Date(`${today.getFullYear() - year}-${today.getMonth() +1 - month}-${today.getDate() - day}`)
     return lastPeriod;
 }

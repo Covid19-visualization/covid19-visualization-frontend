@@ -40,6 +40,14 @@ function Navbar() {
     })
   }
 
+  function changePeriod(from, to) {
+    setSelectedPeriod({
+      ...selectedPeriod,
+      from: from,
+      to: to,
+    })
+  }
+
   function onChange(newDate) {
     if (fromHasChanged) {
       if (newDate > selectedPeriod.from && newDate < selectedPeriod.to) changeTo(newDate)
@@ -62,23 +70,20 @@ function Navbar() {
     switch (period) {
       case CONST.PERIOD.LAST_WEEK.VALUE:
         from = getLastPeriod(0, 0, 7);
-        setFromHasChanged(true);
-        changeTo(new Date());
-        changeFrom(from);
+        changePeriod(from, new Date());
 
         break;
+
       case CONST.PERIOD.LAST_MONTH.VALUE:
         from = getLastPeriod(0, 1, 0);
-        changeTo(new Date());
-        changeFrom(from);
-
+        changePeriod(from, new Date());
         break;
+
       case CONST.PERIOD.LAST_YEAR.VALUE:
         from = getLastPeriod(1, 0, 0)
-        changeTo(new Date());
-        changeFrom(from);
-
+        changePeriod(from, new Date());
         break;
+
       default:
         break;
     }
