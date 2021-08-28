@@ -12,35 +12,23 @@ const CustomCalendar = (props) => {
     const style = props.style;
     //TODO: week/month/year selector
 
+    const buttonList = [CONST.PERIOD.LAST_WEEK, CONST.PERIOD.LAST_MONTH, CONST.PERIOD.LAST_YEAR];
 
 
     return (
         <div>
             <div id="outer">
-                <div className="inner">
-                    <Button
-                        children={CONST.PERIOD.LAST_WEEK.LABEL}
-                        onClick={() => onChangePeriod(CONST.PERIOD.LAST_WEEK.VALUE)}
-                        type="button"
-                    >
-                    </Button>
-                </div>
-                <div className="inner">
-                    <Button
-                        children={CONST.PERIOD.LAST_MONTH.LABEL}
-                        onClick={() => onChangePeriod(CONST.PERIOD.LAST_MONTH.VALUE)}
-                        type="button">
+                {buttonList.map((item) => {
+                    return <div className="inner">
+                        <Button
+                            children={item.LABEL}
+                            onClick={() => onChangePeriod(item.VALUE)}
+                            type="button"
+                        >
+                        </Button>
+                    </div>
+                })}
 
-                    </Button>
-                </div>
-                <div className="inner">
-                    <Button
-                        children={CONST.PERIOD.LAST_YEAR.LABEL}
-                        onClick={() => onChangePeriod(CONST.PERIOD.LAST_YEAR.VALUE)}
-                        type="button">
-
-                    </Button>
-                </div>
             </div>
             <Calendar
                 onChange={onChange}

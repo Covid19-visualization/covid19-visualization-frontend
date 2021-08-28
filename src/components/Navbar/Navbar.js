@@ -42,7 +42,6 @@ function Navbar() {
 
   function changePeriod(from, to) {
     setSelectedPeriod({
-      ...selectedPeriod,
       from: from,
       to: to,
     })
@@ -66,29 +65,21 @@ function Navbar() {
   }
 
   function onChangePeriod(period) {
-    let from;
     switch (period) {
       case CONST.PERIOD.LAST_WEEK.VALUE:
-        from = getLastPeriod(0, 0, 7);
-        changePeriod(from, new Date());
-
+        changePeriod(getLastPeriod(0, 0, 7), new Date());
         break;
-
       case CONST.PERIOD.LAST_MONTH.VALUE:
-        from = getLastPeriod(0, 1, 0);
-        changePeriod(from, new Date());
+        changePeriod(getLastPeriod(0, 1, 0), new Date());
         break;
 
       case CONST.PERIOD.LAST_YEAR.VALUE:
-        from = getLastPeriod(1, 0, 0)
-        changePeriod(from, new Date());
+        changePeriod(getLastPeriod(1, 0, 0), new Date());
         break;
-
       default:
         break;
     }
   }
-
 
   const toggleCalendar = () => {
     setCalendarVisible(!calendarVisible);

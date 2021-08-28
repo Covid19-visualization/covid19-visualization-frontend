@@ -4,7 +4,7 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 export function DateHandler(from, to) {
     let shortMonthName = months.map((item) => { return item.substr(0, 3) })
 
-    return `${addZeros(from)} ${shortMonthName[from.getMonth()]} ${to.getFullYear()} - ${addZeros(to)} ${shortMonthName[to.getMonth()]} ${to.getFullYear()}  `
+    return `${addZeros(from)} ${shortMonthName[from.getMonth()]} ${from.getFullYear()} - ${addZeros(to)} ${shortMonthName[to.getMonth()]} ${to.getFullYear()}  `
     /* return from == to
      ? `${from.getDay()} ${shortMonthName[from.getMonth()]} ${to.getFullYear()} - ${to.getDay()} ${shortMonthName[to.getMonth()]} ${to.getFullYear()}`
      : `${from.getDay()} ${shortMonthName[from.getMonth()]} ${to.getFullYear()}` */
