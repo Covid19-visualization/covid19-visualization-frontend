@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Button.css";
 import { Link } from "react-router-dom";
 
@@ -9,24 +9,24 @@ export const Button = ({
   children,
   type,
   onClick,
-  buttonStyle,
-  buttonSize,
+  style
 }) => {
-  const checkButtonStyle = STYLES.includes(buttonStyle)
-    ? buttonStyle
-    : STYLES[0];
 
-  const checkButtonSize = SIZES.includes(buttonSize) ? buttonSize : STYLES[0];
+  const [hover, setHover] = useState(false)
 
   return (
-    <Link to="/sign-up" className="btn-mobile">
-      <button
-        className="btn ${checkButtonStyle} ${checkButtonSize}"
-        onClick={() => onClick}
-        type={type}
-      >
-        {children}
-      </button>
-    </Link>
+    <button
+      className="btn"
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      type={type}
+      style={{
+        backgroundColor: !hover? "white" : "#e6e6e6",
+        transition:" all 0.3 ease-out"
+      }}
+    >
+      {children}
+    </button>
   );
 };

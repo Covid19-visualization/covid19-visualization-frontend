@@ -5,7 +5,7 @@ import './Navbar.css';
 import FlagButton from "../../components/Buttons/flag/FlagButton";
 import SearchBar from "../SearchBar/SearchBar";
 import CustomCalendar from "../Calendar/CustomCalendar";
-import { DateHandler } from "../../utils/utility";
+import { DateHandler, getLastPeriod } from "../../utils/utility";
 import { CONST } from "../../utils/const";
 
 var height = window.innerHeight;
@@ -25,9 +25,6 @@ function Navbar() {
     from: new Date(),
     to: new Date()
   });
-
-
-
 
   function changeTo(newDate) {
     setSelectedPeriod({
@@ -58,8 +55,35 @@ function Navbar() {
       }
       setFromHasChanged(true);
     }
-
   }
+
+  function onChangePeriod(period) {
+    let from;
+    switch (period) {
+      case CONST.PERIOD.LAST_WEEK.VALUE:
+        from = getLastPeriod(0, 0, 7);
+        setFromHasChanged(true);
+        changeTo(new Date());
+        changeFrom(from);
+
+        break;
+      case CONST.PERIOD.LAST_MONTH.VALUE:
+        from = getLastPeriod(0, 1, 0);
+        changeTo(new Date());
+        changeFrom(from);
+
+        break;
+      case CONST.PERIOD.LAST_YEAR.VALUE:
+        from = getLastPeriod(1, 0, 0)
+        changeTo(new Date());
+        changeFrom(from);
+
+        break;
+      default:
+        break;
+    }
+  }
+
 
   const toggleCalendar = () => {
     setCalendarVisible(!calendarVisible);
@@ -122,7 +146,12 @@ function Navbar() {
                 <i className="far fa-calendar-alt" /> {DateHandler(selectedPeriod.from, selectedPeriod.to)}
               </Link>
               {calendarVisible
-                ? <div className="calendar-wrapper"> <CustomCalendar onChange={onChange} value={value} /> </div>
+                ? <div className="calendar-wrapper">
+                  <CustomCalendar
+                    onChange={onChange}
+                    onChangePeriod={onChangePeriod}
+                    value={value} />
+                </div>
                 : null}
             </li>
           </ul>

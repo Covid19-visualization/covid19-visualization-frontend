@@ -30,9 +30,10 @@
   }
   .react-calendar button {
     margin: 0;
-
     border: 0;
     outline: none;
+    border-radius: 4px;
+
   }
   .react-calendar button:enabled:hover {
     cursor: pointer;
@@ -50,7 +51,9 @@
     background-color: #e6e6e6;
   }
   .react-calendar__navigation button[disabled] {
-    background-color: #f0f0f0;
+    color: #cacaca;
+    border-radius: 0px;
+
   }
   .react-calendar__month-view__weekdays {
     text-align: center;
@@ -122,3 +125,16 @@
     background-color: #e6e6e6;
   }
   
+  #outer
+{
+    width:100%;
+    border-right: 6px solid #1C1B1B ;
+    border-left: 6px solid #1C1B1B ;
+    text-align: center;
+    justify-content: space-between;
+}
+.inner
+{
+    display: inline-block;
+}
+
