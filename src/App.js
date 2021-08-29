@@ -11,6 +11,7 @@ import { API } from "./utils/API";
 
 function App() {
 
+  const [isCasesVisualization, setIsCasesVisualization] = useState(false)
   const [countries, setCountries] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState({
@@ -25,6 +26,8 @@ function App() {
     setSelectedCountries: setSelectedCountries,
     selectedPeriod: selectedPeriod,
     setSelectedPeriod: setSelectedPeriod,
+    isCasesVisualization: isCasesVisualization,
+    setIsCasesVisualization: setIsCasesVisualization,
   }
 
   useEffect(() => {

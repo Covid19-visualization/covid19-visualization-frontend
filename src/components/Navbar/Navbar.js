@@ -15,7 +15,7 @@ var width = window.innerWidth;
 //rfce
 function Navbar() {
 
-  const { selectedPeriod, setSelectedPeriod } = useContext(Context);
+  const { selectedPeriod, setSelectedPeriod, isCasesVisualization, setIsCasesVisualization } = useContext(Context);
 
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(false);
@@ -95,6 +95,11 @@ function Navbar() {
     }
   };
 
+  const toggleVisualzation = (type) => {
+    console.log(type);
+    setIsCasesVisualization(type == CONST.VISUALZATION.CASES.VALUE)
+  };
+
   window.addEventListener('resize', handleResize)
   return (
     <>
@@ -121,16 +126,18 @@ function Navbar() {
               <Link
                 to="/"
                 className="nav-links"
+                onClick={() => toggleVisualzation(CONST.VISUALZATION.CASES.VALUE)}
               >
-                Cases
+                {CONST.VISUALZATION.CASES.LABEL}
               </Link>
             </li>
             <li className="nav-item">
               <Link
                 to="/"
                 className="nav-links"
+                onClick={() => toggleVisualzation(CONST.VISUALZATION.VACCINATIONS.VALUE)}
               >
-                Vaccinations
+                {CONST.VISUALZATION.VACCINATIONS.LABEL}
               </Link>
             </li>
             <li className="nav-item">

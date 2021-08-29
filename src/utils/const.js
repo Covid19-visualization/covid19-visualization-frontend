@@ -5,7 +5,7 @@ export const CONST = {
             SIDE: 1,
             SEARCH: 2
         }
-    }, 
+    },
     PERIOD: {
         LAST_WEEK: {
             LABEL: 'Last Week',
@@ -19,5 +19,15 @@ export const CONST = {
             LABEL: 'Last Year',
             VALUE: 2
         }
+    },
+    VISUALZATION: {
+        CASES: {
+            LABEL: "Cases",
+            VALUE: 0
+        },
+        VACCINATIONS: {
+            LABEL: "Vaccinations",
+            VALUE: 1
+        },
     }
 }
