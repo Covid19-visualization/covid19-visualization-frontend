@@ -9,7 +9,6 @@ import "./CountryList.css"
 const CountryList = (props) => {
 
     const list = props.list;
-
     return (
         <>
             <ul className="country-list">

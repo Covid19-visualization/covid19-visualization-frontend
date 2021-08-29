@@ -11,6 +11,7 @@ const CountryItem = (props) => {
     const cases = props.cases;
     const name = props.name;
     const milion = 1000000;
+    const thousand = 1000;
 
 
     const handleCountrySelection = () => {
@@ -27,6 +28,12 @@ const CountryItem = (props) => {
 
     }
 
+    const displayCounter = () => {
+       let total_population = (population / milion).toFixed(1) >= 1 ? (population / milion).toFixed(1)+ "M" : (population / thousand).toFixed(1) + "k"
+       let total_cases = (cases / milion).toFixed(1) != 0 ? (cases / milion).toFixed(1)+ "M cases" : (cases / thousand).toFixed(1) + "k cases"
+       return `${total_population} - ${total_cases}`
+    }
+
     return (
         <div>
             <ul className="line-wrapper" onClick={handleCountrySelection}>
@@ -38,7 +45,7 @@ const CountryItem = (props) => {
                         <li className="country-name">{name}</li>
                         <li className="country-info">
                             <p className="country-info">
-                                {(population / milion).toFixed(1)}M - {(cases / milion).toFixed(1)}M cases
+                                {displayCounter()}
                             </p>
                         </li>
                     </ul>

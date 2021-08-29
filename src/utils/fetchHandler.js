@@ -1,7 +1,7 @@
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export const fetchHandler = (data, method, url, callback) => {
-
+    console.log(data, method, url);
     fetch(url, {
         mode: 'cors',
         method: method,
@@ -9,7 +9,7 @@ export const fetchHandler = (data, method, url, callback) => {
             Accept: "application/json",
             "Content-Type": "application/json",
         },
-        body: data,
+        body: JSON.stringify(data),
     })
         .then((response) => response.json())
         .then((response) => {

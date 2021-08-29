@@ -5,19 +5,19 @@ import CountryList from "./CountryList";
 import { Context } from "../../context/Provider";
 
 const SearchBar = (props) => {
+    const { countries } = useContext(Context);
+
     const height = props.height;
     const width = props.width;
     const visible = props.visible;
-    const context = useContext(Context);
-    const unfiltredList = context.countries;
 
-    const [filteredList, setFilteredList] = useState(unfiltredList)
+    const [filteredList, setFilteredList] = useState(countries)
     const [blockVisible, setBlockVisible] = useState(false)
 
     useEffect(() => {
-        setFilteredList(unfiltredList)
-     
-    }, [unfiltredList])
+        setFilteredList(countries)
+
+    }, [countries])
 
 
 
@@ -27,9 +27,9 @@ const SearchBar = (props) => {
 
     function handleInputChange(event) {
         let string = event.target.value.toLowerCase();
-        if (string.length == 0) setFilteredList(unfiltredList);
+        if (string.length == 0) setFilteredList(countries);
         else {
-            setFilteredList(unfiltredList.filter((item) => item.name.toLowerCase().includes(string)));
+            setFilteredList(countries.filter((item) => item.name.toLowerCase().includes(string)));
         }
     }
 

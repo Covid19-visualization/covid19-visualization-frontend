@@ -7,12 +7,16 @@ import SearchBar from "../SearchBar/SearchBar";
 import CustomCalendar from "../Calendar/CustomCalendar";
 import { DateHandler, getLastPeriod } from "../../utils/utility";
 import { CONST } from "../../utils/const";
+import { Context } from "../../context/Provider";
 
 var height = window.innerHeight;
 var width = window.innerWidth;
 
 //rfce
 function Navbar() {
+
+  const { selectedPeriod, setSelectedPeriod } = useContext(Context);
+
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(false);
 
@@ -21,10 +25,6 @@ function Navbar() {
   const [fromHasChanged, setFromHasChanged] = useState(false);
   const [visible, setVisible] = useState(true);
 
-  const [selectedPeriod, setSelectedPeriod] = useState({
-    from: new Date(),
-    to: new Date()
-  });
 
   function changeTo(newDate) {
     setSelectedPeriod({
