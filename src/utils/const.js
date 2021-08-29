@@ -2,7 +2,8 @@ export const CONST = {
     FLAG_BUTTON: {
         TYPE: {
             HOME: 0,
-            SIDE: 1
+            SIDE: 1,
+            SEARCH: 2
         }
     }, 
     PERIOD: {

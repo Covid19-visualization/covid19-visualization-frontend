@@ -38,7 +38,7 @@ const CountryItem = (props) => {
         <div>
             <ul className="line-wrapper" onClick={handleCountrySelection}>
                 <li className="line-element" style={{ margin: 4 }}>
-                    <FlagButton height={30} width={30} flagIcon={name ? name.toLowerCase() : "europe"}/>
+                    <FlagButton height={30} width={30} flagIcon={name ? name.toLowerCase() : "europe"} type={CONST.FLAG_BUTTON.TYPE.SEARCH}/>
                 </li>
                 <li className="line-element">
                     <ul className="country-wrapper">

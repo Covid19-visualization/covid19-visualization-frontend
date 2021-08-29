@@ -33,7 +33,7 @@ const FlagButton = (props) => {
 
     return (
         <div
-            className={touched ? "flag_icon touched" : "flag icon"}
+            className={touched && type != CONST.FLAG_BUTTON.TYPE.SEARCH ? "flag_icon touched" : "flag icon"}
             onMouseEnter={toggleTouched}
             onMouseLeave={toggleTouched}
             style={marginBottom ? { marginBottom: marginBottom } : {}}
