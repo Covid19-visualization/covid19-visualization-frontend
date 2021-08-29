@@ -30,7 +30,7 @@ const CountryItem = (props) => {
 
     const displayCounter = () => {
        let total_population = (population / milion).toFixed(1) >= 1 ? (population / milion).toFixed(1)+ "M" : (population / thousand).toFixed(1) + "k"
-       let total_cases = (cases / milion).toFixed(1) != 0 ? (cases / milion).toFixed(1)+ "M cases" : (cases / thousand).toFixed(1) + "k cases"
+       let total_cases = (cases / milion).toFixed(1) >= 1 ? (cases / milion).toFixed(1)+ "M cases" : (cases / thousand).toFixed(1) + "k cases"
        return `${total_population} - ${total_cases}`
     }
 
