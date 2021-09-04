@@ -47,7 +47,6 @@ function LineChart(props) {
             .y(d => yScale(d.value))
             .curve(d3.curveMonotoneX);
 
-
         svg
             .append('g')
             .attr('class', 'x-axis')
@@ -76,12 +75,28 @@ function LineChart(props) {
             .attr('class', 'line')
             .attr('d', line);
 
-        let focus = svg
+        let focusLabeled = svg
             .append('g')
             .attr('class', 'focus')
             .style('display', 'none');
 
-        focus.append('circle').attr('r', 5).attr('class', 'circle');
+        focusLabeled.append('circle')
+            .attr('r', 5)
+            .attr('class', 'circle')
+            .style("fill", colors.green)
+            .style("stroke", "black");
+
+
+        let focusUnlabeled = svg
+            .append('g')
+            .attr('class', 'focus')
+            .style('display', 'none');
+
+        focusUnlabeled.append('circle')
+            .attr('r', 5)
+            .attr('class', 'circle')
+            .style("fill", colors.azure)
+            .style("stroke", "black");
 
         tooltip = d3
             .select('#container')
@@ -96,10 +111,27 @@ function LineChart(props) {
             .attr('height', height)
             .style('opacity', 0)
             .on('mouseover', () => {
-                focus.style('display', null);
+                focusLabeled.style('display', null);
+                focusUnlabeled.style('display', null)
+                focusLabeled
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 1);
+                focusUnlabeled
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 1);
             })
             .on('mouseout', () => {
                 tooltip
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 0);
+                focusLabeled
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 0);
+                focusUnlabeled
                     .transition()
                     .duration(300)
                     .style('opacity', 0);
@@ -112,25 +144,22 @@ function LineChart(props) {
             const bisect = d3.bisector(d => d.label).left;
 
             const xPos = d3.pointer(event)[0];
-            const x0 = bisect(labeledData, xScale.invert(xPos));
-            console.log(x0)
+            const x0_labeled = bisect(labeledData, xScale.invert(xPos));
+            const x0_unlabeled = bisect(unlabeledData, xScale.invert(xPos));
 
-            const d0 = labeledData[x0 > 0 ? x0 - 1 : x0];
-            focus.attr(
+            const d0_labeled = labeledData[x0_labeled > 0 ? x0_labeled - 1 : x0_labeled];
+            const d0_unlabeled = unlabeledData[x0_unlabeled > 0 ? x0_unlabeled - 1 : x0_unlabeled];
+
+            focusLabeled.attr(
                 'transform',
-                `translate(${xScale(d0.label)},${yScale(d0.value)})`,
+                `translate(${xScale(d0_labeled.label)},${yScale(d0_labeled.value)})`,
             );
-            tooltip
-                .transition()
-                .duration(300)
-                .style('opacity', 0.9);
 
-            tooltip
-                .html(d0.tooltipContent || d0.label)
-                .style(
-                    'transform',
-                    `translate(${xScale(d0.label)},${yScale(d0.value)})`,
-                );
+            focusUnlabeled.attr(
+                'transform',
+                `translate(${xScale(d0_unlabeled.label)},${yScale(d0_unlabeled.value)})`,
+            );
+
         }
     }
     return <div id="container" />;

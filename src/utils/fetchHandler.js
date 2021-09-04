@@ -17,7 +17,6 @@ export const fetchHandler = (data, method, url, callback) => {
             callback(response.data)
         })
         .catch((error) => {
-
             console.error(error);
         });
 }
