@@ -1,168 +1,97 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as d3 from 'd3'
 import { colors } from '../../../utils/colors'
 import './LineChart.css';
+import { Context } from '../../../context/Provider';
+import { regenerateData } from '../../../utils/utility';
 
 function LineChart(props) {
-    const { labeledData, unlabeledData, width, height } = props;
+    const { width, height } = props;
 
+    const { selectedPeriod } = useContext(Context);
+    const [labeledData, setLabeledData] = useState([regenerateData(selectedPeriod.from, selectedPeriod.to)])
+    const [unlabeledData, setUnlabeledData] = useState([regenerateData(selectedPeriod.from, selectedPeriod.to)])
 
     const margin = { top: 50, right: 50, bottom: 50, left: 100 };
-    const yMinValue = d3.min(labeledData, d => d.value);
-    const yMaxValue = d3.max(labeledData, d => d.value);
-    const xMinValue = d3.min(labeledData, d => d.label);
-    const xMaxValue = d3.max(labeledData, d => d.label);
 
     useEffect(() => {
-        drawChart();
-    }, []);
 
-    function drawChart() {
-        let svg = d3
-            .select('#container')
-            .append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
+        let labeled = regenerateData(selectedPeriod.from, selectedPeriod.to)
+        let unlabeled = regenerateData(selectedPeriod.from, selectedPeriod.to)
 
-        let tooltip = d3
-            .select('#container')
-            .append('div')
-            .attr('class', 'tooltip')
+        setLabeledData(...labeled);
+        setUnlabeledData(...unlabeled);
 
-        let xScale = d3
-            .scaleLinear()
-            .domain([xMinValue, xMaxValue])
-            .range([0, width]);
+        drawChart(labeled, unlabeled);
+    }, [selectedPeriod])
 
-        let yScale = d3
-            .scaleLinear()
-            .range([height, 0])
-            .domain([0, yMaxValue]);
 
-        let line = d3
-            .line()
-            .x(d => xScale(d.label))
+
+    function drawChart(labeledData, unlabeledData) {
+
+
+        const xScale = d3.scaleTime()
+            .nice()
+            .domain(d3.extent(labeledData, d => d.date))
+            .range([margin.left, width - margin.right])
+
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max(labeledData, d => d.value)]).nice()
+            .range([height - margin.bottom, margin.top])
+
+        const line = d3.line()
+            .defined(d => !isNaN(d.value))
+            .x(d => xScale(d.date))
             .y(d => yScale(d.value))
-            .curve(d3.curveMonotoneX);
+            .curve(d3.curveBasis);
 
-        svg
-            .append('g')
-            .attr('class', 'x-axis')
-            .attr('transform', `translate(0,${height})`)
-            .call(d3.axisBottom().scale(xScale).tickSize(15));
-        svg
-            .append('g')
-            .attr('class', 'y-axis')
-            .call(d3.axisLeft(yScale));
+        const xAxis = g => g
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeInner((-height / 2)).tickPadding(10))
 
+        const yAxis = g => g
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(yScale).tickSizeInner((-width / 1.5) - 17).tickPadding(10))
 
-        svg
-            .append('path')
+        const svg =
+            d3.select('.svg-canvas')
+                .attr("viewBox", [0, 0, width, height]);
+
+        svg.selectAll("*").remove()
+
+        svg.append("g")
+            .call(xAxis);
+
+        svg.append("g")
+            .call(yAxis);
+
+        svg.append("path")
             .datum(labeledData)
-            .attr('fill', 'none')
-            .attr('stroke', colors.green)
-            .attr('stroke-width', 5)
-            .attr('class', 'line')
-            .attr('d', line);
-        svg
-            .append('path')
+            .attr("fill", "none")
+            .attr("stroke", colors.green)
+            .attr("stroke-width", 3)
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("d", line);
+
+        svg.append("path")
             .datum(unlabeledData)
-            .attr('fill', 'none')
-            .attr('stroke', colors.azure)
-            .attr('stroke-width', 5)
-            .attr('class', 'line')
-            .attr('d', line);
+            .attr("fill", "none")
+            .attr("stroke", colors.azure)
+            .attr("stroke-width", 3)
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("d", line);
 
-        let focusLabeled = svg
-            .append('g')
-            .attr('class', 'focus')
-            .style('display', 'none');
-
-        focusLabeled.append('circle')
-            .attr('r', 5)
-            .attr('class', 'circle')
-            .style("fill", colors.green)
-            .style("stroke", "black");
-
-
-        let focusUnlabeled = svg
-            .append('g')
-            .attr('class', 'focus')
-            .style('display', 'none');
-
-        focusUnlabeled.append('circle')
-            .attr('r', 5)
-            .attr('class', 'circle')
-            .style("fill", colors.azure)
-            .style("stroke", "black");
-
-        tooltip = d3
-            .select('#container')
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('opacity', 0);
-
-        svg
-            .append('rect')
-            .attr('class', 'overlay')
-            .attr('width', width)
-            .attr('height', height)
-            .style('opacity', 0)
-            .on('mouseover', () => {
-                focusLabeled.style('display', null);
-                focusUnlabeled.style('display', null)
-                focusLabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 1);
-                focusUnlabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 1);
-            })
-            .on('mouseout', () => {
-                tooltip
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 0);
-                focusLabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 0);
-                focusUnlabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 0);
-            })
-            .on('mousemove', mousemove);
-
-
-
-        function mousemove(event) {
-            const bisect = d3.bisector(d => d.label).left;
-
-            const xPos = d3.pointer(event)[0];
-            const x0_labeled = bisect(labeledData, xScale.invert(xPos));
-            const x0_unlabeled = bisect(unlabeledData, xScale.invert(xPos));
-
-            const d0_labeled = labeledData[x0_labeled > 0 ? x0_labeled - 1 : x0_labeled];
-            const d0_unlabeled = unlabeledData[x0_unlabeled > 0 ? x0_unlabeled - 1 : x0_unlabeled];
-
-            focusLabeled.attr(
-                'transform',
-                `translate(${xScale(d0_labeled.label)},${yScale(d0_labeled.value)})`,
-            );
-
-            focusUnlabeled.attr(
-                'transform',
-                `translate(${xScale(d0_unlabeled.label)},${yScale(d0_unlabeled.value)})`,
-            );
-
-        }
+        d3.selectAll('g.tick')
+            //only ticks that returned true for the filter will be included
+            //in the rest of the method calls:
+            .select('line') //grab the tick line
+            .attr('class', 'quadrantBorder') //style with a custom class and CSS
+            .style('stroke-width', 0.1); //or style directly with attributes or inline styles
     }
-    return <div id="container" />;
+
+    return <svg className="svg-canvas" />;
 }
 
 export default LineChart;
