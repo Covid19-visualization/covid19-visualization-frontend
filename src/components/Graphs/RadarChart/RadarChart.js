@@ -3,7 +3,9 @@ import * as d3 from 'd3'
 
 function RadarChart(props) {
 
-    var RadarChart = {
+    const margin = { top: 50, right: 50, bottom: 50, left: 100 };
+
+    var MyRadarChart = {
         draw: function(id, d, options){
         var cfg = {
             radius: 5,
@@ -30,7 +32,7 @@ function RadarChart(props) {
                 }
             }
             }
-            cfg.maxValue = Math.max(cfg.maxValue, d3.max(d, function(i){return d3.max(i.map(function(o){return o.value;}))}));
+            cfg.maxValue = 0.5;
             var allAxis = (d[0].map(function(i, j){return i.axis}));
             var total = allAxis.length;
             var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
@@ -39,8 +41,8 @@ function RadarChart(props) {
             
             var g = d3.select(id)
                     .append("svg")
-                    .attr("width", cfg.w+cfg.ExtraWidthX)
-                    .attr("height", cfg.h+cfg.ExtraWidthY)
+                    .attr("width", cfg.w + margin.left + margin.right)
+                    .attr("height", cfg.h+ margin.top + margin.bottom)
                     .append("g")
                     .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
                     ;
@@ -82,7 +84,7 @@ function RadarChart(props) {
             .text(Format((j+1)*cfg.maxValue/cfg.levels));
             }
             
-            series = 0;
+            var series = 0;
 
             var axis = g.selectAll(".axis")
                     .data(allAxis)
@@ -110,9 +112,8 @@ function RadarChart(props) {
                 .attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
                 .attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
 
-        
+            var dataValues = [];
             d.forEach(function(y, x){
-            dataValues = [];
             g.selectAll(".nodes")
                 .data(y, function(j, i){
                 dataValues.push([
@@ -138,7 +139,7 @@ function RadarChart(props) {
                 .style("fill", function(j, i){return cfg.color(series)})
                 .style("fill-opacity", cfg.opacityArea)
                 .on('mouseover', function (d){
-                    z = "polygon."+d3.select(this).attr("class");
+                    var z = "polygon."+d3.select(this).attr("class");
                     g.selectAll("polygon")
                     .transition(200)
                     .style("fill-opacity", 0.1); 
@@ -176,8 +177,8 @@ function RadarChart(props) {
                 .attr("data-id", function(j){return j.axis})
                 .style("fill", cfg.color(series)).style("fill-opacity", .9)
                 .on('mouseover', function (d){
-                            newX =  parseFloat(d3.select(this).attr('cx')) - 10;
-                            newY =  parseFloat(d3.select(this).attr('cy')) - 5;
+                            var newX =  parseFloat(d3.select(this).attr('cx')) - 10;
+                            var newY =  parseFloat(d3.select(this).attr('cy')) - 5;
                             
                             tooltip
                                 .attr('x', newX)
@@ -186,7 +187,7 @@ function RadarChart(props) {
                                 .transition(200)
                                 .style('opacity', 1);
                                 
-                            z = "polygon."+d3.select(this).attr("class");
+                            var z = "polygon."+d3.select(this).attr("class");
                             g.selectAll("polygon")
                                 .transition(200)
                                 .style("fill-opacity", 0.1); 
@@ -213,16 +214,19 @@ function RadarChart(props) {
                     .style('font-family', 'sans-serif')
                     .style('font-size', '13px');
         }
-        };
+    };
 
-    const { d } = props;
+    const d = props.data;
     
     useEffect(() => {
         drawChart();
     }, []);
 
     function drawChart() {
-        var w = 500, h = 500;
+
+        var w = 300, h = 300;
+
+        var colorscale = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
 
         //Legend titles
         var LegendOptions = ['Smartphone','Tablet'];
@@ -238,16 +242,16 @@ function RadarChart(props) {
 
         //Call function to draw the Radar chart
         //Will expect that data is in %'s
-        RadarChart.draw("#chart", d, cfg);
+        MyRadarChart.draw("#container2", d, cfg);
 
         ////////////////////////////////////////////
         /////////// Initiate legend ////////////////
         ////////////////////////////////////////////
 
-        var svg = d3.select('#body')
+        var svg = d3.select('#container2')
             .selectAll('svg')
             .append('svg')
-            .attr("width", w+300)
+            .attr("width", w)
             .attr("height", h)
 
         //Create the title for the legend
@@ -290,7 +294,7 @@ function RadarChart(props) {
             .text(function(d) { return d; })
             ;	
     }
-    return <div id="container" />;
+    return <div id="container2" />;
 	
 }
 

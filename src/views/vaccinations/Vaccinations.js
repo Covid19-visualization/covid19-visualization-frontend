@@ -17,11 +17,24 @@ const Vaccinations = () => {
     const data = regenerateData();
     const data2 = regenerateData();
 
-
-
-
+    var data4 = [
+      [
+          {axis: "strength", value: 13, yOffset: 10},
+          {axis: "intelligence", value: 6},
+          {axis: "charisma", value: 5},  
+          {axis: "dexterity", value: 9},  
+          {axis: "luck", value: 2, xOffset: -20}
+        ],
+        [
+          {axis: "strength", value: 6},
+          {axis: "intelligence", value: 7},
+          {axis: "charisma", value: 10},  
+          {axis: "dexterity", value: 13},  
+          {axis: "luck", value: 9}
+        ]
+    ];
     //Data
-    var d = [
+    var data3 = [
       [
           {axis:"Email",value:0.59},
           {axis:"Social Networks",value:0.56},
@@ -76,8 +89,8 @@ const Vaccinations = () => {
             <div className={"vaccination-container"} style={{ width: "100%", height: "100%", display: "flex", backgroundColor: debug ? "beige" : null }} >
                 <div className={"first-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "60%", backgroundColor: debug ? "blue" : null }} />
+                    <RadarChart data={data4} />
                     <div className={"second-component"} style={{ width: "100%", height: "40%", backgroundColor: debug ? "brown" : null }} />
-                      <RadarChart data={data3} />
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center" }}>
