@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 
 function RadarChart(props) {
 
-    const margin = { top: 50, right: 50, bottom: 50, left: 100 };
+    const margin = { top: 100, right: 50, bottom: 100, left: 300 };
 
     var MyRadarChart = {
         draw: function(id, d, options){
@@ -18,19 +18,17 @@ function RadarChart(props) {
             radians: 2 * Math.PI,
             opacityArea: 0.5,
             ToRight: 5,
-            TranslateX: 80,
-            TranslateY: 30,
             ExtraWidthX: 100,
             ExtraWidthY: 100,
             color: d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"])
             };
             
             if('undefined' !== typeof options){
-            for(var i in options){
-                if('undefined' !== typeof options[i]){
-                cfg[i] = options[i];
+                for(var i in options){
+                    if('undefined' !== typeof options[i]){
+                    cfg[i] = options[i];
+                    }
                 }
-            }
             }
             cfg.maxValue = 0.5;
             var allAxis = (d[0].map(function(i, j){return i.axis}));
@@ -44,7 +42,7 @@ function RadarChart(props) {
                     .attr("width", cfg.w + margin.left + margin.right)
                     .attr("height", cfg.h+ margin.top + margin.bottom)
                     .append("g")
-                    .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
                     ;
 
             var tooltip;
@@ -213,6 +211,60 @@ function RadarChart(props) {
                     .style('opacity', 0)
                     .style('font-family', 'sans-serif')
                     .style('font-size', '13px');
+            
+            ////////////////////////////////////////////
+            /////////// Initiate legend ////////////////
+            ////////////////////////////////////////////
+
+            var colorscale = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
+
+            //Legend titles
+            var LegendOptions = ['Smartphone','Tablet'];
+
+            var svg = d3.select('#container2')
+            .selectAll('svg')
+            .append('svg')
+            .attr("width", cfg.w+400)
+            .attr("height", cfg.h)
+
+            //Create the title for the legend
+            var text = svg.append("text")
+                .attr("class", "title")
+                .attr('transform', 'translate(90,0)') 
+                .attr("x", cfg.w - 70)
+                .attr("y", 10)
+                .attr("font-size", "12px")
+                .attr("fill", "#404040")
+                .text("What % of owners use a specific service in a week");
+                    
+            //Initiate Legend	
+            var legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("height", 100)
+                .attr("width", 200)
+                .attr('transform', 'translate(90,20)') 
+                ;
+                //Create colour squares
+                legend.selectAll('rect')
+                .data(LegendOptions)
+                .enter()
+                .append("rect")
+                .attr("x", cfg.w - 65)
+                .attr("y", function(d, i){ return i * 20;})
+                .attr("width", 10)
+                .attr("height", 10)
+                .style("fill", function(d, i){ return colorscale(i);})
+                ;
+                //Create text next to squares
+                legend.selectAll('text')
+                .data(LegendOptions)
+                .enter()
+                .append("text")
+                .attr("x", cfg.w - 52)
+                .attr("y", function(d, i){ return i * 20 + 9;})
+                .attr("font-size", "11px")
+                .attr("fill", "#737373")
+                .text(function(d) { return d; });
         }
     };
 
@@ -223,13 +275,7 @@ function RadarChart(props) {
     }, []);
 
     function drawChart() {
-
         var w = 300, h = 300;
-
-        var colorscale = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
-
-        //Legend titles
-        var LegendOptions = ['Smartphone','Tablet'];
 
         //Options for the Radar chart, other than default
         var cfg = {
@@ -243,56 +289,6 @@ function RadarChart(props) {
         //Call function to draw the Radar chart
         //Will expect that data is in %'s
         MyRadarChart.draw("#container2", d, cfg);
-
-        ////////////////////////////////////////////
-        /////////// Initiate legend ////////////////
-        ////////////////////////////////////////////
-
-        var svg = d3.select('#container2')
-            .selectAll('svg')
-            .append('svg')
-            .attr("width", w)
-            .attr("height", h)
-
-        //Create the title for the legend
-        var text = svg.append("text")
-            .attr("class", "title")
-            .attr('transform', 'translate(90,0)') 
-            .attr("x", w - 70)
-            .attr("y", 10)
-            .attr("font-size", "12px")
-            .attr("fill", "#404040")
-            .text("What % of owners use a specific service in a week");
-                
-        //Initiate Legend	
-        var legend = svg.append("g")
-            .attr("class", "legend")
-            .attr("height", 100)
-            .attr("width", 200)
-            .attr('transform', 'translate(90,20)') 
-            ;
-            //Create colour squares
-            legend.selectAll('rect')
-            .data(LegendOptions)
-            .enter()
-            .append("rect")
-            .attr("x", w - 65)
-            .attr("y", function(d, i){ return i * 20;})
-            .attr("width", 10)
-            .attr("height", 10)
-            .style("fill", function(d, i){ return colorscale(i);})
-            ;
-            //Create text next to squares
-            legend.selectAll('text')
-            .data(LegendOptions)
-            .enter()
-            .append("text")
-            .attr("x", w - 52)
-            .attr("y", function(d, i){ return i * 20 + 9;})
-            .attr("font-size", "11px")
-            .attr("fill", "#737373")
-            .text(function(d) { return d; })
-            ;	
     }
     return <div id="container2" />;
 	
