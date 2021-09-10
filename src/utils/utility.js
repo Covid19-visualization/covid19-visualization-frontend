@@ -1,3 +1,5 @@
+import { CONST } from "./const";
+
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -15,23 +17,45 @@ function addZeros(date) {
 }
 
 export function getLastPeriod(year, month, day) {
+
     var today = new Date();
-    let lastPeriod = new Date(`${today.getFullYear() - year}-${today.getMonth() + 1 - month}-${today.getDate() - day}`)
-    return lastPeriod;
+    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() -1 , 0).getDate() - (day - today.getDate()) : today.getDate() - day
+    let fixedMonth = today.getDate() - day <= 0 ? today.getMonth() - month : today.getMonth() + 1 - month
+
+    return new Date(`${today.getFullYear() - year}-${fixedMonth}-${dayOfTheMonth}`);
 }
 
-export function regenerateData() {
+function differenceBetweenDays(from, to) {
+    
+    const utc1 = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
+    const utc2 = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
+  
+    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
+}
+
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+export function regenerateData(from, to) {
 
     let value, chartData = [];
+    let numDays = differenceBetweenDays(from, to);
 
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < numDays+1; i++) {
         value = getRandomInt(0, 100)
         chartData.push({
             label: i,
             value,
-            tooltipContent: `<b>x: </b>${i}<br><b>y: </b>${value}`
+            tooltipContent: `<b>x: </b>${i}<br><b>y: </b>${value}`,
+            date: addDays(from, i),
+            range: numDays
         });
+
     }
+
     return chartData;
 }
 
@@ -72,4 +96,153 @@ function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-  }
+}
+
+
+ /*    function drawChart() {
+        let svg = d3
+            .select('#container')
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        let tooltip = d3
+            .select('#container')
+            .append('div')
+            .attr('class', 'tooltip')
+
+  
+        let xScale = d3
+            .scaleTime()
+            .domain([new Date(xMinValue), new Date(xMaxValue)])
+            .range([0, width]);
+
+        let yScale = d3
+            .scaleLinear()
+            .range([height, 0])
+            .domain([0, yMaxValue]);
+
+        let line = d3
+            .line()
+            .x(d => xScale(d.label))
+            .y(d => yScale(d.value))
+            .curve(d3.curveMonotoneX);
+
+        svg
+            .append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', `translate(0,${height})`)
+            .call(d3.axisBottom().scale(xScale).tickSize(5));
+        svg
+            .append('g')
+            .attr('class', 'y-axis')
+            .call(d3.axisLeft(yScale));
+
+
+        svg
+            .append('path')
+            .datum(labeledData)
+            .attr('fill', 'none')
+            .attr('stroke', colors.green)
+            .attr('stroke-width', 5)
+            .attr('class', 'line')
+            .attr('d', line);
+        svg
+            .append('path')
+            .datum(unlabeledData)
+            .attr('fill', 'none')
+            .attr('stroke', colors.azure)
+            .attr('stroke-width', 5)
+            .attr('class', 'line')
+            .attr('d', line);
+
+        let focusLabeled = svg
+            .append('g')
+            .attr('class', 'focus')
+            .style('display', 'none');
+
+        focusLabeled.append('circle')
+            .attr('r', 5)
+            .attr('class', 'circle')
+            .style("fill", colors.green)
+            .style("stroke", "black");
+
+
+        let focusUnlabeled = svg
+            .append('g')
+            .attr('class', 'focus')
+            .style('display', 'none');
+
+        focusUnlabeled.append('circle')
+            .attr('r', 5)
+            .attr('class', 'circle')
+            .style("fill", colors.azure)
+            .style("stroke", "black");
+
+        tooltip = d3
+            .select('#container')
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+
+        svg
+            .append('rect')
+            .attr('class', 'overlay')
+            .attr('width', width)
+            .attr('height', height)
+            .style('opacity', 0)
+            .on('mouseover', () => {
+                focusLabeled.style('display', null);
+                focusUnlabeled.style('display', null)
+                focusLabeled
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 1);
+                focusUnlabeled
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 1);
+            })
+            .on('mouseout', () => {
+                tooltip
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 0);
+                focusLabeled
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 0);
+                focusUnlabeled
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 0);
+            })
+            .on('mousemove', mousemove);
+
+
+
+        function mousemove(event) {
+            const bisect = d3.bisector(d => d.label).left;
+
+            const xPos = d3.pointer(event)[0];
+            const x0_labeled = bisect(labeledData, xScale.invert(xPos));
+            const x0_unlabeled = bisect(unlabeledData, xScale.invert(xPos));
+
+            const d0_labeled = labeledData[x0_labeled > 0 ? x0_labeled - 1 : x0_labeled];
+            const d0_unlabeled = unlabeledData[x0_unlabeled > 0 ? x0_unlabeled - 1 : x0_unlabeled];
+
+            focusLabeled.attr(
+                'transform',
+                `translate(${xScale(d0_labeled.label)},${yScale(d0_labeled.value)})`,
+            );
+
+            focusUnlabeled.attr(
+                'transform',
+                `translate(${xScale(d0_unlabeled.label)},${yScale(d0_unlabeled.value)})`,
+            );
+
+        }
+    } */
+  

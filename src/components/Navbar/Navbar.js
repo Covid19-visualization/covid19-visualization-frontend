@@ -96,7 +96,6 @@ function Navbar() {
   };
 
   const toggleVisualzation = (type) => {
-    console.log(type);
     setIsCasesVisualization(type == CONST.VISUALZATION.CASES.VALUE)
   };
 

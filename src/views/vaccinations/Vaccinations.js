@@ -5,7 +5,7 @@ import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
 
 import { Context } from "../../context/Provider";
-import { regenerateData } from "../../utils/utility";
+import { regenerateData, } from "../../utils/utility";
 import "./Vaccinations.css";
 
 const Vaccinations = () => {
@@ -58,7 +58,7 @@ const Vaccinations = () => {
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center" }}>
-                        <LineChart labeledData={data} unlabeledData={data2} width={550} height={200} />
+                        <LineChart width={500} height={200} />
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }} />
                 </div>
