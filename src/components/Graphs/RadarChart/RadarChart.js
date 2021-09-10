@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 
 function RadarChart(props) {
 
-    const margin = { top: 100, right: 50, bottom: 100, left: 300 };
+    const margin = { top: 50, right: 50, bottom: 1000, left: 600 };
 
     var MyRadarChart = {
         draw: function(id, d, options){
@@ -215,7 +215,6 @@ function RadarChart(props) {
             ////////////////////////////////////////////
             /////////// Initiate legend ////////////////
             ////////////////////////////////////////////
-
             var colorscale = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
 
             //Legend titles
@@ -224,18 +223,18 @@ function RadarChart(props) {
             var svg = d3.select('#container2')
             .selectAll('svg')
             .append('svg')
-            .attr("width", cfg.w+400)
+            .attr("width", cfg.w+600)
             .attr("height", cfg.h)
 
             //Create the title for the legend
             var text = svg.append("text")
                 .attr("class", "title")
                 .attr('transform', 'translate(90,0)') 
-                .attr("x", cfg.w - 70)
+                .attr("x", cfg.w + 190)
                 .attr("y", 10)
                 .attr("font-size", "12px")
                 .attr("fill", "#404040")
-                .text("What % of owners use a specific service in a week");
+                .text("TEXT");
                     
             //Initiate Legend	
             var legend = svg.append("g")
@@ -249,7 +248,7 @@ function RadarChart(props) {
                 .data(LegendOptions)
                 .enter()
                 .append("rect")
-                .attr("x", cfg.w - 65)
+                .attr("x", cfg.w + 180)
                 .attr("y", function(d, i){ return i * 20;})
                 .attr("width", 10)
                 .attr("height", 10)
@@ -260,7 +259,7 @@ function RadarChart(props) {
                 .data(LegendOptions)
                 .enter()
                 .append("text")
-                .attr("x", cfg.w - 52)
+                .attr("x", cfg.w + 200)
                 .attr("y", function(d, i){ return i * 20 + 9;})
                 .attr("font-size", "11px")
                 .attr("fill", "#737373")
@@ -275,7 +274,7 @@ function RadarChart(props) {
     }, []);
 
     function drawChart() {
-        var w = 300, h = 300;
+        var w = 230, h = 230;
 
         //Options for the Radar chart, other than default
         var cfg = {
