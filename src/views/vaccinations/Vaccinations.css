@@ -1,4 +1,13 @@
 .vaccination-container {
     /* background-color: aquamarine; */
     border-radius: 5px;
+
+    
 }
+  
+svg .country:hover {
+    stroke: black;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+

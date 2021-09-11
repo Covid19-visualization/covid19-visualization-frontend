@@ -30,11 +30,12 @@ function App() {
     setIsCasesVisualization: setIsCasesVisualization,
   }
 
+
   useEffect(() => {
     fetchHandler(selectedPeriod, "POST", API.GET_ALL_COUNTRY_DATA, setCountries);
   }, [selectedPeriod]);
-
   return (
+    
     <>
       <Context.Provider value={AppContext}>
         <Router>
@@ -46,6 +47,7 @@ function App() {
         </Router>
       </Context.Provider>
     </>
+    
   );
 }
 
