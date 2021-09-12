@@ -5,7 +5,7 @@ import GeoChart from "../../components/Graphs/GeoChart/GeoChart";
 import { Context } from "../../context/Provider";
 import { regenerateData } from "../../utils/utility";
 import GeoData from "./Europe.geo.json";
-//import SunburstChart from "../../components/Graphs/SunburstChart/SunburstChart";
+import SunburstChart from "../../components/Graphs/SunburstChart/SunburstChart";
 import "./Vaccinations.css";
 
   
@@ -27,11 +27,11 @@ const Vaccinations = () => {
             
                 <div className={"first-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                 
-                    <div className={"first-component"} style={{ width: "100%", height: "60%", backgroundColor: debug ? "blue" : null }} >
+                    <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }} >
                         <GeoChart data={GeoData} property={property} />
                     </div>
-                    <div className={"second-component"} style={{ width: "100%", height: "40%", backgroundColor: debug ? "brown" : null }} >
-
+                    <div className={"second-component"} style={{ width: "50%", height: "50%", backgroundColor: debug ? "brown" : null }} >
+                        <SunburstChart />
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>

@@ -49,8 +49,8 @@ function GeoChart({ data, property }) {
         setSelectedCountry(selectedCountry === feature ? null : feature);
       })
       .attr("class", "country")
-      .transition()
-      .duration(1000)
+      //.transition()
+      //.duration(1000)
       .attr("fill", feature => colorScale(feature.properties[property]))
       .attr("d", feature => pathGenerator(feature));
  
@@ -67,7 +67,7 @@ function GeoChart({ data, property }) {
             ": " +
             feature.properties[property].toLocaleString()
       )
-      .attr("x", 1900) //2000
+      .attr("x", 1200) //2000
       .attr("y", 800); //800
   }, [data, property, selectedCountry]);
 
