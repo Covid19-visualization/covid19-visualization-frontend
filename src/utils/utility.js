@@ -25,6 +25,7 @@ export function getLastPeriod(year, month, day) {
     return new Date(`${today.getFullYear() - year}-${fixedMonth}-${dayOfTheMonth}`);
 }
 
+
 function differenceBetweenDays(from, to) {
     
     const utc1 = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
@@ -32,6 +33,7 @@ function differenceBetweenDays(from, to) {
   
     return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
 }
+
 
 function addDays(date, days) {
     var result = new Date(date);
