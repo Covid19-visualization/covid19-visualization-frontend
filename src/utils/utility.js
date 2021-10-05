@@ -25,7 +25,7 @@ export function getLastPeriod(year, month, day) {
     return new Date(`${today.getFullYear() - year}-${fixedMonth}-${dayOfTheMonth}`);
 }
 
-function differenceBetweenDays(from, to) {
+export function differenceBetweenDays(from, to) {
     
     const utc1 = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
     const utc2 = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
@@ -39,7 +39,7 @@ function addDays(date, days) {
     return result;
   }
 
-export function regenerateData(from, to) {
+/* export function regenerateData(from, to) {
 
     let value, chartData = [];
     let numDays = differenceBetweenDays(from, to);
@@ -51,12 +51,55 @@ export function regenerateData(from, to) {
             value,
             tooltipContent: `<b>x: </b>${i}<br><b>y: </b>${value}`,
             date: addDays(from, i),
-            range: numDays
         });
 
     }
 
     return chartData;
+} */
+
+export function refreshData(from, to, data, type) {
+    let value, chartData = [];
+    data.forEach(country => {
+        let dailyDataList = country.dailyData;
+        dailyDataList.forEach(day => {
+            let currentDay = new Date(day.date);
+
+            if(currentDay >= from && currentDay <= to) {
+                
+                value = handleValueType(type, day)
+                console.log(value);
+                chartData.push({
+                    label: country._id,
+                    value: value,
+                    tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
+                    date: currentDay,
+                });
+            }
+        });
+
+    });
+    chartData.sort(function (a, b) { return a.date - b.date; });
+    return chartData;
+}
+
+function handleValueType(type, day) {
+    switch (type) {
+        case CONST.CHART_TYPE.CASES:
+            return newCasesInDate(day)
+        case CONST.CHART_TYPE.VACCINATIONS:
+            return newVaccinationsInDate(day)
+        default:
+            break;
+    }
+}
+
+function newVaccinationsInDate(day) {
+    return day.new_vaccinations_smoothed ? day.new_vaccinations_smoothed : 0;
+}
+
+function newCasesInDate(day) {
+    return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
 }
 
 export const mock_data = [
@@ -97,152 +140,3 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
-
-
- /*    function drawChart() {
-        let svg = d3
-            .select('#container')
-            .append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
-
-        let tooltip = d3
-            .select('#container')
-            .append('div')
-            .attr('class', 'tooltip')
-
-  
-        let xScale = d3
-            .scaleTime()
-            .domain([new Date(xMinValue), new Date(xMaxValue)])
-            .range([0, width]);
-
-        let yScale = d3
-            .scaleLinear()
-            .range([height, 0])
-            .domain([0, yMaxValue]);
-
-        let line = d3
-            .line()
-            .x(d => xScale(d.label))
-            .y(d => yScale(d.value))
-            .curve(d3.curveMonotoneX);
-
-        svg
-            .append('g')
-            .attr('class', 'x-axis')
-            .attr('transform', `translate(0,${height})`)
-            .call(d3.axisBottom().scale(xScale).tickSize(5));
-        svg
-            .append('g')
-            .attr('class', 'y-axis')
-            .call(d3.axisLeft(yScale));
-
-
-        svg
-            .append('path')
-            .datum(labeledData)
-            .attr('fill', 'none')
-            .attr('stroke', colors.green)
-            .attr('stroke-width', 5)
-            .attr('class', 'line')
-            .attr('d', line);
-        svg
-            .append('path')
-            .datum(unlabeledData)
-            .attr('fill', 'none')
-            .attr('stroke', colors.azure)
-            .attr('stroke-width', 5)
-            .attr('class', 'line')
-            .attr('d', line);
-
-        let focusLabeled = svg
-            .append('g')
-            .attr('class', 'focus')
-            .style('display', 'none');
-
-        focusLabeled.append('circle')
-            .attr('r', 5)
-            .attr('class', 'circle')
-            .style("fill", colors.green)
-            .style("stroke", "black");
-
-
-        let focusUnlabeled = svg
-            .append('g')
-            .attr('class', 'focus')
-            .style('display', 'none');
-
-        focusUnlabeled.append('circle')
-            .attr('r', 5)
-            .attr('class', 'circle')
-            .style("fill", colors.azure)
-            .style("stroke", "black");
-
-        tooltip = d3
-            .select('#container')
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('opacity', 0);
-
-        svg
-            .append('rect')
-            .attr('class', 'overlay')
-            .attr('width', width)
-            .attr('height', height)
-            .style('opacity', 0)
-            .on('mouseover', () => {
-                focusLabeled.style('display', null);
-                focusUnlabeled.style('display', null)
-                focusLabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 1);
-                focusUnlabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 1);
-            })
-            .on('mouseout', () => {
-                tooltip
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 0);
-                focusLabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 0);
-                focusUnlabeled
-                    .transition()
-                    .duration(300)
-                    .style('opacity', 0);
-            })
-            .on('mousemove', mousemove);
-
-
-
-        function mousemove(event) {
-            const bisect = d3.bisector(d => d.label).left;
-
-            const xPos = d3.pointer(event)[0];
-            const x0_labeled = bisect(labeledData, xScale.invert(xPos));
-            const x0_unlabeled = bisect(unlabeledData, xScale.invert(xPos));
-
-            const d0_labeled = labeledData[x0_labeled > 0 ? x0_labeled - 1 : x0_labeled];
-            const d0_unlabeled = unlabeledData[x0_unlabeled > 0 ? x0_unlabeled - 1 : x0_unlabeled];
-
-            focusLabeled.attr(
-                'transform',
-                `translate(${xScale(d0_labeled.label)},${yScale(d0_labeled.value)})`,
-            );
-
-            focusUnlabeled.attr(
-                'transform',
-                `translate(${xScale(d0_unlabeled.label)},${yScale(d0_unlabeled.value)})`,
-            );
-
-        }
-    } */
-  
