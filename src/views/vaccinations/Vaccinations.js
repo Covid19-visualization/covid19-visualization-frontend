@@ -15,9 +15,6 @@ const Vaccinations = () => {
     const width = window.innerWidth;
     const { selectedCountries } = useContext(Context);
 
-    const data = regenerateData();
-    const data2 = regenerateData();
-
     //Data
     var data3 = [
       [
