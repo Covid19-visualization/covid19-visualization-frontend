@@ -18,7 +18,7 @@ const Vaccinations = () => {
 
     const data = regenerateData();
     const data2 = regenerateData();
-    const [property] = useState("pop_est");
+    const [property] = useState("gdp_md_est");
 
 
     return (

@@ -100,8 +100,8 @@ function LineChart(props) {
             })
             .on('mouseout', () => {
                 tooltip
-                    .transition()
-                    .duration(300)
+                    //.transition()
+                    //.duration(300)
                     .style('opacity', 0);
             })
             .on('mousemove', mousemove);
@@ -121,8 +121,8 @@ function LineChart(props) {
                 `translate(${xScale(d0.label)},${yScale(d0.value)})`,
             );
             tooltip
-                .transition()
-                .duration(300)
+                //.transition()
+                //.duration(300)
                 .style('opacity', 0.9);
 
             tooltip
