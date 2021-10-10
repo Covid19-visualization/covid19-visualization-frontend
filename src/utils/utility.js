@@ -33,65 +33,62 @@ export function differenceBetweenDays(from, to) {
     return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
 }
 
-function addDays(date, days) {
-    var result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
+export function parseData (from, to, data) {
+    let europeData = {}, selectedCountriesData = {};
 
-/* export function regenerateData(from, to) {
-
-    let value, chartData = [];
-    let numDays = differenceBetweenDays(from, to);
-
-    for (let i = 0; i < numDays+1; i++) {
-        value = getRandomInt(0, 100)
-        chartData.push({
-            label: i,
-            value,
-            tooltipContent: `<b>x: </b>${i}<br><b>y: </b>${value}`,
-            date: addDays(from, i),
-        });
-
-    }
-
-    return chartData;
-} */
-
-export function refreshData(from, to, data, type) {
-    let value, chartData = [];
     data.forEach(country => {
         let dailyDataList = country.dailyData;
+        var vaccinations = [], cases= [];
+
         dailyDataList.forEach(day => {
-            let currentDay = new Date(day.date);
+            let currentDay = new Date(day._id);
 
             if(currentDay >= from && currentDay <= to) {
-                
-                value = handleValueType(type, day)
-                console.log(value);
-                chartData.push({
-                    label: country._id,
-                    value: value,
-                    tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
-                    date: currentDay,
-                });
+                generateAndInsertEntry(day, country, currentDay, vaccinations, cases);
             }
         });
 
+        if(country._id == CONST.EUROPE.ID ) {
+            europeData.vaccinations = vaccinations;
+            europeData.cases = cases;
+            europeData.cases.sort(function (a, b) { return a.date - b.date; });
+            europeData.vaccinations.sort(function (a, b) { return a.date - b.date; });
+        }
+        else { 
+            selectedCountriesData.vaccinations = vaccinations;
+            selectedCountriesData.cases = cases;
+            selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
+            selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
+        }
+
     });
-    chartData.sort(function (a, b) { return a.date - b.date; });
-    return chartData;
+
+    return {europeData, selectedCountriesData};
 }
 
-function handleValueType(type, day) {
-    switch (type) {
-        case CONST.CHART_TYPE.CASES:
-            return newCasesInDate(day)
-        case CONST.CHART_TYPE.VACCINATIONS:
-            return newVaccinationsInDate(day)
-        default:
-            break;
+function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
+    let value = valueAssembler(day);
+
+    let vaccinatioEntry = {
+        label: country._id,
+        value: value.vaccinations,
+        tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
+        date: currentDay,
+    };
+    
+    let casesEntry = {
+        label: country._id,
+        value: value.cases,
+        tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
+        date: currentDay,
     }
+
+    vaccinations.push(vaccinatioEntry);
+    cases.push(casesEntry);
+}
+
+function valueAssembler(day) {
+     return { cases: newCasesInDate(day), vaccinations:  newVaccinationsInDate(day)}
 }
 
 function newVaccinationsInDate(day) {

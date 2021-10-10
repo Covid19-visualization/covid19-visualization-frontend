@@ -9,9 +9,7 @@ import "./Vaccinations.css";
 const Vaccinations = () => {
 
     const debug = false;
-    const height = window.innerHeight;
-    const width = window.innerWidth;
-    const { selectedCountries } = useContext(Context);
+
 
     return (
         <>
