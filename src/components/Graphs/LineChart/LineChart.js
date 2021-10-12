@@ -1,45 +1,34 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import * as d3 from 'd3';
 import React, { useContext, useEffect, useState } from 'react';
-import * as d3 from 'd3'
-import { colors } from '../../../utils/colors'
-import './LineChart.css';
 import { Context } from '../../../context/Provider';
-import { refreshData, differenceBetweenDays } from '../../../utils/utility';
-import { CONST } from '../../../utils/const';
-import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
+import { colors } from '../../../utils/colors';
+import { CONST } from '../../../utils/const';
+import { differenceBetweenDays, refreshData } from '../../../utils/utility';
+import './LineChart.css';
 
 
 function LineChart(props) {
-    const { width, height, type} = props;
+    const { width, height, type } = props;
 
-    const { selectedPeriod, selectedCountries, selectedCountriesData } = useContext(Context);
-    const [labeledData, setLabeledData] = useState([])
-/*     const [unlabeledData, setUnlabeledData] = useState([regenerateData(selectedPeriod.from, selectedPeriod.to)])
- */
+    const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
+
     const margin = { top: 50, right: 50, bottom: 50, left: 100 };
 
-    useEffect(() => {
-        let data = {
-            ...selectedPeriod,
-            selectedCountries: selectedCountries
-        }
-
-        fetchHandler(data, API.METHOD.POST, API.GET_SELECTED_COUNTRY_DATA, regenerateData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedPeriod, selectedCountries])
-
-    function regenerateData(newData) {
-
-        const selectedCountriesDataAux = refreshData(selectedPeriod.from, selectedPeriod.to, newData, type)
-        drawChart(selectedCountriesDataAux);
-    }
+    useEffect(() => { 
+        var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
+        var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
+        drawChart(europeFiltered, selectedCountriesFiltered); 
+    }, [europeData, selectedCountriesData])
 
 
-    function drawChart(labeledData) {
+    function drawChart(europeFiltered, selectedCountriesFiltered) {
 
-        const xScale = generateScaleX(labeledData, margin, width)
+ 
+        const xScale = generateScaleX(europeFiltered, margin, width)
 
-        const yScale = generateScaleY(labeledData, height, margin)
+        const yScale = generateScaleY(europeFiltered, height, margin)
 
         const line = d3.line()
             .defined(d => !isNaN(d.value))
@@ -68,7 +57,7 @@ function LineChart(props) {
             .call(yAxis);
 
         svg.append("path")
-            .datum(labeledData)
+            .datum(europeFiltered)
             .sort()
             .attr("fill", "none")
             .attr("stroke", colors.green)
@@ -77,15 +66,15 @@ function LineChart(props) {
             .attr("stroke-linecap", "round")
             .attr("d", line);
 
-/*         svg.append("path")
-            .datum(unlabeledData)
+        svg.append("path")
+            .datum(selectedCountriesFiltered)
             .attr("fill", "none")
             .attr("stroke", colors.azure)
             .attr("stroke-width", lineWidth())
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("d", line);
- */
+
         d3.selectAll('g.tick')
             //only ticks that returned true for the filter will be included
             //in the rest of the method calls:
@@ -104,16 +93,16 @@ function LineChart(props) {
 export default LineChart;
 
 
-function generateScaleY(labeledData, height, margin) {
+function generateScaleY(dataset, height, margin) {
     return d3.scaleLinear()
-        .domain([0, d3.max(labeledData, d => d.value)]).nice()
+        .domain([0, d3.max(dataset, d => d.value)]).nice()
         .range([height - margin.bottom, margin.top]);
 }
 
-function generateScaleX(labeledData, margin, width) {
+function generateScaleX(dataset, margin, width) {
     return d3.scaleTime()
         .nice()
-        .domain(d3.extent(labeledData, d => d.date))
+        .domain(d3.extent(dataset, d => d.date))
         .range([margin.left, width - margin.right]);
 }
 

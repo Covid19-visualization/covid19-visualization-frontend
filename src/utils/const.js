@@ -48,5 +48,7 @@ export const CONST = {
     CHART_TYPE: {
         VACCINATIONS: 0,
         CASES: 1
-    }
+    },
+    EUROPE: { NAME: "Europe", ID: "EU" },
+    SELECTED_COUNTRIES: { NAME: "Selected Countries", ID: "SC" },
 }
