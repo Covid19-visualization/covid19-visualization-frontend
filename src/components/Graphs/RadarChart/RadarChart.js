@@ -1,36 +1,42 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as d3 from 'd3'
+import { Context } from '../../../context/Provider';
+import { refreshData, differenceBetweenDays } from '../../../utils/utility';
+import { CONST } from '../../../utils/const';
+import { fetchHandler } from '../../../utils/fetchHandler';
+import { API } from '../../../utils/API';
 
 function RadarChart(props) {
 
-    const margin = { top: 50, right: 50, bottom: 1000, left: 600 };
+    const {type} = props;
+
+    const margin = { top: 50, right: 50, bottom: 100, left: 100 };
+
+    
+    const { selectedPeriod, selectedCountries, selectedCountriesData } = useContext(Context);
+    const [labeledData, setLabeledData] = useState([])
+
+    
+    useEffect(() => {
+        let data = {
+            ...selectedPeriod,
+            selectedCountries: selectedCountries
+        }
+
+        fetchHandler(data, API.METHOD.POST, API.GET_SELECTED_COUNTRY_DATA, regenerateData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedPeriod, selectedCountries])
+
+    function regenerateData(newData) {
+
+        const selectedCountriesDataAux = refreshData(selectedPeriod.from, selectedPeriod.to, newData, type)
+        drawChart(selectedCountriesDataAux);
+    }
+    
 
     var MyRadarChart = {
-        draw: function(id, d, options){
-        var cfg = {
-            radius: 5,
-            w: 600,
-            h: 600,
-            factor: 1,
-            factorLegend: .85,
-            levels: 3,
-            maxValue: 0,
-            radians: 2 * Math.PI,
-            opacityArea: 0.5,
-            ToRight: 5,
-            ExtraWidthX: 100,
-            ExtraWidthY: 100,
-            color: d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"])
-            };
-            
-            if('undefined' !== typeof options){
-                for(var i in options){
-                    if('undefined' !== typeof options[i]){
-                    cfg[i] = options[i];
-                    }
-                }
-            }
-            cfg.maxValue = 0.5;
+        draw: function(id, d, cfg){
+
             var allAxis = (d[0].map(function(i, j){return i.axis}));
             var total = allAxis.length;
             var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
@@ -48,38 +54,38 @@ function RadarChart(props) {
             var tooltip;
             
             //Circular segments
-            for(var j=0; j<cfg.levels-1; j++){
-            var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
-            g.selectAll(".levels")
-            .data(allAxis)
-            .enter()
-            .append("svg:line")
-            .attr("x1", function(d, i){return levelFactor*(1-cfg.factor*Math.sin(i*cfg.radians/total));})
-            .attr("y1", function(d, i){return levelFactor*(1-cfg.factor*Math.cos(i*cfg.radians/total));})
-            .attr("x2", function(d, i){return levelFactor*(1-cfg.factor*Math.sin((i+1)*cfg.radians/total));})
-            .attr("y2", function(d, i){return levelFactor*(1-cfg.factor*Math.cos((i+1)*cfg.radians/total));})
-            .attr("class", "line")
-            .style("stroke", "grey")
-            .style("stroke-opacity", "0.75")
-            .style("stroke-width", "0.3px")
-            .attr("transform", "translate(" + (cfg.w/2-levelFactor) + ", " + (cfg.h/2-levelFactor) + ")");
+            for(var j=0; j<cfg.levels; j++){
+                var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
+                g.selectAll(".levels")
+                .data(allAxis)
+                .enter()
+                .append("svg:line")
+                .attr("x1", function(d, i){return levelFactor*(1-cfg.factor*Math.sin(i*cfg.radians/total));})
+                .attr("y1", function(d, i){return levelFactor*(1-cfg.factor*Math.cos(i*cfg.radians/total));})
+                .attr("x2", function(d, i){return levelFactor*(1-cfg.factor*Math.sin((i+1)*cfg.radians/total));})
+                .attr("y2", function(d, i){return levelFactor*(1-cfg.factor*Math.cos((i+1)*cfg.radians/total));})
+                .attr("class", "line")
+                .style("stroke", "grey")
+                .style("stroke-opacity", "0.75")
+                .style("stroke-width", "0.3px")
+                .attr("transform", "translate(" + (cfg.w/2-levelFactor) + ", " + (cfg.h/2-levelFactor) + ")");
             }
 
             //Text indicating at what % each level is
             for(var j=0; j<cfg.levels; j++){
-            var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
-            g.selectAll(".levels")
-            .data([1]) //dummy data
-            .enter()
-            .append("svg:text")
-            .attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
-            .attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
-            .attr("class", "legend")
-            .style("font-family", "sans-serif")
-            .style("font-size", "10px")
-            .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
-            .attr("fill", "#737373")
-            .text(Format((j+1)*cfg.maxValue/cfg.levels));
+                var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
+                g.selectAll(".levels")
+                .data([1]) //dummy data
+                .enter()
+                .append("svg:text")
+                .attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
+                .attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
+                .attr("class", "legend")
+                .style("font-family", "sans-serif")
+                .style("font-size", "10px")
+                .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
+                .attr("fill", "#737373")
+                .text(Format((j+1)*cfg.maxValue/cfg.levels));
             }
             
             var series = 0;
@@ -114,11 +120,12 @@ function RadarChart(props) {
             d.forEach(function(y, x){
             g.selectAll(".nodes")
                 .data(y, function(j, i){
-                dataValues.push([
-                    cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
-                    cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
-                ]);
+                    dataValues.push([
+                        cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
+                        cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
+                    ]);
                 });
+
             dataValues.push(dataValues[0]);
             g.selectAll(".area")
                 .data([dataValues])
@@ -177,7 +184,7 @@ function RadarChart(props) {
                 .on('mouseover', function (d){
                             var newX =  parseFloat(d3.select(this).attr('cx')) - 10;
                             var newY =  parseFloat(d3.select(this).attr('cy')) - 5;
-                            
+
                             tooltip
                                 .attr('x', newX)
                                 .attr('y', newY)
@@ -215,6 +222,8 @@ function RadarChart(props) {
             ////////////////////////////////////////////
             /////////// Initiate legend ////////////////
             ////////////////////////////////////////////
+
+            /*
             var colorscale = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
 
             //Legend titles
@@ -223,7 +232,7 @@ function RadarChart(props) {
             var svg = d3.select('#container2')
             .selectAll('svg')
             .append('svg')
-            .attr("width", cfg.w+600)
+            .attr("width", cfg.w+100)
             .attr("height", cfg.h)
 
             //Create the title for the legend
@@ -264,31 +273,45 @@ function RadarChart(props) {
                 .attr("font-size", "11px")
                 .attr("fill", "#737373")
                 .text(function(d) { return d; });
+                */
         }
+        
     };
 
-    const d = props.data;
-    
+    /*
     useEffect(() => {
         drawChart();
     }, []);
+    */
 
-    function drawChart() {
-        var w = 230, h = 230;
+    function drawChart(data) {
+        var w = 350, h = 350;
+
+        console.log("QUIIIIIIIIIIIIIIIII")
+        console.log(data)
 
         //Options for the Radar chart, other than default
         var cfg = {
+            radius: 5,
             w: w,
             h: h,
-            maxValue: 0.6,
-            levels: 6,
-            ExtraWidthX: 300
-        }
+            factor: 1,
+            factorLegend: .85,
+            levels: 5,
+            maxValue: 1,
+            radians: 2 * Math.PI,
+            opacityArea: 0.4,
+            ToRight: 5,
+            ExtraWidthX: 100,
+            ExtraWidthY: 100,
+            color: d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"])
+        };
 
         //Call function to draw the Radar chart
         //Will expect that data is in %'s
-        MyRadarChart.draw("#container2", d, cfg);
+        //MyRadarChart.draw("#container2", data, cfg);
     }
+
     return <div id="container2" />;
 	
 }

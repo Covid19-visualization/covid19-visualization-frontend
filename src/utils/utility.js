@@ -136,6 +136,23 @@ export const mock_data = [
     { year: 2017, efficiency: 39.4, sales: 6081000 },
 ]
 
+//Data for test
+export const mock_data2 = [
+    [
+        {axis:"Email",value:0.59},
+        {axis:"Social Networks",value:0.56},
+        {axis:"Internet Banking",value:0.42},
+        {axis:"News Sportsites",value:0.34},
+        {axis:"Search Engine",value:0.48}
+    ],[
+        {axis:"Email",value:0.48},
+        {axis:"Social Networks",value:0.41},
+        {axis:"Internet Banking",value:0.27},
+        {axis:"News Sportsites",value:0.28},
+        {axis:"Search Engine",value:0.46}
+    ]
+];
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
