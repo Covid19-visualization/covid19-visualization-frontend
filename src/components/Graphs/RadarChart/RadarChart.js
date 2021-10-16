@@ -11,27 +11,14 @@ function RadarChart(props) {
     const {type} = props;
 
     const margin = { top: 50, right: 50, bottom: 100, left: 100 };
-
     
-    const { selectedPeriod, selectedCountries, selectedCountriesData } = useContext(Context);
-    const [labeledData, setLabeledData] = useState([])
-
+    const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
     
-    useEffect(() => {
-        let data = {
-            ...selectedPeriod,
-            selectedCountries: selectedCountries
-        }
-
-        fetchHandler(data, API.METHOD.POST, API.GET_SELECTED_COUNTRY_DATA, regenerateData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedPeriod, selectedCountries])
-
-    function regenerateData(newData) {
-
-        const selectedCountriesDataAux = refreshData(selectedPeriod.from, selectedPeriod.to, newData, type)
-        drawChart(selectedCountriesDataAux);
-    }
+    useEffect(() => { 
+        //var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
+        //var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
+        drawChart(europeData, selectedCountriesData); 
+    }, [europeData, selectedCountriesData])
     
 
     var MyRadarChart = {
@@ -278,17 +265,13 @@ function RadarChart(props) {
         
     };
 
-    /*
-    useEffect(() => {
-        drawChart();
-    }, []);
-    */
-
-    function drawChart(data) {
+    function drawChart(europeFiltered, data) {
         var w = 350, h = 350;
-
-        console.log("QUIIIIIIIIIIIIIIIII")
+        
+        console.log("33333 QUIIIIIIIIIIIIIIIII")
         console.log(data)
+
+        var radarData = generateRadarData(data);
 
         //Options for the Radar chart, other than default
         var cfg = {
@@ -307,13 +290,33 @@ function RadarChart(props) {
             color: d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"])
         };
 
-        //Call function to draw the Radar chart
-        //Will expect that data is in %'s
-        //MyRadarChart.draw("#container2", data, cfg);
+        MyRadarChart.draw("#container2", radarData, cfg);
     }
 
     return <div id="container2" />;
 	
+}
+
+function generateRadarData(data){
+    var radarData = []
+    var newData = []
+    newData.push({axis: "Population", value: data.population})
+    newData.push({axis: "GDP per Capita", value: data.gdp_per_capita})
+    newData.push({axis: "Extreme Poverty", value: data.extreme_poverty})
+    newData.push({axis: "HDI", value: data.human_development_index})
+    radarData.push(newData);
+    /*
+    data.forEach(country => {
+        var newData = []
+        newData.push({axis: "Population", value: country.population})
+        newData.push({axis: "GDP per Capita", value: country.gdp_per_capita})
+        newData.push({axis: "Extreme Poverty", value: country.extreme_poverty})
+        newData.push({axis: "HDI", value: country.human_development_index})
+
+        radarData.push(newData);
+    });
+    */
+    return radarData;
 }
 
 export default RadarChart;

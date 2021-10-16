@@ -33,29 +33,6 @@ export function differenceBetweenDays(from, to) {
     return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
 }
 
-
-function addDays(date, days) {
-    var result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-
-export function regenerateData(from, to) {
-
-    let value, chartData = [];
-    let numDays = differenceBetweenDays(from, to);
-
-    for (let i = 0; i < numDays+1; i++) {
-        value = getRandomInt(0, 100)
-        chartData.push({
-            label: i,
-            value,
-            tooltipContent: `<b>x: </b>${i}<br><b>y: </b>${value}`,
-            date: addDays(from, i),
-        });
-
-    }
-    
 export function parseData (from, to, data) {
     let europeData = {}, selectedCountriesData = {};
 
@@ -82,6 +59,11 @@ export function parseData (from, to, data) {
             selectedCountriesData.cases = cases;
             selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
             selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
+            
+            selectedCountriesData.population = dailyDataList[0].population;
+            selectedCountriesData.gdp_per_capita = dailyDataList[0].gdp_per_capita;
+            selectedCountriesData.extreme_poverty = dailyDataList[0].extreme_poverty;
+            selectedCountriesData.human_development_index = dailyDataList[0].human_development_index;
         }
 
     });
