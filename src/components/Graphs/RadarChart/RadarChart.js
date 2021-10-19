@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import * as d3 from 'd3'
 import { Context } from '../../../context/Provider';
-import { refreshData, differenceBetweenDays } from '../../../utils/utility';
+import { refreshData, differenceBetweenDays, mock_data2 } from '../../../utils/utility';
 import { CONST } from '../../../utils/const';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
@@ -27,7 +27,8 @@ function RadarChart(props) {
             var allAxis = (d[0].map(function(i, j){return i.axis}));
             var total = allAxis.length;
             var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
-            var Format = d3.format('%');
+            //var Format = d3.format('%');
+            var Format = d3.format('.4');
             d3.select(id).select("svg").remove();
             
             var g = d3.select(id)
@@ -267,11 +268,6 @@ function RadarChart(props) {
 
     function drawChart(europeFiltered, data) {
         var w = 350, h = 350;
-        
-        console.log("33333 QUIIIIIIIIIIIIIIIII")
-        console.log(data)
-
-        var radarData = generateRadarData(data);
 
         //Options for the Radar chart, other than default
         var cfg = {
@@ -281,7 +277,7 @@ function RadarChart(props) {
             factor: 1,
             factorLegend: .85,
             levels: 5,
-            maxValue: 1,
+            maxValue: 100,
             radians: 2 * Math.PI,
             opacityArea: 0.4,
             ToRight: 5,
@@ -290,7 +286,17 @@ function RadarChart(props) {
             color: d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"])
         };
 
-        MyRadarChart.draw("#container2", radarData, cfg);
+        
+        if(data.radarData != null && data.radarData.length != 0){
+            // DEBUG
+            //console.log("QUIIIIIIIIIIIIIIIII")
+            //console.log(data.radarData)
+            //console.log(data.radarData.length)
+            var radarData = generateRadarData(data);
+            MyRadarChart.draw("#container2", radarData, cfg);
+        }
+        else 
+            MyRadarChart.draw("#container2", mock_data2, cfg);
     }
 
     return <div id="container2" />;
@@ -298,25 +304,29 @@ function RadarChart(props) {
 }
 
 function generateRadarData(data){
-    var radarData = []
-    var newData = []
-    newData.push({axis: "Population", value: data.population})
-    newData.push({axis: "GDP per Capita", value: data.gdp_per_capita})
-    newData.push({axis: "Extreme Poverty", value: data.extreme_poverty})
-    newData.push({axis: "HDI", value: data.human_development_index})
-    radarData.push(newData);
+    var radarData = []    
     /*
-    data.forEach(country => {
+    newData.push({axis: "Population", value: data.population / 100000})
+    newData.push({axis: "Population density / 10", value: data.population_density / 10})
+    newData.push({axis: "Life Expectancy", value: data.life_expectancy })
+    newData.push({axis: "GDP per Capita / 1000", value: data.gdp_per_capita / 1000})
+    newData.push({axis: "Extreme Poverty", value: data.extreme_poverty * 10})
+    newData.push({axis: "HDI", value: data.human_development_index * 10})
+    radarData.push(newData);
+    */
+    data.radarData.forEach(country => {
         var newData = []
-        newData.push({axis: "Population", value: country.population})
-        newData.push({axis: "GDP per Capita", value: country.gdp_per_capita})
-        newData.push({axis: "Extreme Poverty", value: country.extreme_poverty})
-        newData.push({axis: "HDI", value: country.human_development_index})
+        newData.push({axis: "Population density / 10", value: country.population_density / 10})
+        newData.push({axis: "Life Expectancy", value: country.life_expectancy })
+        newData.push({axis: "GDP per Capita / 1000", value: country.gdp_per_capita / 1000})
+        newData.push({axis: "Extreme Poverty", value: country.extreme_poverty * 10})
+        newData.push({axis: "HDI", value: country.human_development_index * 10})
 
         radarData.push(newData);
     });
-    */
+    
     return radarData;
 }
+  
 
 export default RadarChart;

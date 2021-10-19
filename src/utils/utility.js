@@ -35,10 +35,11 @@ export function differenceBetweenDays(from, to) {
 
 export function parseData (from, to, data) {
     let europeData = {}, selectedCountriesData = {};
-
+    //console.log("1111111 QUIIIIIIIIIIIIIIIII")
+    //console.log(data)
     data.forEach(country => {
         let dailyDataList = country.dailyData;
-        var vaccinations = [], cases= [];
+        var vaccinations = [], cases = [], radarData = [];
 
         dailyDataList.forEach(day => {
             let currentDay = new Date(day._id);
@@ -47,6 +48,8 @@ export function parseData (from, to, data) {
                 generateAndInsertEntry(day, country, currentDay, vaccinations, cases);
             }
         });
+
+        insertRadarEntry(country, radarData);
 
         if(country._id == CONST.EUROPE.ID ) {
             europeData.vaccinations = vaccinations;
@@ -60,15 +63,25 @@ export function parseData (from, to, data) {
             selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
             selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
             
-            selectedCountriesData.population = dailyDataList[0].population;
-            selectedCountriesData.gdp_per_capita = dailyDataList[0].gdp_per_capita;
-            selectedCountriesData.extreme_poverty = dailyDataList[0].extreme_poverty;
-            selectedCountriesData.human_development_index = dailyDataList[0].human_development_index;
+            selectedCountriesData.radarData = radarData;
         }
 
     });
 
     return {europeData, selectedCountriesData};
+}
+
+function insertRadarEntry(country, radarData) {
+    let radarDataEntry = {
+        name: country.dailyData[0].name,
+        life_expectancy: country.dailyData[0].life_expectancy,
+        population_density: country.dailyData[0].population_density,
+        gdp_per_capita: country.dailyData[0].gdp_per_capita,
+        extreme_poverty: country.dailyData[0].extreme_poverty,
+        human_development_index: country.dailyData[0].human_development_index,
+    };
+
+    radarData.push(radarDataEntry);
 }
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
@@ -139,6 +152,16 @@ export const mock_data = [
 
 //Data for test
 export const mock_data2 = [
+    [
+        {axis:"Population density / 10",value:0},
+        {axis:"Life Expectancy",value:0},
+        {axis:"GDP per Capita / 1000",value:0},
+        {axis:"Extreme Poverty",value:0},
+        {axis:"HDI",value:0}
+    ]
+];
+
+export const mock_data3 = [
     [
         {axis:"Email",value:0.59},
         {axis:"Social Networks",value:0.56},
