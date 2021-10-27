@@ -35,8 +35,6 @@ export function differenceBetweenDays(from, to) {
 
 export function parseData (from, to, data) {
     let europeData = {}, selectedCountriesData = {};
-    //console.log("1111111 QUIIIIIIIIIIIIIIIII")
-    //console.log(data)
     data.forEach(country => {
         let dailyDataList = country.dailyData;
         var vaccinations = [], cases = [], radarData = [];
@@ -49,7 +47,8 @@ export function parseData (from, to, data) {
             }
         });
 
-        insertRadarEntry(country, radarData);
+        if(country._id == "SC" && dailyDataList.length != 0)
+            insertRadarEntry(country, radarData);
 
         if(country._id == CONST.EUROPE.ID ) {
             europeData.vaccinations = vaccinations;
@@ -81,7 +80,7 @@ function insertRadarEntry(country, radarData) {
         human_development_index: country.dailyData[0].human_development_index,
     };
 
-    radarData.push(radarDataEntry);
+    radarData.unshift(radarDataEntry);
 }
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {

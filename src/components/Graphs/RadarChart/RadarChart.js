@@ -22,7 +22,7 @@ function RadarChart(props) {
     
 
     var MyRadarChart = {
-        draw: function(id, d, cfg){
+        draw: function(id, d, legendOptions, cfg){
 
             var allAxis = (d[0].map(function(i, j){return i.axis}));
             var total = allAxis.length;
@@ -150,56 +150,57 @@ function RadarChart(props) {
             series=0;
 
 
-            d.forEach(function(y, x){
-            g.selectAll(".nodes")
-                .data(y).enter()
-                .append("svg:circle")
-                .attr("class", "radar-chart-serie"+series)
-                .attr('r', cfg.radius)
-                .attr("alt", function(j){return Math.max(j.value, 0)})
-                .attr("cx", function(j, i){
-                dataValues.push([
-                    cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
-                    cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
-                ]);
-                return cfg.w/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total));
-                })
-                .attr("cy", function(j, i){
-                return cfg.h/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total));
-                })
-                .attr("data-id", function(j){return j.axis})
-                .style("fill", cfg.color(series)).style("fill-opacity", .9)
-                .on('mouseover', function (d){
-                            var newX =  parseFloat(d3.select(this).attr('cx')) - 10;
-                            var newY =  parseFloat(d3.select(this).attr('cy')) - 5;
+            d.forEach(y => {
+                console.log(g)
+                g.selectAll(".nodes")
+                    .data(y).enter()
+                    .append("svg:circle")
+                    .attr("class", "radar-chart-serie"+series)
+                    .attr('r', cfg.radius)
+                    .attr("alt", function(j){return Math.max(j.value, 0)})
+                    .attr("cx", function(j, i){
+                        dataValues.push([
+                            cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
+                            cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
+                        ]);
+                        return cfg.w/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total));
+                    })
+                    .attr("cy", function(j, i){
+                        return cfg.h/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total));
+                    })
+                    .attr("data-id", function(j){return j.axis})
+                    .style("fill", cfg.color(series)).style("fill-opacity", .9)
+                    .on('mouseover', function(data){
+                        var newX =  parseFloat(d3.select(this).attr('cx')) - 10;
+                        var newY =  parseFloat(d3.select(this).attr('cy')) - 5;
 
-                            tooltip
-                                .attr('x', newX)
-                                .attr('y', newY)
-                                .text(Format(d.value))
-                                .transition(200)
-                                .style('opacity', 1);
-                                
-                            var z = "polygon."+d3.select(this).attr("class");
-                            g.selectAll("polygon")
-                                .transition(200)
-                                .style("fill-opacity", 0.1); 
-                            g.selectAll(z)
-                                .transition(200)
-                                .style("fill-opacity", .7);
-                        })
-                .on('mouseout', function(){
-                            tooltip
-                                .transition(200)
-                                .style('opacity', 0);
-                            g.selectAll("polygon")
-                                .transition(200)
-                                .style("fill-opacity", cfg.opacityArea);
-                        })
-                .append("svg:title")
-                .text(function(j){return Math.max(j.value, 0)});
+                        tooltip
+                            .attr('x', newX)
+                            .attr('y', newY)
+                            .text(Format(d3.select(this).select("title").text()))
+                            .transition(200)
+                            .style('opacity', 1);
+                            
+                        var z = "polygon."+d3.select(this).attr("class");
+                        g.selectAll("polygon")
+                            .transition(200)
+                            .style("fill-opacity", .4); 
+                        g.selectAll(z)
+                            .transition(200)
+                            .style("fill-opacity", .7);
+                    })
+                    .on('mouseout', function(){
+                        tooltip
+                            .transition(200)
+                            .style('opacity', 0);
+                        g.selectAll("polygon")
+                            .transition(200)
+                            .style("fill-opacity", cfg.opacityArea);
+                    })
+                    .append("svg:title")
+                    .text(function(j){return Math.max(j.value, 0)});
 
-            series++;
+                series++;
             });
             //Tooltip
             tooltip = g.append('text')
@@ -207,11 +208,13 @@ function RadarChart(props) {
                     .style('font-family', 'sans-serif')
                     .style('font-size', '13px');
             
+
+            /*
             ////////////////////////////////////////////
             /////////// Initiate legend ////////////////
             ////////////////////////////////////////////
 
-            /*
+            
             var colorscale = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
 
             //Legend titles
@@ -220,18 +223,18 @@ function RadarChart(props) {
             var svg = d3.select('#container2')
             .selectAll('svg')
             .append('svg')
-            .attr("width", cfg.w+100)
+            .attr("width", cfg.w)
             .attr("height", cfg.h)
 
             //Create the title for the legend
             var text = svg.append("text")
                 .attr("class", "title")
                 .attr('transform', 'translate(90,0)') 
-                .attr("x", cfg.w + 190)
-                .attr("y", 10)
+                .attr("x", 400) // cfg.w 
+                .attr("y", 100) // cfg.h
                 .attr("font-size", "12px")
                 .attr("fill", "#404040")
-                .text("TEXT");
+                .text("States Selected");
                     
             //Initiate Legend	
             var legend = svg.append("g")
@@ -261,9 +264,8 @@ function RadarChart(props) {
                 .attr("font-size", "11px")
                 .attr("fill", "#737373")
                 .text(function(d) { return d; });
-                */
+        */
         }
-        
     };
 
     function drawChart(europeFiltered, data) {
@@ -292,11 +294,12 @@ function RadarChart(props) {
             //console.log("QUIIIIIIIIIIIIIIIII")
             //console.log(data.radarData)
             //console.log(data.radarData.length)
-            var radarData = generateRadarData(data);
-            MyRadarChart.draw("#container2", radarData, cfg);
+            var radarData = generateRadarData(data.radarData[0]);
+            var legendOptions = generateLegendOptions(data.radarData[0])
+            MyRadarChart.draw("#container2", radarData, legendOptions, cfg);
         }
         else 
-            MyRadarChart.draw("#container2", mock_data2, cfg);
+            MyRadarChart.draw("#container2", mock_data2, legendOptions, cfg);
     }
 
     return <div id="container2" />;
@@ -304,28 +307,30 @@ function RadarChart(props) {
 }
 
 function generateRadarData(data){
-    var radarData = []    
-    /*
-    newData.push({axis: "Population", value: data.population / 100000})
-    newData.push({axis: "Population density / 10", value: data.population_density / 10})
-    newData.push({axis: "Life Expectancy", value: data.life_expectancy })
-    newData.push({axis: "GDP per Capita / 1000", value: data.gdp_per_capita / 1000})
-    newData.push({axis: "Extreme Poverty", value: data.extreme_poverty * 10})
-    newData.push({axis: "HDI", value: data.human_development_index * 10})
-    radarData.push(newData);
-    */
-    data.radarData.forEach(country => {
+    var radarData = [];
+    
+    for(let i = 0; i < data.name.length; i++){
         var newData = []
-        newData.push({axis: "Population density / 10", value: country.population_density / 10})
-        newData.push({axis: "Life Expectancy", value: country.life_expectancy })
-        newData.push({axis: "GDP per Capita / 1000", value: country.gdp_per_capita / 1000})
-        newData.push({axis: "Extreme Poverty", value: country.extreme_poverty * 10})
-        newData.push({axis: "HDI", value: country.human_development_index * 10})
+        newData.push({axis: "Population density / 10", value: data.population_density[i] / 10})
+        newData.push({axis: "Life Expectancy", value: data.life_expectancy[i] })
+        newData.push({axis: "GDP per Capita / 1000", value: data.gdp_per_capita[i] / 1000})
+        newData.push({axis: "Extreme Poverty", value: data.extreme_poverty[i] * 10})
+        newData.push({axis: "HDI", value: data.human_development_index[i] * 100})
 
         radarData.push(newData);
-    });
+    }
     
     return radarData;
+}
+
+function generateLegendOptions(data){
+    var legendOptions = [];
+    
+    for(let i = 0; i < data.name.length; i++){
+        legendOptions.push(data.name[i]);
+    }
+    
+    return legendOptions;
 }
   
 
