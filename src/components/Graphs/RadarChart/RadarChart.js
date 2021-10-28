@@ -22,9 +22,14 @@ function RadarChart(props) {
     
 
     var MyRadarChart = {
-        draw: function(id, d, legendOptions, cfg){
+        draw: function(id, data, legendOptions, cfg){
 
-            var allAxis = (d[0].map(function(i, j){return i.axis}));
+
+            ////////////////////////////////////////////
+            /////////////// RADAR SKELETON /////////////
+            ////////////////////////////////////////////
+
+            var allAxis = (data[0].map(function(i, j){return i.axis}));
             var total = allAxis.length;
             var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
             //var Format = d3.format('%');
@@ -33,8 +38,8 @@ function RadarChart(props) {
             
             var g = d3.select(id)
                     .append("svg")
-                    .attr("width", cfg.w + margin.left + margin.right)
-                    .attr("height", cfg.h+ margin.top + margin.bottom)
+                    .attr("width", 847/*cfg.w + margin.left + margin.right*/)
+                    .attr("height", 504 /*cfg.h+ margin.top + margin.bottom*/)
                     .append("g")
                     .attr("transform", `translate(${margin.left},${margin.top})`);
                     ;
@@ -66,8 +71,8 @@ function RadarChart(props) {
                 .data([1]) //dummy data
                 .enter()
                 .append("svg:text")
-                .attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
-                .attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
+                .attr("x", function(){return levelFactor*(1-cfg.factor*Math.sin(0));})
+                .attr("y", function(){return levelFactor*(1-cfg.factor*Math.cos(0));})
                 .attr("class", "legend")
                 .style("font-family", "sans-serif")
                 .style("font-size", "10px")
@@ -104,54 +109,59 @@ function RadarChart(props) {
                 .attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
                 .attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
 
+
+            ////////////////////////////////////////////
+            /////////////// POLYGONS ///////////////////
+            ////////////////////////////////////////////
+
             var dataValues = [];
-            d.forEach(function(y, x){
-            g.selectAll(".nodes")
-                .data(y, function(j, i){
-                    dataValues.push([
-                        cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
-                        cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
-                    ]);
+
+            data.forEach(function(y, x){
+                g.selectAll(".nodes")
+                    .data(y, function(j, i){
+                        dataValues.push([
+                            cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
+                            cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
+                        ]);
+                    });
+                g.selectAll(".area")
+                    .data([dataValues])
+                    .enter()
+                    .append("polygon")
+                    .attr("id", (legendOptions != null ? "polygon"+legendOptions[series] : "Empty"))
+                    .attr("class", "radar-chart-serie"+series)
+                    .style("stroke-width", "2px")
+                    .style("stroke", cfg.color(series))
+                    .attr("points", function(d) {
+                        var str="";
+                        var range = d.length - 5;
+                        for(var pti = 0; pti < 5; pti++){
+                            str=str+d[pti + range][0]+","+d[pti + range][1]+" ";
+                        }
+                        return str;
+                    })
+                    .style("fill", function(j, i){return cfg.color(series)})
+                    .style("fill-opacity", cfg.opacityArea)
+                    .on('mouseover', function (d){
+                        var z = "polygon."+d3.select(this).attr("class");
+                        g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", 0); 
+                        g.selectAll(z)
+                        .transition(200)
+                        .style("fill-opacity", 0.8);
+                    })
+                    .on('mouseout', function(){
+                        g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", cfg.opacityArea);
+                    });
+                series++;
                 });
 
-            dataValues.push(dataValues[0]);
-            g.selectAll(".area")
-                .data([dataValues])
-                .enter()
-                .append("polygon")
-                .attr("class", "radar-chart-serie"+series)
-                .style("stroke-width", "2px")
-                .style("stroke", cfg.color(series))
-                .attr("points",function(d) {
-                    var str="";
-                    for(var pti=0;pti<d.length;pti++){
-                        str=str+d[pti][0]+","+d[pti][1]+" ";
-                    }
-                    return str;
-                })
-                .style("fill", function(j, i){return cfg.color(series)})
-                .style("fill-opacity", cfg.opacityArea)
-                .on('mouseover', function (d){
-                    var z = "polygon."+d3.select(this).attr("class");
-                    g.selectAll("polygon")
-                    .transition(200)
-                    .style("fill-opacity", 0.1); 
-                    g.selectAll(z)
-                    .transition(200)
-                    .style("fill-opacity", .7);
-                })
-                .on('mouseout', function(){
-                    g.selectAll("polygon")
-                    .transition(200)
-                    .style("fill-opacity", cfg.opacityArea);
-                });
-            series++;
-            });
             series=0;
 
-
-            d.forEach(y => {
-                console.log(g)
+            data.forEach(y => {
                 g.selectAll(".nodes")
                     .data(y).enter()
                     .append("svg:circle")
@@ -184,10 +194,10 @@ function RadarChart(props) {
                         var z = "polygon."+d3.select(this).attr("class");
                         g.selectAll("polygon")
                             .transition(200)
-                            .style("fill-opacity", .4); 
+                            .style("fill-opacity", 0); 
                         g.selectAll(z)
                             .transition(200)
-                            .style("fill-opacity", .7);
+                            .style("fill-opacity", 0.8);
                     })
                     .on('mouseout', function(){
                         tooltip
@@ -209,20 +219,20 @@ function RadarChart(props) {
                     .style('font-size', '13px');
             
 
-            /*
+            
             ////////////////////////////////////////////
-            /////////// Initiate legend ////////////////
+            /////////////// LEGEND /////////////////////
             ////////////////////////////////////////////
 
             
-            var colorscale = d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"]);
+            var colorscale = cfg.color;
 
             //Legend titles
-            var LegendOptions = ['Smartphone','Tablet'];
+            var LegendOptions = legendOptions;
 
             var svg = d3.select('#container2')
             .selectAll('svg')
-            .append('svg')
+            .append('g')
             .attr("width", cfg.w)
             .attr("height", cfg.h)
 
@@ -230,41 +240,61 @@ function RadarChart(props) {
             var text = svg.append("text")
                 .attr("class", "title")
                 .attr('transform', 'translate(90,0)') 
-                .attr("x", 400) // cfg.w 
-                .attr("y", 100) // cfg.h
-                .attr("font-size", "12px")
+                .attr("x", 450) // cfg.w 
+                .attr("y", 70) // cfg.h
+                .attr("font-size", "18px")
                 .attr("fill", "#404040")
-                .text("States Selected");
+                .text("States Selected:");
                     
-            //Initiate Legend	
-            var legend = svg.append("g")
-                .attr("class", "legend")
-                .attr("height", 100)
-                .attr("width", 200)
-                .attr('transform', 'translate(90,20)') 
-                ;
-                //Create colour squares
-                legend.selectAll('rect')
-                .data(LegendOptions)
-                .enter()
-                .append("rect")
-                .attr("x", cfg.w + 180)
-                .attr("y", function(d, i){ return i * 20;})
-                .attr("width", 10)
-                .attr("height", 10)
-                .style("fill", function(d, i){ return colorscale(i);})
-                ;
-                //Create text next to squares
-                legend.selectAll('text')
-                .data(LegendOptions)
-                .enter()
-                .append("text")
-                .attr("x", cfg.w + 200)
-                .attr("y", function(d, i){ return i * 20 + 9;})
-                .attr("font-size", "11px")
-                .attr("fill", "#737373")
-                .text(function(d) { return d; });
-        */
+            if(LegendOptions != null){
+                //Initiate Legend	
+                var legend = svg.append("g")
+                    .attr("class", "legend")
+                    .attr("height", 100)
+                    .attr("width", 200)
+                    .attr('transform', 'translate(90,20)') 
+                    ;
+
+                    //Create colour squares
+                    legend.selectAll('rect')
+                    .data(LegendOptions).enter()
+                    .append("rect")
+                    .attr("x", cfg.w + 110)
+                    .attr("y", function(d, i){ return 70 + (i * 20);})
+                    //.attr("id", function(d){return d;})
+                    .attr("width", 10)
+                    .attr("height", 10)
+                    .style("fill", function(d, i){ return colorscale(i);})
+                    /*
+                    .on('mouseover', function (c){
+                        var id = d3.select(this).attr('id')
+                        console.log(id)
+                        var z = "polygon#"+d3.select("#polygon"+id).attr("id");
+                        g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", 0); 
+                        g.selectAll(z)
+                        .transition(200)
+                        .style("fill-opacity", 0.8);
+                    })
+                    .on('mouseout', function(){
+                        g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", cfg.opacityArea);
+                    });
+                    ;
+                    */
+
+                    //Create text next to squares
+                    legend.selectAll('text')
+                    .data(LegendOptions).enter()
+                    .append("text")
+                    .attr("x", cfg.w + 130)
+                    .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
+                    .attr("font-size", "14px")
+                    .attr("fill", "#737373")
+                    .text(function(d) { return d; });  
+            }
         }
     };
 
@@ -285,15 +315,11 @@ function RadarChart(props) {
             ToRight: 5,
             ExtraWidthX: 100,
             ExtraWidthY: 100,
-            color: d3.scaleOrdinal().range(["#EDC951","#CC333F","#00A0B0"])
+            color: d3.scaleOrdinal(d3.schemeCategory10)
         };
 
         
         if(data.radarData != null && data.radarData.length != 0){
-            // DEBUG
-            //console.log("QUIIIIIIIIIIIIIIIII")
-            //console.log(data.radarData)
-            //console.log(data.radarData.length)
             var radarData = generateRadarData(data.radarData[0]);
             var legendOptions = generateLegendOptions(data.radarData[0])
             MyRadarChart.draw("#container2", radarData, legendOptions, cfg);
@@ -308,11 +334,13 @@ function RadarChart(props) {
 
 function generateRadarData(data){
     var radarData = [];
+
+    console.log(data)
     
     for(let i = 0; i < data.name.length; i++){
         var newData = []
         newData.push({axis: "Population density / 10", value: data.population_density[i] / 10})
-        newData.push({axis: "Life Expectancy", value: data.life_expectancy[i] })
+        newData.push({axis: "Life Expect", value: data.life_expectancy[i]})
         newData.push({axis: "GDP per Capita / 1000", value: data.gdp_per_capita[i] / 1000})
         newData.push({axis: "Extreme Poverty", value: data.extreme_poverty[i] * 10})
         newData.push({axis: "HDI", value: data.human_development_index[i] * 100})
@@ -325,6 +353,8 @@ function generateRadarData(data){
 
 function generateLegendOptions(data){
     var legendOptions = [];
+
+    console.log(data)
     
     for(let i = 0; i < data.name.length; i++){
         legendOptions.push(data.name[i]);

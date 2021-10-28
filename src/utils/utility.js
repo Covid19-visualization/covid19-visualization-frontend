@@ -80,7 +80,7 @@ function insertRadarEntry(country, radarData) {
         human_development_index: country.dailyData[0].human_development_index,
     };
 
-    radarData.unshift(radarDataEntry);
+    radarData.push(radarDataEntry);
 }
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
@@ -153,7 +153,7 @@ export const mock_data = [
 export const mock_data2 = [
     [
         {axis:"Population density / 10",value:0},
-        {axis:"Life Expectancy",value:0},
+        {axis:"Life Expect",value:0},
         {axis:"GDP per Capita / 1000",value:0},
         {axis:"Extreme Poverty",value:0},
         {axis:"HDI",value:0}
