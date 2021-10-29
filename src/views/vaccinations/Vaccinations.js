@@ -36,7 +36,7 @@ const Vaccinations = () => {
                         <RadarChart type={CONST.CHART_TYPE.VACCINATIONS} />
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        {/*<PcaChart data={data3}/>*/}
+                        <PcaChart type={CONST.CHART_TYPE.VACCINATIONS}/>
                     </div>
                 </div>
 

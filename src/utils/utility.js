@@ -194,6 +194,25 @@ export const mock_data3 = [
     ]
 ];
 
+export const mock_pca_data = [
+    [
+        {v1:200, v2:100},
+        {v1:300, v2:400},
+        {v1:50, v2:200},
+        {v1:600, v2:300},
+        {v1:400, v2:500},
+        {v1:400, v2:700}
+    ],
+    [
+        {v2:200, v1:100},
+        {v2:300, v1:400},
+        {v2:50, v1:200},
+        {v2:600, v1:300},
+        {v2:400, v1:500},
+        {v2:400, v1:700}
+    ]
+];
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
