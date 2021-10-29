@@ -1,29 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react';
 import * as d3 from 'd3'
 import { Context } from '../../../context/Provider';
-import { refreshData, differenceBetweenDays, mock_data2 } from '../../../utils/utility';
+import { refreshData, differenceBetweenDays, mock_data2_vacs, mock_data2_cases } from '../../../utils/utility';
 import { CONST } from '../../../utils/const';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
 
 function RadarChart(props) {
 
-    const {type} = props;
+    const type = props.type;
 
     const margin = { top: 50, right: 50, bottom: 100, left: 100 };
     
     const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
     
     useEffect(() => { 
-        //var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
-        //var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
         drawChart(europeData, selectedCountriesData); 
     }, [europeData, selectedCountriesData])
     
 
     var MyRadarChart = {
-        draw: function(id, data, legendOptions, cfg){
-
+        draw: function(id, data, legendOptions, cfg, completeData){
 
             ////////////////////////////////////////////
             /////////////// RADAR SKELETON /////////////
@@ -32,8 +29,8 @@ function RadarChart(props) {
             var allAxis = (data[0].map(function(i, j){return i.axis}));
             var total = allAxis.length;
             var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
-            //var Format = d3.format('%');
             var Format = d3.format('.4');
+
             d3.select(id).select("svg").remove();
             
             var g = d3.select(id)
@@ -64,7 +61,7 @@ function RadarChart(props) {
                 .attr("transform", "translate(" + (cfg.w/2-levelFactor) + ", " + (cfg.h/2-levelFactor) + ")");
             }
 
-            //Text indicating at what % each level is
+            //Text indicating at what each level is
             for(var j=0; j<cfg.levels; j++){
                 var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
                 g.selectAll(".levels")
@@ -128,7 +125,7 @@ function RadarChart(props) {
                     .data([dataValues])
                     .enter()
                     .append("polygon")
-                    .attr("id", (legendOptions != null ? "polygon"+legendOptions[series] : "Empty"))
+                    .attr("id", (legendOptions != null ? "polygon"+legendOptions[series].replace(/\s/g, "") : "Empty"))
                     .attr("class", "radar-chart-serie"+series)
                     .style("stroke-width", "2px")
                     .style("stroke", cfg.color(series))
@@ -217,7 +214,6 @@ function RadarChart(props) {
                     .style('opacity', 0)
                     .style('font-family', 'sans-serif')
                     .style('font-size', '13px');
-            
 
             
             ////////////////////////////////////////////
@@ -244,7 +240,7 @@ function RadarChart(props) {
                 .attr("y", 70) // cfg.h
                 .attr("font-size", "18px")
                 .attr("fill", "#404040")
-                .text("States Selected:");
+                .text("Selected:");
                     
             if(LegendOptions != null){
                 //Initiate Legend	
@@ -261,13 +257,12 @@ function RadarChart(props) {
                     .append("rect")
                     .attr("x", cfg.w + 110)
                     .attr("y", function(d, i){ return 70 + (i * 20);})
-                    //.attr("id", function(d){return d;})
+                    .attr("id", function(d){return d;})
                     .attr("width", 10)
                     .attr("height", 10)
                     .style("fill", function(d, i){ return colorscale(i);})
-                    /*
                     .on('mouseover', function (c){
-                        var id = d3.select(this).attr('id')
+                        var id = d3.select(this).attr('id').replace(/\s/g, "")
                         console.log(id)
                         var z = "polygon#"+d3.select("#polygon"+id).attr("id");
                         g.selectAll("polygon")
@@ -276,14 +271,29 @@ function RadarChart(props) {
                         g.selectAll(z)
                         .transition(200)
                         .style("fill-opacity", 0.8);
+
+                        /*
+                        tooltip
+                            .attr('x', d3.select(this).attr("x"))
+                            .attr('y', d3.select(this).attr("y"))
+                            .text(generateTooltip(completeData, id))
+                            .transition(200)
+                            .style('opacity', 1);
+                        */
                     })
                     .on('mouseout', function(){
                         g.selectAll("polygon")
                         .transition(200)
                         .style("fill-opacity", cfg.opacityArea);
+                        
+                        /*
+                        tooltip
+                            .transition(200)
+                            .style('opacity', 0);
+                        */
                     });
                     ;
-                    */
+                    
 
                     //Create text next to squares
                     legend.selectAll('text')
@@ -320,32 +330,49 @@ function RadarChart(props) {
 
         
         if(data.radarData != null && data.radarData.length != 0){
-            var radarData = generateRadarData(data.radarData[0]);
+            var radarData = generateRadarData(data.radarData[0], type);
             var legendOptions = generateLegendOptions(data.radarData[0])
-            MyRadarChart.draw("#container2", radarData, legendOptions, cfg);
+            MyRadarChart.draw("#container2", radarData, legendOptions, cfg, data.radarData[0]);
         }
-        else 
-            MyRadarChart.draw("#container2", mock_data2, legendOptions, cfg);
+        else{
+            if(type == CONST.CHART_TYPE.VACCINATIONS)
+                MyRadarChart.draw("#container2", mock_data2_vacs, legendOptions, cfg, 0);
+            else
+                MyRadarChart.draw("#container2", mock_data2_cases, legendOptions, cfg, 0);
+        }
     }
 
     return <div id="container2" />;
 	
 }
 
-function generateRadarData(data){
+function generateRadarData(data, type){
     var radarData = [];
-
-    console.log(data)
     
-    for(let i = 0; i < data.name.length; i++){
-        var newData = []
-        newData.push({axis: "Population density / 10", value: data.population_density[i] / 10})
-        newData.push({axis: "Life Expect", value: data.life_expectancy[i]})
-        newData.push({axis: "GDP per Capita / 1000", value: data.gdp_per_capita[i] / 1000})
-        newData.push({axis: "Extreme Poverty", value: data.extreme_poverty[i] * 10})
-        newData.push({axis: "HDI", value: data.human_development_index[i] * 100})
+    if(type == CONST.CHART_TYPE.VACCINATIONS){
+        for(let i = 0; i < data.name.length; i++){
+            var newData = []
+            newData.push({axis: "Population density / 10", value: data.population_density[i] / 10})
+            newData.push({axis: "Life Expect", value: data.life_expectancy[i]})
+            newData.push({axis: "GDP per Capita / 1000", value: data.gdp_per_capita[i] / 1000})
+            newData.push({axis: "Median age", value: data.median_age[i]})
+            //newData.push({axis: "Extreme Poverty", value: data.extreme_poverty[i] * 10})
+            newData.push({axis: "HDI", value: data.human_development_index[i] * 100})
 
-        radarData.push(newData);
+            radarData.push(newData);
+        }
+    }
+    else{
+        for(let i = 0; i < data.name.length; i++){
+            var newData = []
+            newData.push({axis: "Population density / 10", value: data.population_density[i] / 10})
+            newData.push({axis: "Smokers", value: data.male_smokers[i] + data.female_smokers[i]})
+            newData.push({axis: "Cardiovasc death rate / 10", value: data.cardiovasc_death_rate[i] / 5})
+            newData.push({axis: "Diabetes prevalence", value: data.diabetes_prevalence[i] })
+            newData.push({axis: "Median age", value: data.median_age[i]})
+
+            radarData.push(newData);
+        }
     }
     
     return radarData;
@@ -361,6 +388,17 @@ function generateLegendOptions(data){
     }
     
     return legendOptions;
+}
+
+function generateTooltip(data, country){
+    var i = data.name.indexOf(country)
+    var string = "Life Expectancy: " + data.life_expectancy[i] + "<br/>" + 
+                 "Population density: " + data.population_density[i] + "<br/>" +
+                 "GDP per Capita" + data.gdp_per_capita[i] + "<br/>" +
+                 "Median age" + data.median_age[i] + "<br/>" +
+                 "HDI" + data.human_development_index[i]
+    return string
+
 }
   
 

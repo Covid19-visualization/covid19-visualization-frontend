@@ -71,13 +71,20 @@ export function parseData (from, to, data) {
 }
 
 function insertRadarEntry(country, radarData) {
+    var ep = 0
+    console.log(radarData)
     let radarDataEntry = {
         name: country.dailyData[0].name,
         life_expectancy: country.dailyData[0].life_expectancy,
         population_density: country.dailyData[0].population_density,
         gdp_per_capita: country.dailyData[0].gdp_per_capita,
-        extreme_poverty: country.dailyData[0].extreme_poverty,
+        //extreme_poverty: country.dailyData[0].extreme_poverty.length < country.dailyData[0].name.length ? country.dailyData[0].extreme_poverty : 0,
         human_development_index: country.dailyData[0].human_development_index,
+        cardiovasc_death_rate: country.dailyData[0].cardiovasc_death_rate,
+        diabetes_prevalence: country.dailyData[0].diabetes_prevalence,
+        male_smokers: country.dailyData[0].male_smokers,
+        female_smokers: country.dailyData[0].female_smokers,
+        median_age: country.dailyData[0].median_age
     };
 
     radarData.push(radarDataEntry);
@@ -150,13 +157,24 @@ export const mock_data = [
 ]
 
 //Data for test
-export const mock_data2 = [
+export const mock_data2_vacs = [
     [
         {axis:"Population density / 10",value:0},
         {axis:"Life Expect",value:0},
         {axis:"GDP per Capita / 1000",value:0},
-        {axis:"Extreme Poverty",value:0},
+        //{axis:"Extreme Poverty",value:0},
+        {axis:"Median age",value:0},
         {axis:"HDI",value:0}
+    ]
+];
+
+export const mock_data2_cases = [
+    [
+        {axis:"Population density / 10",value:0},
+        {axis:"Smokers",value:0},
+        {axis:"Cardiovasc death rate",value:0},
+        {axis:"Diabetes prevalence",value:0},
+        {axis:"Median age",value:0}
     ]
 ];
 
