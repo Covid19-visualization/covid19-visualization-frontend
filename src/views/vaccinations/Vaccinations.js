@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import BarChart from "../../components/Graphs/BarChart/BarChart";
+import MapChart from "../../components/Graphs/MapChart/MapChart";
 import LineChart from "../../components/Graphs/LineChart/LineChart";
 import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
@@ -32,7 +32,7 @@ const Vaccinations = () => {
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center" }}>
                         <RadarChart type={CONST.CHART_TYPE.VACCINATIONS} />
-                        <TableChart/> 
+                        <TableChart type={CONST.CHART_TYPE.VACCINATIONS}/> 
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
                         <PcaChart type={CONST.CHART_TYPE.VACCINATIONS}/>

@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { Context } from '../../../context/Provider';
+import { CONST } from '../../../utils/const';
+
 
 
 import "./TableChart.css"
@@ -10,9 +12,12 @@ function TableChart(props) {
 
     const margin = { top: 50, right: 50, bottom: 1000, left: 600 };
 
+    const type = props.type;
+
     const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
 
-    const label = ["Country", "Pop. density", "Life Expect", "GDP", "Median age", "HDI"]
+    const label_vacs = ["Country", "Pop. density", "Life Expect", "GDP", "Median age", "HDI"]
+    const label_cases = ["Country", "Pop. density", "Smokers", "CDR", "Diab preval", "Median age"]
 
     const d = props.data;
     
@@ -22,46 +27,99 @@ function TableChart(props) {
 
     var MyTableChart = {
         draw: function(id, data, cfg){
-            console.log(data)
-
             d3.select(id).select("table").remove();
 
             // Create table
             var table = d3.select(id)
                 .append("table")
-                .attr("class", "table table-success")
+                .attr("class", "table table-inverse")
             
             // Create head row
             var first_row = table.append("thead")
                             .append("tr");
-            
-            for(var i = 0; i < label.length; i++){
-                first_row.append("th")
-                .attr("scope", "col")
-                .text(label[i])
-            }
 
-            var body =  table.append("tbody")
-            for(var i = 0; i < data.name.length; i++){
-                var tr = body.append("tr");
-                tr.append("th")
-                .attr("scope", "row")
-                .text(data.name[i]);
-                tr.append("td").text(data.population_density[i])
-                tr.append("td").text(data.life_expectancy[i])
-                tr.append("td").text(data.gdp_per_capita[i])
-                tr.append("td").text(data.median_age[i])
-                tr.append("td").text(data.human_development_index[i])
-            }
+
+            if(type == CONST.CHART_TYPE.VACCINATIONS){
+              for(var i = 0; i < label_vacs.length; i++){
+                  first_row.append("th")
+                  .attr("scope", "col")
+                  .text(label_vacs[i])
+              }
+
+              var body =  table.append("tbody")
+              for(var i = 0; i < data.name.length; i++){
+                  var tr = body.append("tr").attr("id", data.name[i]);
+                  tr.append("th")
+                  .attr("scope", "row")
+                  .text(data.name[i]);
+                  tr.append("td").text(data.population_density[i])
+                  tr.append("td").text(data.life_expectancy[i])
+                  tr.append("td").text(data.gdp_per_capita[i])
+                  tr.append("td").text(data.median_age[i])
+                  tr.append("td").text(data.human_development_index[i])
+                  tr.on('click', function (d){
+                    d3.select(this).style("background-color", "blue");
+                    var id = d3.select(this).attr("id");
+                    var z = d3.select("#polygon"+id);
+                          z.transition(200)
+                          .style("fill-opacity", 0); 
+                          z.transition(200)
+                          .style("fill-opacity", 0.8);
+                  });
+                  tr.on('mouseout', function(){
+                    d3.select(this).style("background-color", "#292b2c");
+                    var id = d3.select(this).attr("id");
+                    var z = d3.select("#polygon"+id);
+                          z.transition(200)
+                          .style("fill-opacity", 0.4);
+                  });
+                }
+              }
+              
+              else{
+                for(var i = 0; i < label_vacs.length; i++){
+                  first_row.append("th")
+                  .attr("scope", "col")
+                  .text(label_cases[i])
+              }
+
+              var body =  table.append("tbody")
+              for(var i = 0; i < data.name.length; i++){
+                  var tr = body.append("tr").attr("id", data.name[i]);
+                  tr.append("th")
+                  .attr("scope", "row")
+                  .text(data.name[i]);
+                  tr.append("td").text(data.population_density[i])
+                  tr.append("td").text(data.male_smokers[i] + data.female_smokers[i])
+                  tr.append("td").text(data.cardiovasc_death_rate[i])
+                  tr.append("td").text(data.diabetes_prevalence[i])
+                  tr.append("td").text(data.median_age[i])
+                  tr.on('click', function (d){
+                    d3.select(this).style("background-color", "blue");
+                    var id = d3.select(this).attr("id");
+                    var z = d3.select("#polygon"+id);
+                          z.transition(200)
+                          .style("fill-opacity", 0); 
+                          z.transition(200)
+                          .style("fill-opacity", 0.8);
+                  });
+                  tr.on('mouseout', function(){
+                    d3.select(this).style("background-color", "#292b2c");
+                    var id = d3.select(this).attr("id");
+                    var z = d3.select("#polygon"+id);
+                          z.transition(200)
+                          .style("fill-opacity", 0.4);
+                  });
+                }
+              }
         },
-        clean: function(id){
-            d3.select(id).select("table").remove();
+        clean: function(idx){
+            d3.select(idx).select("table").remove();
         }
     }
 
     function drawChart(europeFiltered, data) {
 
-        //Options for the Radar chart, other than default
         var cfg = {
             w: 400,
             h: 200,
@@ -79,36 +137,3 @@ function TableChart(props) {
 
 }
 export default TableChart;
-
-/*
-<table class="table table-dark">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
-*/
