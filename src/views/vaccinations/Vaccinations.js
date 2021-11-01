@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import MapChart from "../../components/Graphs/MapChart/MapChart";
 import LineChart from "../../components/Graphs/LineChart/LineChart";
 import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
