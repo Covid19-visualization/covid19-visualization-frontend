@@ -36,7 +36,7 @@ function RadarChart(props) {
             var g = d3.select(id)
                     .append("svg")
                     .attr("width", 847/*cfg.w + margin.left + margin.right*/)
-                    .attr("height", 504 /*cfg.h+ margin.top + margin.bottom*/)
+                    .attr("height", 354 /*cfg.h+ margin.top + margin.bottom*/)
                     .append("g")
                     .attr("transform", `translate(${margin.left},${margin.top})`);
                     ;
@@ -309,7 +309,7 @@ function RadarChart(props) {
     };
 
     function drawChart(europeFiltered, data) {
-        var w = 350, h = 350;
+        var w = 300, h = 300;
 
         //Options for the Radar chart, other than default
         var cfg = {
@@ -342,7 +342,7 @@ function RadarChart(props) {
         }
     }
 
-    return <div id="container2" />;
+    return <div class="card" id="container2" />;
 	
 }
 

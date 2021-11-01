@@ -8,7 +8,7 @@ function PcaChart(props) {
 
     const d = props.data;
 
-    const margin = {top: 80, right: 70, bottom: 0, left: 100};
+    const margin = {top: 30, right: 70, bottom: 0, left: 100};
     
     /*
     useEffect(() => { 
@@ -99,7 +99,7 @@ function PcaChart(props) {
         //Options for the Radar chart, other than default
         var cfg = {
             w: 1000,
-            h: 500,
+            h: 370,
             color: d3.scaleOrdinal(d3.schemeCategory10)
         };
 
@@ -119,7 +119,7 @@ function PcaChart(props) {
         }
         */
     }
-    return <div id="pca_container"/>;
+    return <div class="card" id="pca_container"/>;
 }
 
 export default PcaChart;
