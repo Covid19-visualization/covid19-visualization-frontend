@@ -3,12 +3,14 @@ import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import {mock_pca_data } from '../../../utils/utility';
 
+import "./PcaChart.css"
+
 
 function PcaChart(props) {
 
     const d = props.data;
 
-    const margin = {top: 30, right: 70, bottom: 0, left: 100};
+    const margin = {top: 20, right: 70, bottom: 0, left: 100};
     
     /*
     useEffect(() => { 
@@ -45,16 +47,16 @@ function PcaChart(props) {
             // Add X axis
             var x = d3.scaleLinear()
                 .domain([0, 1000])
-                .range([ 0, 500 ]);
+                .range([ 0, 400 ]);
 
             svg.append("g")
-                .attr("transform", "translate(0," + 300 + ")")
+                .attr("transform", "translate(0," + 250 + ")")
                 .call(d3.axisBottom(x));
 
             // Add Y axis
             var y = d3.scaleLinear()
                 .domain([0, 1000])
-                .range([ 300, 0]);
+                .range([ 250, 0]);
 
             svg.append("g")
                 .call(d3.axisLeft(y));
@@ -99,7 +101,7 @@ function PcaChart(props) {
         //Options for the Radar chart, other than default
         var cfg = {
             w: 1000,
-            h: 370,
+            h: 300,
             color: d3.scaleOrdinal(d3.schemeCategory10)
         };
 

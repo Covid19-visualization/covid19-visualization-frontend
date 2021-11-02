@@ -15,8 +15,6 @@ const Vaccinations = () => {
     const height = window.innerHeight;
     const width = window.innerWidth;
     const { selectedCountries } = useContext(Context);
-        
-
 
     return (
         <>
