@@ -1,6 +1,10 @@
 
-import React, { useEffect } from 'react';
-import * as d3 from 'd3';
+
+import React, { useContext, useEffect, useState } from 'react';
+import * as d3 from 'd3'
+import { Context } from '../../../context/Provider';
+import { fetchHandler } from '../../../utils/fetchHandler';
+import { API } from '../../../utils/API';
 import {mock_pca_data } from '../../../utils/utility';
 
 import "./PcaChart.css"
@@ -11,16 +15,21 @@ function PcaChart(props) {
     const d = props.data;
 
     const margin = {top: 20, right: 70, bottom: 0, left: 100};
+
+    const { selectedPeriod, europeData, selectedCountriesData, selectedCountries  } = useContext(Context);
     
-    /*
     useEffect(() => { 
+        let data = {
+            ...selectedPeriod,
+            selectedCountries: selectedCountries.length != 0 ? selectedCountries : ["Italy"]
+        }
+        fetchHandler(data, API.METHOD.POST, API.COMPUTE_PCA, createPcaData);
         drawChart(europeData, selectedCountriesData); 
     }, [europeData, selectedCountriesData]);
-    */
 
-    useEffect(() => { 
-        drawChart(); 
-    });
+    function createPcaData(newData) {
+        //console.log(newData.data);
+    }
 
 
     var MyPcaChart = {
