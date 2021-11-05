@@ -1,22 +1,40 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useContext, useRef, useEffect, useState } from "react";
 import { select, geoPath, geoMercator, min, max, scaleLinear } from "d3";
+import { Context } from '../../../context/Provider';
+import LoadCountriesTask from "../GeoChart/LoadContriesTask";
+import { CONST } from "../../../utils/const";
 //import useResizeObserver from "./useResizeObserver";
 
 /**
- * Component that renders a map of Germany.
+ * Component that renders a map
  */
 
 function GeoChart({ data, property }) {
+
+  //const type = props.type;
+  //const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
+
   const svgRef = useRef();
   const wrapperRef = useRef();
   //const dimensions = useResizeObserver(wrapperRef);
-  const [selectedCountry, setSelectedCountry] = useState(null);
 
+  
+  
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  //load covid data contries
+  /*
+  const load = () => {
+    console.log("load");
+    const loadCountriesTask = new LoadCountriesTask();
+    loadCountriesTask.load((countries) => setSelectedCountry(countries));
+  };
+  */
   // will be called initially and on every data change
   useEffect(() => {
     const svg = select(svgRef.current)
       .attr("viewBox", [1200, 300, 950, 600])
-
+      
+    //coloring the map
     const minProp = min(data.features, feature => feature.properties[property]);
     const maxProp = max(data.features, feature => feature.properties[property]);
     const colorScale = scaleLinear()

@@ -342,7 +342,7 @@ export default class SunburstChart extends Component {
             "warnings": []
           }
           
-        chart.show(profile, "https://www.freepnglogos.com/uploads/google-logo-png/file-google-logo-svg-wikimedia-commons-23.png")
+        chart.show(profile)
     }
 
     render(){

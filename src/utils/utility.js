@@ -1,3 +1,5 @@
+import { CONST } from "./const";
+
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -15,24 +17,86 @@ function addZeros(date) {
 }
 
 export function getLastPeriod(year, month, day) {
+
     var today = new Date();
-    let lastPeriod = new Date(`${today.getFullYear() - year}-${today.getMonth() + 1 - month}-${today.getDate() - day}`)
-    return lastPeriod;
+    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() -1 , 0).getDate() - (day - today.getDate()) : today.getDate() - day
+    let fixedMonth = today.getDate() - day <= 0 ? today.getMonth() - month : today.getMonth() + 1 - month
+
+    return new Date(`${today.getFullYear() - year}-${fixedMonth}-${dayOfTheMonth}`);
 }
 
-export function regenerateData() {
+export function differenceBetweenDays(from, to) {
+    
+    const utc1 = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
+    const utc2 = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
+  
+    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
+}
 
-    let value, chartData = [];
+export function parseData (from, to, data) {
+    let europeData = {}, selectedCountriesData = {};
 
-    for (let i = 0; i < 25; i++) {
-        value = getRandomInt(0, 100)
-        chartData.push({
-            label: i,
-            value,
-            tooltipContent: `<b>x: </b>${i}<br><b>y: </b>${value}`
+    data.forEach(country => {
+        let dailyDataList = country.dailyData;
+        var vaccinations = [], cases= [];
+
+        dailyDataList.forEach(day => {
+            let currentDay = new Date(day._id);
+
+            if(currentDay >= from && currentDay <= to) {
+                generateAndInsertEntry(day, country, currentDay, vaccinations, cases);
+            }
         });
+
+        if(country._id == CONST.EUROPE.ID ) {
+            europeData.vaccinations = vaccinations;
+            europeData.cases = cases;
+            europeData.cases.sort(function (a, b) { return a.date - b.date; });
+            europeData.vaccinations.sort(function (a, b) { return a.date - b.date; });
+        }
+        else { 
+            selectedCountriesData.vaccinations = vaccinations;
+            selectedCountriesData.cases = cases;
+            selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
+            selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
+        }
+
+    });
+
+    return {europeData, selectedCountriesData};
+}
+
+function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
+    let value = valueAssembler(day);
+
+    let vaccinatioEntry = {
+        label: country._id,
+        value: value.vaccinations,
+        tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
+        date: currentDay,
+    };
+    
+    let casesEntry = {
+        label: country._id,
+        value: value.cases,
+        tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
+        date: currentDay,
     }
-    return chartData;
+
+    vaccinations.push(vaccinatioEntry);
+    cases.push(casesEntry);
+}
+
+function valueAssembler(day) {
+     return { cases: newCasesInDate(day), vaccinations:  newVaccinationsInDate(day)}
+}
+
+function newVaccinationsInDate(day) {
+    return day.new_vaccinations_smoothed ? day.new_vaccinations_smoothed : 0;
+}
+
+function newCasesInDate(day) {
+    return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
 }
 
 export const mock_data = [
@@ -72,4 +136,4 @@ function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-  }
+}

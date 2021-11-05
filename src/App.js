@@ -14,6 +14,10 @@ function App() {
   const [isCasesVisualization, setIsCasesVisualization] = useState(false)
   const [countries, setCountries] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
+  const [selectedCountriesData, setSelectedCountriesData] = useState({vaccinations: [], cases: []});
+  const [europeData, setEuropeData] = useState({vaccinations: [], cases: []});
+
+  const [newAccess, setNewAccess] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date("2020-01-01"),
     to: new Date()
@@ -24,16 +28,27 @@ function App() {
     setCountries: setCountries,
     selectedCountries: selectedCountries,
     setSelectedCountries: setSelectedCountries,
+    selectedCountriesData: selectedCountriesData,
+    setSelectedCountriesData: setSelectedCountriesData,
+    europeData: europeData,
+    setEuropeData: setEuropeData,
     selectedPeriod: selectedPeriod,
     setSelectedPeriod: setSelectedPeriod,
     isCasesVisualization: isCasesVisualization,
     setIsCasesVisualization: setIsCasesVisualization,
+    
   }
 
 
   useEffect(() => {
-    fetchHandler(selectedPeriod, "POST", API.GET_ALL_COUNTRY_DATA, setCountries);
+    //newAccess ? fetchHandler({}, API.METHOD.POST, API.UPDATE_DATA, getCountries) : getCountries();
+    getCountries()
   }, [selectedPeriod]);
+
+  function getCountries() {
+    fetchHandler(selectedPeriod, API.METHOD.POST, API.GET_ALL_COUNTRY_DATA, setCountries);
+    setNewAccess(false);
+  }
   return (
     
     <>

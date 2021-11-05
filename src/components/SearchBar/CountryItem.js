@@ -6,12 +6,10 @@ import { CONST } from "../../utils/const";
 
 const CountryItem = (props) => {
 
-    const {selectedCountries, setSelectedCountries} = useContext(Context);
+    const { selectedCountries, setSelectedCountries, setSelectedCountriesData, selectedCountriesData } = useContext(Context);
     const population = props.population;
     const cases = props.cases;
     const name = props.name;
-    const milion = 1000000;
-    const thousand = 1000;
 
 
     const handleCountrySelection = () => {
@@ -29,8 +27,8 @@ const CountryItem = (props) => {
     }
 
     const displayCounter = () => {
-       let total_population = (population / milion).toFixed(1) >= 1 ? (population / milion).toFixed(1)+ "M" : (population / thousand).toFixed(1) + "k"
-       let total_cases = (cases / milion).toFixed(1) >= 1 ? (cases / milion).toFixed(1)+ "M cases" : (cases / thousand).toFixed(1) + "k cases"
+       let total_population = (population / CONST.MILION).toFixed(1) >= 1 ? (population / CONST.MILION).toFixed(1)+ "M" : (population / CONST.THOUSAND).toFixed(1) + "k"
+       let total_cases = (cases / CONST.MILION).toFixed(1) >= 1 ? (cases / CONST.MILION).toFixed(1)+ "M cases" : (cases / CONST.THOUSAND).toFixed(1) + "k cases"
        return `${total_population} - ${total_cases}`
     }
 

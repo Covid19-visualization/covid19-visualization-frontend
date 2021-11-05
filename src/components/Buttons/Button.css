@@ -8,6 +8,8 @@
   outline: none;
   border: none;
   cursor: pointer;
+  font-family: 'PT Sans', sans-serif;
+
 }
 
 .btn-primary {

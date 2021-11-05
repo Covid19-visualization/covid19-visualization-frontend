@@ -29,5 +29,26 @@ export const CONST = {
             LABEL: "Vaccinations",
             VALUE: 1
         },
-    }
+    },
+    DATE: {
+        WEEK: 7,
+        MONTH: 30, 
+        YEAR: 365
+    },
+    MS_PER_DAY: 1000 * 60 * 60 * 24,
+    MILION: 1000000,
+    THOUSAND: 1000,
+    LINECHAR: {
+        WIDTH: {
+            SMALL: 1,
+            REGULAR: 1.5,
+            LARGE: 3,
+        }
+    },
+    CHART_TYPE: {
+        VACCINATIONS: 0,
+        CASES: 1
+    },
+    EUROPE: { NAME: "Europe", ID: "EU" },
+    SELECTED_COUNTRIES: { NAME: "Selected Countries", ID: "SC" },
 }

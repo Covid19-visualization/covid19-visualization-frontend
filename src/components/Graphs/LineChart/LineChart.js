@@ -1,139 +1,108 @@
-import React, { useEffect } from 'react';
-import * as d3 from 'd3'
-import { colors } from '../../../utils/colors'
+/* eslint-disable react-hooks/exhaustive-deps */
+import * as d3 from 'd3';
+import React, { useContext, useEffect, useState } from 'react';
+import { Context } from '../../../context/Provider';
+import { API } from '../../../utils/API';
+import { colors } from '../../../utils/colors';
+import { CONST } from '../../../utils/const';
+import { differenceBetweenDays, refreshData } from '../../../utils/utility';
 import './LineChart.css';
 
-function LineChart(props) {
-    const { labeledData, unlabeledData, width, height } = props;
 
+function LineChart(props) {
+    const { width, height, type } = props;
+
+    const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
 
     const margin = { top: 50, right: 50, bottom: 50, left: 100 };
-    const yMinValue = d3.min(labeledData, d => d.value);
-    const yMaxValue = d3.max(labeledData, d => d.value);
-    const xMinValue = d3.min(labeledData, d => d.label);
-    const xMaxValue = d3.max(labeledData, d => d.label);
 
-    useEffect(() => {
-        drawChart();
-    }, []);
+    useEffect(() => { 
+        var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
+        var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
+        drawChart(europeFiltered, selectedCountriesFiltered); 
+    }, [europeData, selectedCountriesData])
 
-    function drawChart() {
-        let svg = d3
-            .select('#container')
-            .append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        let tooltip = d3
-            .select('#container')
-            .append('div')
-            .attr('class', 'tooltip')
+    function drawChart(europeFiltered, selectedCountriesFiltered) {
 
-        let xScale = d3
-            .scaleLinear()
-            .domain([xMinValue, xMaxValue])
-            .range([0, width]);
+ 
+        const xScale = generateScaleX(europeFiltered, margin, width)
 
-        let yScale = d3
-            .scaleLinear()
-            .range([height, 0])
-            .domain([0, yMaxValue]);
+        const yScale = generateScaleY(europeFiltered, height, margin)
 
-        let line = d3
-            .line()
-            .x(d => xScale(d.label))
+        const line = d3.line()
+            .defined(d => !isNaN(d.value))
+            .x(d => xScale(d.date))
             .y(d => yScale(d.value))
-            .curve(d3.curveMonotoneX);
+            .curve(d3.curveBasis);
 
+        const xAxis = g => g
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeInner((-height / 2)).tickPadding(10))
 
-        svg
-            .append('g')
-            .attr('class', 'x-axis')
-            .attr('transform', `translate(0,${height})`)
-            .call(d3.axisBottom().scale(xScale).tickSize(15));
-        svg
-            .append('g')
-            .attr('class', 'y-axis')
-            .call(d3.axisLeft(yScale));
+        const yAxis = g => g
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(yScale).tickSizeInner((-width / 1.5) - 17).tickPadding(10))
 
+        const svg =
+            d3.select('.svg-canvas')
+                .attr("viewBox", [0, 0, width, height]);
 
-        svg
-            .append('path')
-            .datum(labeledData)
-            .attr('fill', 'none')
-            .attr('stroke', colors.green)
-            .attr('stroke-width', 5)
-            .attr('class', 'line')
-            .attr('d', line);
-        svg
-            .append('path')
-            .datum(unlabeledData)
-            .attr('fill', 'none')
-            .attr('stroke', colors.azure)
-            .attr('stroke-width', 5)
-            .attr('class', 'line')
-            .attr('d', line);
+        svg.selectAll("*").remove()
 
-        let focus = svg
-            .append('g')
-            .attr('class', 'focus')
-            .style('display', 'none');
+        svg.append("g")
+            .call(xAxis);
 
-        focus.append('circle').attr('r', 5).attr('class', 'circle');
+        svg.append("g")
+            .call(yAxis);
 
-        tooltip = d3
-            .select('#container')
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('opacity', 0);
+        svg.append("path")
+            .datum(europeFiltered)
+            .sort()
+            .attr("fill", "none")
+            .attr("stroke", colors.green)
+            .attr("stroke-width", lineWidth())
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("d", line);
 
-        svg
-            .append('rect')
-            .attr('class', 'overlay')
-            .attr('width', width)
-            .attr('height', height)
-            .style('opacity', 0)
-            .on('mouseover', () => {
-                focus.style('display', null);
-            })
-            .on('mouseout', () => {
-                tooltip
-                    //.transition()
-                    //.duration(300)
-                    .style('opacity', 0);
-            })
-            .on('mousemove', mousemove);
+        svg.append("path")
+            .datum(selectedCountriesFiltered)
+            .attr("fill", "none")
+            .attr("stroke", colors.azure)
+            .attr("stroke-width", lineWidth())
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("d", line);
 
-
-
-        function mousemove(event) {
-            const bisect = d3.bisector(d => d.label).left;
-
-            const xPos = d3.pointer(event)[0];
-            const x0 = bisect(labeledData, xScale.invert(xPos));
-            console.log(x0)
-
-            const d0 = labeledData[x0 > 0 ? x0 - 1 : x0];
-            focus.attr(
-                'transform',
-                `translate(${xScale(d0.label)},${yScale(d0.value)})`,
-            );
-            tooltip
-                //.transition()
-                //.duration(300)
-                .style('opacity', 0.9);
-
-            tooltip
-                .html(d0.tooltipContent || d0.label)
-                .style(
-                    'transform',
-                    `translate(${xScale(d0.label)},${yScale(d0.value)})`,
-                );
-        }
+        d3.selectAll('g.tick')
+            //only ticks that returned true for the filter will be included
+            //in the rest of the method calls:
+            .select('line') //grab the tick line
+            .attr('class', 'quadrantBorder') //style with a custom class and CSS
+            .style('stroke-width', 0.1); //or style directly with attributes or inline styles
     }
-    return <div id="container" />;
+
+    function lineWidth() {
+        return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
+    }
+
+    return <svg className="svg-canvas" />;
 }
 
 export default LineChart;
+
+
+function generateScaleY(dataset, height, margin) {
+    return d3.scaleLinear()
+        .domain([0, d3.max(dataset, d => d.value)]).nice()
+        .range([height - margin.bottom, margin.top]);
+}
+
+function generateScaleX(dataset, margin, width) {
+    return d3.scaleTime()
+        .nice()
+        .domain(d3.extent(dataset, d => d.date))
+        .range([margin.left, width - margin.right]);
+}
+

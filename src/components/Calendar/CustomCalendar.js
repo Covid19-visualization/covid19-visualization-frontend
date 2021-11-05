@@ -18,8 +18,8 @@ const CustomCalendar = (props) => {
     return (
         <div>
             <div id="outer">
-                {buttonList.map((item) => {
-                    return <div className="inner">
+                {buttonList.map((item, index) => {
+                    return <div className="inner" key={index + "_" + item.LABEL}>
                         <Button
                             children={item.LABEL}
                             onClick={() => onChangePeriod(item.VALUE)}
