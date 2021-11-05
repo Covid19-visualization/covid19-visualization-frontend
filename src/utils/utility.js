@@ -132,6 +132,18 @@ export const mock_data = [
     { year: 2017, efficiency: 39.4, sales: 6081000 },
 ]
 
+//Data for test
+export const mock_data2_vacs = [
+    [
+        {axis:"Population density / 10",value:0},
+        {axis:"Life Expect",value:0},
+        {axis:"GDP per Capita / 1000",value:0},
+        //{axis:"Extreme Poverty",value:0},
+        {axis:"Median age",value:0},
+        {axis:"HDI",value:0}
+    ]
+];
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);

@@ -16,7 +16,7 @@ const Vaccinations = () => {
 
     //const data = regenerateData();
     //const data2 = regenerateData();
-    const [property] = useState("gdp_md_est");
+    //const [property] = useState("Vaccinations");
     const { selectedCountries } = useContext(Context);
 
 
@@ -27,7 +27,7 @@ const Vaccinations = () => {
                 <div className={"first-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                 
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }} >
-                        <GeoChart data={GeoData} property={property} />
+                        <GeoChart data={GeoData} type={CONST.CHART_TYPE.VACCINATIONS}/>
                     </div>
                     <div className={"second-component"} style={{ width: "50%", height: "50%", backgroundColor: debug ? "brown" : null }} >
                         <SunburstChart />

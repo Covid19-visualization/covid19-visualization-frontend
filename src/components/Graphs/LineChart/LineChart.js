@@ -74,7 +74,7 @@ function LineChart(props) {
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("d", line);
-
+       
         d3.selectAll('g.tick')
             //only ticks that returned true for the filter will be included
             //in the rest of the method calls:

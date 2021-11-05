@@ -1,26 +1,29 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 import { select, geoPath, geoMercator, min, max, scaleLinear } from "d3";
 import { Context } from '../../../context/Provider';
-import LoadCountriesTask from "../GeoChart/LoadContriesTask";
+//import LoadCountriesTask from "../GeoChart/LoadContriesTask";
 import { CONST } from "../../../utils/const";
+import { differenceBetweenDays, refreshData } from '../../../utils/utility';
 //import useResizeObserver from "./useResizeObserver";
 
 /**
  * Component that renders a map
  */
 
-function GeoChart({ data, property }) {
+function GeoChart({ data, props }) {
 
-  //const type = props.type;
-  //const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
+  const type = props;
+  const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
+
 
   const svgRef = useRef();
   const wrapperRef = useRef();
   //const dimensions = useResizeObserver(wrapperRef);
 
   
-  
   const [selectedCountry, setSelectedCountry] = useState(null);
+  
+  
   //load covid data contries
   /*
   const load = () => {
@@ -31,12 +34,18 @@ function GeoChart({ data, property }) {
   */
   // will be called initially and on every data change
   useEffect(() => {
+    var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
+    DrawMap(selectedCountriesFiltered)
+  }, [data, selectedCountry, selectedCountriesData]);
+
+  function DrawMap(selectedCountriesFiltered ){
     const svg = select(svgRef.current)
       .attr("viewBox", [1200, 300, 950, 600])
-      
+
+    
     //coloring the map
-    const minProp = min(data.features, feature => feature.properties[property]);
-    const maxProp = max(data.features, feature => feature.properties[property]);
+    const minProp = min(data.features, feature => CONST.CHART_TYPE.VACCINATIONS);
+    const maxProp = max(data.features, feature => CONST.CHART_TYPE.VACCINATIONS);
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
       .range(["#ccc", "red"]);
@@ -69,28 +78,26 @@ function GeoChart({ data, property }) {
       .attr("class", "country")
       //.transition()
       //.duration(1000)
-      .attr("fill", feature => colorScale(feature.properties[property]))
+      .attr("fill", feature => colorScale(CONST.CHART_TYPE.VACCINATIONS))
       .attr("d", feature => pathGenerator(feature));
  
     // render text
     svg
       .selectAll(".label")
-      .data([selectedCountry])
+      .data([selectedCountriesFiltered])
       .join("text")
       .attr("class", "label")
+      .attr("stroke-width", lineWidth())
       .text(
-        feature =>
-          feature &&
-          feature.properties.name +
-            ": " +
-            feature.properties[property].toLocaleString()
+          selectedCountriesFiltered
       )
       .attr("x", 1200) //2000
       .attr("y", 800); //800
-  }, [data, property, selectedCountry]);
+  }
 
-
-
+  function lineWidth() {
+    return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
+  }
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
       <svg ref={svgRef}></svg>
