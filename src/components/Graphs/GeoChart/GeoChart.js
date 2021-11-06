@@ -1,18 +1,22 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 import { select, geoPath, geoMercator, min, max, scaleLinear } from "d3";
+import * as d3 from 'd3';
 import { Context } from '../../../context/Provider';
+import { API } from '../../../utils/API';
 //import LoadCountriesTask from "../GeoChart/LoadContriesTask";
 import { CONST } from "../../../utils/const";
 import { differenceBetweenDays, refreshData } from '../../../utils/utility';
+
+import { colors } from '../../../utils/colors';
+
 //import useResizeObserver from "./useResizeObserver";
 
 /**
  * Component that renders a map
  */
 
-function GeoChart({ data, props }) {
-
-  const type = props;
+function GeoChart(props) {
+  const { data, type } = props;
   const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
 
 
@@ -36,9 +40,9 @@ function GeoChart({ data, props }) {
   useEffect(() => {
     var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
     DrawMap(selectedCountriesFiltered)
-  }, [data, selectedCountry, selectedCountriesData]);
+  }, [europeData, selectedCountriesData]);
 
-  function DrawMap(selectedCountriesFiltered ){
+  function DrawMap(selectedCountriesFiltered){
     const svg = select(svgRef.current)
       .attr("viewBox", [1200, 300, 950, 600])
 
@@ -106,3 +110,8 @@ function GeoChart({ data, props }) {
 }
 
 export default GeoChart;
+
+
+
+
+

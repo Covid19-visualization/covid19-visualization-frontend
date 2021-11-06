@@ -20,6 +20,7 @@ const Vaccinations = () => {
     const { selectedCountries } = useContext(Context);
 
 
+
     return (
         <>
             <div className={"vaccination-container"} style={{ width: "100%", height: "100%", display: "flex", backgroundColor: debug ? "beige" : null }} >
