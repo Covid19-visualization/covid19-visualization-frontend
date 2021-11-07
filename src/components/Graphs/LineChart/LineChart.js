@@ -19,7 +19,7 @@ function LineChart(props) {
     useEffect(() => { 
         var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
         var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
-        drawChart(europeFiltered, selectedCountriesFiltered); 
+        drawChart(europeFiltered, selectedCountriesFiltered);
     }, [europeData, selectedCountriesData])
 
 

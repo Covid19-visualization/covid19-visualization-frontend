@@ -6,9 +6,6 @@ import { API } from '../../../utils/API';
 //import LoadCountriesTask from "../GeoChart/LoadContriesTask";
 import { CONST } from "../../../utils/const";
 import { differenceBetweenDays, refreshData } from '../../../utils/utility';
-
-import { colors } from '../../../utils/colors';
-
 //import useResizeObserver from "./useResizeObserver";
 
 /**
@@ -46,6 +43,7 @@ function GeoChart(props) {
     const svg = select(svgRef.current)
       .attr("viewBox", [1200, 300, 950, 600])
 
+    //var mapData = generateMapData(selectedCountriesFiltered, type)
     
     //coloring the map
     const minProp = min(data.features, feature => CONST.CHART_TYPE.VACCINATIONS);
@@ -88,12 +86,12 @@ function GeoChart(props) {
     // render text
     svg
       .selectAll(".label")
-      .data([selectedCountriesFiltered])
+      .data([selectedCountriesData])
       .join("text")
       .attr("class", "label")
-      .attr("stroke-width", lineWidth())
+      //.attr("stroke-width", lineWidth())
       .text(
-          selectedCountriesFiltered
+        selectedCountriesFiltered.toString()
       )
       .attr("x", 1200) //2000
       .attr("y", 800); //800
@@ -110,8 +108,20 @@ function GeoChart(props) {
 }
 
 export default GeoChart;
+/*
+function generateMapData(data, type){
+  var mapData = [];
+  
+  if(type == CONST.CHART_TYPE.VACCINATIONS){
+      for(let i = 0; i < data.name.length; i++){
+          var newData = []
+          newData.push({axis: "vaccinations", value: data.vaccinations[i] / 10})
 
-
+          mapData.push(newData);
+      }
+  }
+  return mapData;
+}*/
 
 
 
