@@ -5,7 +5,7 @@ import { Context } from '../../../context/Provider';
 import { API } from '../../../utils/API';
 //import LoadCountriesTask from "../GeoChart/LoadContriesTask";
 import { CONST } from "../../../utils/const";
-import { differenceBetweenDays, refreshData } from '../../../utils/utility';
+//import { differenceBetweenDays, refreshData } from '../../../utils/utility';
 //import useResizeObserver from "./useResizeObserver";
 
 /**
@@ -16,10 +16,11 @@ function GeoChart(props) {
   const { data, type } = props;
   const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
 
-
   const svgRef = useRef();
   const wrapperRef = useRef();
   //const dimensions = useResizeObserver(wrapperRef);
+
+  const list = props.list;
 
   
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -36,7 +37,7 @@ function GeoChart(props) {
   // will be called initially and on every data change
   useEffect(() => {
     var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
-    DrawMap(selectedCountriesFiltered)
+    DrawMap(selectedCountriesFiltered.push())
   }, [europeData, selectedCountriesData]);
 
   function DrawMap(selectedCountriesFiltered){
@@ -84,25 +85,27 @@ function GeoChart(props) {
       .attr("d", feature => pathGenerator(feature));
  
     // render text
+    //var textData = []
     svg
       .selectAll(".label")
-      .data([selectedCountriesData])
+      .data([selectedCountriesFiltered])
       .join("text")
       .attr("class", "label")
       //.attr("stroke-width", lineWidth())
       .text(
-        selectedCountriesFiltered.toString()
+        selectedCountriesFiltered
       )
       .attr("x", 1200) //2000
       .attr("y", 800); //800
   }
 
-  function lineWidth() {
+  /*function lineWidth() {
     return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
-  }
+  }*/
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
-      <svg ref={svgRef}></svg>
+      <svg ref={svgRef}></svg>  
+     
     </div>
   );
 }

@@ -4,7 +4,6 @@ import data from './flare-2.json'
 
 
 function Sunburst() {
-
   const partition = data => {
     const root = d3.hierarchy(data)
         .sum(d => d.value)
