@@ -87,7 +87,7 @@ function LineChart(props) {
         return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
     }
 
-    return <svg className="svg-canvas card" />;
+    return <svg id="line_container"  className="svg-canvas card" />;
 }
 
 export default LineChart;

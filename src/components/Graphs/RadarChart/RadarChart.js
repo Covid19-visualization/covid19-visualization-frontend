@@ -342,7 +342,7 @@ function RadarChart(props) {
         }
     }
 
-    return <div class="card" id="container2" />;
+    return <div  id="container2" />;
 	
 }
 

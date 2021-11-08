@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import {mock_pca_data } from '../../../utils/utility';
+import './PcaChart.css';
 
 
 function PcaChart(props) {

@@ -1,5 +1,6 @@
 #table_container{
-  height:110px;
+  max-height: 125px;
+  border-width: 0px;
 }
 
 .table {
