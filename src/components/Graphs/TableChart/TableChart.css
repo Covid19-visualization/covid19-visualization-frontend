@@ -1,13 +1,13 @@
 #table_container{
-  height:180px;
+  height:150px;
 }
 
 .table {
-    width: 80%;
-    max-width: 80%;
+    width: 100%;
+    max-width: 95%;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    margin-left: 5rem;
+    margin-left: 1rem;
     border-radius: 1rem;
     overflow:auto;
     display:block;
@@ -18,19 +18,25 @@
     width: 110px;
     vertical-align: top;
     border-top: 1px solid #eceeef;
+    font-size: 13px;
   }
   
   .table thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #eceeef;
+    font-size: 13px;
+
   }
   
   .table tbody + tbody {
     border-top: 2px solid #eceeef;
+    font-size: 13px;
   }
   
   .table .table {
     background-color: #fff;
+    font-size: 13px;
+
   }
   
   .table-sm th,

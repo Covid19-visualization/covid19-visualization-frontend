@@ -6,29 +6,36 @@ import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
 import {mock_pca_data } from '../../../utils/utility';
-
 import "./PcaChart.css"
+
+const kmeans = require('node-kmeans');
 
 
 function PcaChart(props) {
 
-    const d = props.data;
+    var pcaData;
 
     const margin = {top: 20, right: 70, bottom: 0, left: 100};
 
     const { selectedPeriod, europeData, selectedCountriesData, selectedCountries  } = useContext(Context);
+
     
     useEffect(() => { 
         let data = {
             ...selectedPeriod,
             selectedCountries: selectedCountries.length != 0 ? selectedCountries : ["Italy"]
         }
-        fetchHandler(data, API.METHOD.POST, API.COMPUTE_PCA, createPcaData);
-        drawChart(europeData, selectedCountriesData); 
+        //fetchHandler(data, API.METHOD.POST, API.COMPUTE_PCA, createPcaData)
+        //drawChart(europeData, selectedCountriesData); 
     }, [europeData, selectedCountriesData]);
 
     function createPcaData(newData) {
-        //console.log(newData.data);
+        kmeans.clusterize(newData.data, { k: 2 }, (err, result) => {
+            if (err) console.error(err);
+            else {
+                pcaData = result;
+            }
+        });
     }
 
 
@@ -55,7 +62,7 @@ function PcaChart(props) {
 
             // Add X axis
             var x = d3.scaleLinear()
-                .domain([0, 1000])
+                .domain([-63450218, 63450218])
                 .range([ 0, 400 ]);
 
             svg.append("g")
@@ -64,7 +71,7 @@ function PcaChart(props) {
 
             // Add Y axis
             var y = d3.scaleLinear()
-                .domain([0, 1000])
+                .domain([-63450218, 63450218])
                 .range([ 250, 0]);
 
             svg.append("g")
@@ -72,14 +79,15 @@ function PcaChart(props) {
 
             // Add dots
             data.forEach(c => {
+                console.log(c.cluster)
                 svg.append('g')
                 .selectAll("dot")
-                .data(c).enter()
+                .data(c.cluster).enter()
                 .append("circle")
-                .attr("valuex", function (d) { return d.v1 } )
-                .attr("valuey", function (d) { return d.v2 } )
-                .attr("cx", function (d) { return x(d.v1); } )
-                .attr("cy", function (d) { return y(d.v2); } )
+                .attr("valuex", function (d) { return d[0] } )
+                .attr("valuey", function (d) { return d[1] } )
+                .attr("cx", function (d) { return x(d[0]); } )
+                .attr("cy", function (d) { return y(d[1]); } )
                 .attr("r", 3)
                 .style("fill", cfg.color(series))
 
@@ -113,22 +121,12 @@ function PcaChart(props) {
             h: 300,
             color: d3.scaleOrdinal(d3.schemeCategory10)
         };
-
-        MyPcaChart.draw("#pca_container", mock_pca_data, 0, cfg);
+    
         
-        /*
-        if(data.radarData != null && data.radarData.length != 0){
-            var radarData = generateRadarData(data.radarData[0], type);
-            var legendOptions = generateLegendOptions(data.radarData[0])
-            MyRadarChart.draw("#container2", radarData, legendOptions, cfg, data.radarData[0]);
-        }
-        else{
-            if(type == CONST.CHART_TYPE.VACCINATIONS)
-                MyRadarChart.draw("#container2", mock_data2_vacs, legendOptions, cfg, 0);
-            else
-                MyRadarChart.draw("#container2", mock_data2_cases, legendOptions, cfg, 0);
-        }
-        */
+        setTimeout(function(){
+            MyPcaChart.draw("#pca_container", pcaData, 0, cfg);
+        }, 3000);
+        
     }
     return <div class="card" id="pca_container"/>;
 }
