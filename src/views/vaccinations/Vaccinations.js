@@ -6,7 +6,7 @@ import { Context } from "../../context/Provider";
 import { regenerateData } from "../../utils/utility";
 import GeoData from "./Europe.geo.json";
 import Sunburst from "../../components/Graphs/Sunburst/Sunburst";
-//import sunData from "./flare.json"
+import sunData from "./flare.json"
 import { CONST } from "../../utils/const";
 import "./Vaccinations.css";
 
@@ -31,7 +31,7 @@ const Vaccinations = () => {
                         <GeoChart data={GeoData} type={CONST.CHART_TYPE.VACCINATIONS}/>
                     </div>
                     <div className={"second-component"} style={{ width: "50%", height: "50%", backgroundColor: debug ? "brown" : null }} >
-                    
+                       
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
