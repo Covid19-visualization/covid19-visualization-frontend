@@ -15,18 +15,23 @@ function PcaChart(props) {
 
     var pcaData;
 
-    const margin = {top: 20, right: 70, bottom: 0, left: 100};
+    const margin = {top: 70, right: 10, bottom: 0, left: 100};
 
     const { selectedPeriod, europeData, selectedCountriesData, selectedCountries  } = useContext(Context);
 
     
     useEffect(() => { 
-        let data = {
-            ...selectedPeriod,
-            selectedCountries: selectedCountries.length != 0 ? selectedCountries : ["Italy"]
+        if(selectedCountries.length != 0){
+            let data = {
+                ...selectedPeriod,
+                selectedCountries: selectedCountries
+            }
+            fetchHandler(data, API.METHOD.POST, API.COMPUTE_PCA, createPcaData)
+            drawChart(true); 
         }
-        //fetchHandler(data, API.METHOD.POST, API.COMPUTE_PCA, createPcaData)
-        //drawChart(europeData, selectedCountriesData); 
+        else{
+            drawChart(false); 
+        }
     }, [europeData, selectedCountriesData]);
 
     function createPcaData(newData) {
@@ -34,6 +39,7 @@ function PcaChart(props) {
             if (err) console.error(err);
             else {
                 pcaData = result;
+                console.log(result);
             }
         });
     }
@@ -62,8 +68,8 @@ function PcaChart(props) {
 
             // Add X axis
             var x = d3.scaleLinear()
-                .domain([-63450218, 63450218])
-                .range([ 0, 400 ]);
+                .domain([-100000000, 100000000])
+                .range([ 0, 500 ]);
 
             svg.append("g")
                 .attr("transform", "translate(0," + 250 + ")")
@@ -71,7 +77,7 @@ function PcaChart(props) {
 
             // Add Y axis
             var y = d3.scaleLinear()
-                .domain([-63450218, 63450218])
+                .domain([-100000000, 100000000])
                 .range([ 250, 0]);
 
             svg.append("g")
@@ -79,7 +85,6 @@ function PcaChart(props) {
 
             // Add dots
             data.forEach(c => {
-                console.log(c.cluster)
                 svg.append('g')
                 .selectAll("dot")
                 .data(c.cluster).enter()
@@ -114,21 +119,24 @@ function PcaChart(props) {
         }
     }
 
-    function drawChart() {
+    function drawChart(data) {
         //Options for the Radar chart, other than default
         var cfg = {
             w: 1000,
-            h: 300,
+            h: 400,
             color: d3.scaleOrdinal(d3.schemeCategory10)
         };
-    
-        
-        setTimeout(function(){
-            MyPcaChart.draw("#pca_container", pcaData, 0, cfg);
-        }, 3000);
+        if(data){
+            setTimeout(function(){
+                MyPcaChart.draw("#pca_container", pcaData, 0, cfg);
+            }, 6000);
+        }
+        else{
+            MyPcaChart.draw("#pca_container", mock_pca_data, 0, cfg);
+        }
         
     }
-    return <div class="card" id="pca_container"/>;
+    return <div id="pca_container"/>;
 }
 
 export default PcaChart;
