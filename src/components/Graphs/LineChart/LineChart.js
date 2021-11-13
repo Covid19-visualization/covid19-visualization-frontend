@@ -14,7 +14,7 @@ function LineChart(props) {
 
     const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
 
-    const margin = { top: 50, right: 50, bottom: 50, left: 100 };
+    const margin = { top: 25, right: 50, bottom: 125, left: 100 };
 
     useEffect(() => { 
         var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
@@ -38,10 +38,12 @@ function LineChart(props) {
 
         const xAxis = g => g
             .attr("transform", `translate(0,${height - margin.bottom})`)
+            .style("font-size", "6px")
             .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeInner((-height / 2)).tickPadding(10))
 
         const yAxis = g => g
             .attr("transform", `translate(${margin.left},0)`)
+            .style("font-size", "6px")
             .call(d3.axisLeft(yScale).tickSizeInner((-width / 1.5) - 17).tickPadding(10))
 
         const svg =
@@ -81,13 +83,15 @@ function LineChart(props) {
             .select('line') //grab the tick line
             .attr('class', 'quadrantBorder') //style with a custom class and CSS
             .style('stroke-width', 0.1); //or style directly with attributes or inline styles
+            
     }
 
     function lineWidth() {
-        return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
+        //return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
+        return CONST.LINECHAR.WIDTH.REGULAR;
     }
 
-    return <svg id="line_container"  className="svg-canvas card" />;
+    return <svg id="line_container"  className="svg-canvas" />;
 }
 
 export default LineChart;
@@ -103,6 +107,7 @@ function generateScaleX(dataset, margin, width) {
     return d3.scaleTime()
         .nice()
         .domain(d3.extent(dataset, d => d.date))
-        .range([margin.left, width - margin.right]);
+        .range([margin.left, width - margin.right])
+        
 }
 
