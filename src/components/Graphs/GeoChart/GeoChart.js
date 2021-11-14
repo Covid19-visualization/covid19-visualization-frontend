@@ -5,6 +5,7 @@ import { Context } from '../../../context/Provider';
 import { API } from '../../../utils/API';
 //import LoadCountriesTask from "../GeoChart/LoadContriesTask";
 import { CONST } from "../../../utils/const";
+import CountryItem from "../../../components/SearchBar/CountryItem"
 //import { differenceBetweenDays, refreshData } from '../../../utils/utility';
 //import useResizeObserver from "./useResizeObserver";
 
@@ -36,7 +37,11 @@ function GeoChart(props) {
   */
   // will be called initially and on every data change
   useEffect(() => {
-    var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
+    if(type == CONST.CHART_TYPE.VACCINATIONS){
+      var selectedCountriesFiltered = selectedCountriesData.vaccinations;
+    }else{
+      var selectedCountriesFiltered = selectedCountriesData.cases;
+    }
     DrawMap(selectedCountriesFiltered.push())
   }, [europeData, selectedCountriesData]);
 
