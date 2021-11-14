@@ -16,16 +16,16 @@ function LineChart(props) {
 
     const margin = { top: 25, right: 50, bottom: 125, left: 100 };
 
-    useEffect(() => { 
+    useEffect(() => {
         var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
         var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
-        drawChart(europeFiltered, selectedCountriesFiltered); 
+        drawChart(europeFiltered, selectedCountriesFiltered);
     }, [europeData, selectedCountriesData])
 
 
     function drawChart(europeFiltered, selectedCountriesFiltered) {
 
- 
+
         const xScale = generateScaleX(europeFiltered, margin, width)
 
         const yScale = generateScaleY(europeFiltered, height, margin)
@@ -58,6 +58,11 @@ function LineChart(props) {
         svg.append("g")
             .call(yAxis);
 
+        var tooltip = svg.append('text')
+            .style('opacity', 0)
+            .style('font-family', 'sans-serif')
+            .style('font-size', '13px');
+
         svg.append("path")
             .datum(europeFiltered)
             .sort()
@@ -77,13 +82,36 @@ function LineChart(props) {
             .attr("stroke-linecap", "round")
             .attr("d", line);
 
+        svg.selectAll("circle")
+            .data(europeFiltered)
+            .enter().append("circle")
+            .attr("r", 1.3)
+            .attr("cx", function (d) { return xScale(d.date); })
+            .attr("cy", function (d) { return yScale(d.value); })
+            .style("fill", "none")
+            .style("stroke", "none")
+            .style("pointer-events", "all")
+            .on('mouseover', function (d) {
+                d3.select(this)
+                    .style("stroke", "black")
+                    .style("fill", colors.green)
+            })
+            .on('mouseout', function (d) {
+                d3.select(this)
+                    .style("stroke", "none")
+                    .style("fill", "none")
+            })
+            .append("title")
+            .html(function (d) { return d.tooltipContent });
+
+
         d3.selectAll('g.tick')
             //only ticks that returned true for the filter will be included
             //in the rest of the method calls:
             .select('line') //grab the tick line
             .attr('class', 'quadrantBorder') //style with a custom class and CSS
             .style('stroke-width', 0.1); //or style directly with attributes or inline styles
-            
+
     }
 
     function lineWidth() {
@@ -91,7 +119,7 @@ function LineChart(props) {
         return CONST.LINECHAR.WIDTH.REGULAR;
     }
 
-    return <svg id="line_container"  className="svg-canvas" />;
+    return <svg id="line_container" className="svg-canvas" />;
 }
 
 export default LineChart;
@@ -108,6 +136,6 @@ function generateScaleX(dataset, margin, width) {
         .nice()
         .domain(d3.extent(dataset, d => d.date))
         .range([margin.left, width - margin.right])
-        
+
 }
 
