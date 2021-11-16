@@ -5,10 +5,12 @@ import * as d3 from 'd3'
 import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
-import {mock_pca_data } from '../../../utils/utility';
+import {mock_pca_data, dbLabelDaily, dbLabelStatic, countriesNames} from '../../../utils/utility';
 import "./PcaChart.css"
 
 const kmeans = require('node-kmeans');
+const PCA = require('pca-js')
+const math = require('mathjs')
 
 
 function PcaChart(props) {
@@ -27,22 +29,58 @@ function PcaChart(props) {
                 selectedCountries: selectedCountries
             }
             fetchHandler(data, API.METHOD.POST, API.COMPUTE_PCA, createPcaData)
-            drawChart(true); 
         }
         else{
             drawChart(false); 
         }
     }, [europeData, selectedCountriesData]);
 
-    function createPcaData(newData) {
-        kmeans.clusterize(newData.data, { k: 2 }, (err, result) => {
+    function createPcaData(selectedData) {
+        let pcaMatrix = []
+        console.log(selectedData)
+
+        for(var i = 0; i < selectedData.length; i++){
+            insertPcaEntries(selectedData[i], pcaMatrix);
+        }
+        // Generate Eigen vectors
+        var vectors = PCA.getEigenVectors(pcaMatrix);
+
+        // Matrix of eigenvectors with the first two PCA (2D)
+        var vectMat = math.matrix([vectors[0].vector, vectors[1].vector])
+
+        var origMat = math.matrix(pcaMatrix)
+        console.log(origMat)
+        
+        // Dimensionality Reduction
+        var resMat = math.multiply(origMat, math.transpose(vectMat))  
+
+        //console.log(resMat)
+
+        kmeans.clusterize(resMat._data, { k: 2 }, (err, result) => {
             if (err) console.error(err);
             else {
                 pcaData = result;
-                console.log(result);
+                drawChart(true);
             }
         });
+        
     }
+
+    function insertPcaEntries(selectedData, pcaMatrix){
+        let pcaEntry = [];
+        for(var z = 0; z < selectedData.data.length; z++){
+          for(var i = 0; i < dbLabelStatic.length; i++){
+            pcaEntry.push(selectedData[dbLabelStatic[i]])
+          }
+          for(var j = 0; j < dbLabelDaily.length; j++){
+            var value = selectedData.data[z][dbLabelDaily[j]]
+            pcaEntry.push(value ? value : 0)
+          }
+          //console.log(pcaEntry)
+          pcaMatrix.push(pcaEntry);
+          pcaEntry = []
+        }
+      }
 
 
     var MyPcaChart = {
@@ -127,9 +165,7 @@ function PcaChart(props) {
             color: d3.scaleOrdinal(d3.schemeCategory10)
         };
         if(data){
-            setTimeout(function(){
-                MyPcaChart.draw("#pca_container", pcaData, 0, cfg);
-            }, 6000);
+            MyPcaChart.draw("#pca_container", pcaData, 0, cfg);
         }
         else{
             MyPcaChart.draw("#pca_container", mock_pca_data, 0, cfg);
