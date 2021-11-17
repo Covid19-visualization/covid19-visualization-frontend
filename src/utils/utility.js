@@ -167,8 +167,7 @@ export const mock_data3 = [
 ];
 
 export const mock_pca_data = [
-    { cluster: [[0, 0]] },
-    { cluster: [[0, 0]] }
+    { pca: [[0, 0]] },
 ];
 
 function getRandomInt(min, max) {

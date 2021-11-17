@@ -275,6 +275,16 @@ function RadarChart(props) {
                     .transition(200)
                     .style("fill-opacity", 0.8);
 
+
+                    var z2 = "circle#"+id;
+                    var pca = d3.select("#pca_container")
+                    pca.selectAll("circle")
+                    .transition(200)
+                    .style("fill-opacity", 0); 
+                    pca.selectAll(z2)
+                    .transition(200)
+                    .style("fill-opacity", 1);
+
                     /*
                     tooltipLegend = legend
                         .append('title')
@@ -294,6 +304,11 @@ function RadarChart(props) {
                     g.selectAll("polygon")
                     .transition(200)
                     .style("fill-opacity", cfg.opacityArea);
+
+                    var pca = d3.select("#pca_container")
+                    pca.selectAll("circle")
+                    .transition(200)
+                    .style("fill-opacity", 1);
                     
                     /*
                     tooltipLegend

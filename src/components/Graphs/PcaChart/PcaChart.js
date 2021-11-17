@@ -17,7 +17,7 @@ function PcaChart(props) {
 
     var pcaData;
 
-    const margin = {top: 70, right: 10, bottom: 0, left: 100};
+    const margin = {top: 40, right: 10, bottom: 0, left: 70};
 
     const { selectedPeriod, europeData, selectedCountriesData, selectedCountries  } = useContext(Context);
 
@@ -31,17 +31,19 @@ function PcaChart(props) {
             fetchHandler(data, API.METHOD.POST, API.COMPUTE_PCA, createPcaData)
         }
         else{
-            drawChart(false); 
+            drawChart(false, 0); 
         }
     }, [europeData, selectedCountriesData]);
 
     function createPcaData(selectedData) {
         let pcaMatrix = []
+        let countries = []
         console.log(selectedData)
 
         for(var i = 0; i < selectedData.length; i++){
-            insertPcaEntries(selectedData[i], pcaMatrix);
-        }
+            insertPcaEntries(selectedData[i], pcaMatrix, countries);
+        }  
+
         // Generate Eigen vectors
         var vectors = PCA.getEigenVectors(pcaMatrix);
 
@@ -49,13 +51,22 @@ function PcaChart(props) {
         var vectMat = math.matrix([vectors[0].vector, vectors[1].vector])
 
         var origMat = math.matrix(pcaMatrix)
-        console.log(origMat)
+        //console.log(origMat)
         
         // Dimensionality Reduction
-        var resMat = math.multiply(origMat, math.transpose(vectMat))  
+        var resMat = math.multiply(origMat, math.transpose(vectMat))
 
-        //console.log(resMat)
+        console.log(countries)
 
+        pcaData = countries;
+
+        for(var i = 0; i < selectedData.length; i++){
+            updateCountryMatrix(countries[i], vectors);
+        }  
+
+        drawChart(true, countries);
+        
+        /*
         kmeans.clusterize(resMat._data, { k: 2 }, (err, result) => {
             if (err) console.error(err);
             else {
@@ -63,10 +74,12 @@ function PcaChart(props) {
                 drawChart(true);
             }
         });
+        */
         
     }
 
-    function insertPcaEntries(selectedData, pcaMatrix){
+    function insertPcaEntries(selectedData, pcaMatrix, countries){
+        let countryMatrix = [];
         let pcaEntry = [];
         for(var z = 0; z < selectedData.data.length; z++){
           for(var i = 0; i < dbLabelStatic.length; i++){
@@ -78,8 +91,24 @@ function PcaChart(props) {
           }
           //console.log(pcaEntry)
           pcaMatrix.push(pcaEntry);
+          countryMatrix.push(pcaEntry);
           pcaEntry = []
         }
+
+        countries.push({"country": selectedData["name"], "pca" : countryMatrix});
+      }
+
+      function updateCountryMatrix(country, vectors){
+        // Matrix of eigenvectors with the first two PCA (2D)
+        var vectMat = math.matrix([vectors[0].vector, vectors[1].vector])
+
+        var origMat = math.matrix(country.pca)
+        //console.log(origMat)
+        
+        // Dimensionality Reduction
+        var resMat = math.multiply(origMat, math.transpose(vectMat))
+
+        country.pca = resMat._data
       }
 
 
@@ -125,8 +154,9 @@ function PcaChart(props) {
             data.forEach(c => {
                 svg.append('g')
                 .selectAll("dot")
-                .data(c.cluster).enter()
+                .data(c.pca).enter()
                 .append("circle")
+                .attr("id", (c.country).replace(/\s/g, ""))
                 .attr("valuex", function (d) { return d[0] } )
                 .attr("valuey", function (d) { return d[1] } )
                 .attr("cx", function (d) { return x(d[0]); } )
@@ -154,21 +184,94 @@ function PcaChart(props) {
                 series++;
             });
             series = 0;
+
+            ////////////////////////////////////////////
+            /////////////// LEGEND /////////////////////
+            ////////////////////////////////////////////
+
+            
+            var colorscale = cfg.color;
+
+            //Legend titles
+            var LegendOptions = legendOptions;
+
+            var svgl = d3.select(id)
+            .selectAll('svg')
+            .append('g')
+            .attr("width", cfg.lw)
+            .attr("height", cfg.lh)
+
+            //Create the title for the legend
+            var text = svgl.append("text")
+                .attr("class", "title")
+                .attr('transform', 'translate(90,10)') 
+                .attr("x", 450) // cfg.w 
+                .attr("y", 20) // cfg.h
+                .attr("font-size", "15px")
+                .attr("fill", "#404040")
+                .text("Selected:");
+                    
+            if(LegendOptions != null){
+                //Initiate Legend	
+                var legend = svgl.append("g")
+                    .attr("class", "legend")
+                    .attr('transform', 'translate(90,-20)') ;
+                
+                //Create colour squares
+                legend.selectAll('rect')
+                .data(LegendOptions).enter()
+                .append("rect")
+                .attr("x", cfg.lw + 150)
+                .attr("y", function(d, i){ return 70 + (i * 20);})
+                .attr("id", function(d){return (d.country).replace(/\s/g, "");})
+                .attr("width", 10)
+                .attr("height", 10)
+                .style("fill", function(d, i){ return colorscale(i);})
+                .on('mouseover', function (c){
+                    var id = d3.select(this).attr('id')
+                    var z = "circle#"+id;
+                    svg.selectAll("circle")
+                    .transition(200)
+                    .style("fill-opacity", 0); 
+                    svg.selectAll(z)
+                    .transition(200)
+                    .style("fill-opacity", 1);
+                })
+                .on('mouseout', function(){
+                    svg.selectAll("circle")
+                    .transition(200)
+                    .style("fill-opacity", 1);
+                });
+                ;
+                
+
+                //Create text next to squares
+                legend.selectAll('text')
+                    .data(LegendOptions).enter()
+                    .append("text")
+                    .attr("x", cfg.lw + 170)
+                    .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
+                    .attr("font-size", "12px")
+                    .attr("fill", "#737373")
+                    .text(function(d) { return d.country; });  
+            }
         }
     }
 
-    function drawChart(data) {
+    function drawChart(data, countries) {
         //Options for the Radar chart, other than default
         var cfg = {
             w: 1000,
             h: 400,
+            lw: 250,
+            lh: 250,
             color: d3.scaleOrdinal(d3.schemeCategory10)
         };
         if(data){
-            MyPcaChart.draw("#pca_container", pcaData, 0, cfg);
+            MyPcaChart.draw("#pca_container", pcaData, countries, cfg);
         }
         else{
-            MyPcaChart.draw("#pca_container", mock_pca_data, 0, cfg);
+            MyPcaChart.draw("#pca_container", mock_pca_data, countries, cfg);
         }
         
     }
