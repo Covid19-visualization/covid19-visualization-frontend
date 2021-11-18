@@ -266,7 +266,6 @@ function RadarChart(props) {
                 .style("fill", function(d, i){ return colorscale(i);})
                 .on('mouseover', function (c){
                     var id = d3.select(this).attr('id').replace(/\s/g, "")
-                    console.log(id)
                     var z = "polygon#"+d3.select("#polygon"+id).attr("id");
                     g.selectAll("polygon")
                     .transition(200)

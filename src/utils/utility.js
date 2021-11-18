@@ -167,7 +167,7 @@ export const mock_data3 = [
 ];
 
 export const mock_pca_data = [
-    { pca: [[0, 0]] },
+    { country: "", pca: [[0, 0]] }
 ];
 
 function getRandomInt(min, max) {
