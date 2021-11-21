@@ -58,20 +58,26 @@ function TableChart(props) {
                   tr.append("td").text(data.median_age[i])
                   tr.append("td").text(data.human_development_index[i])
                   tr.on('click', function (d){
-                    d3.select(this).style("background-color", "blue");
-                    var id = d3.select(this).attr("id");
+                    d3.select(this).style("background-color", cfg.color[1]);
+                    var id = d3.select(this).attr("id").replace(/\s/g, "");
+                    var g = d3.select("#polygons");
                     var z = d3.select("#polygon"+id);
-                          z.transition(200)
-                          .style("fill-opacity", 0); 
-                          z.transition(200)
-                          .style("fill-opacity", 0.8);
+
+                    g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", 0); 
+                    z.transition(200)
+                        .style("fill-opacity", cfg.full_opacity);
                   });
                   tr.on('mouseout', function(){
-                    d3.select(this).style("background-color", "#292b2c");
-                    var id = d3.select(this).attr("id");
+                    d3.select(this).style("background-color", cfg.color[0]);
+                    var id = d3.select(this).attr("id").replace(/\s/g, "");
+                    var g = d3.select("#polygons");
                     var z = d3.select("#polygon"+id);
-                          z.transition(200)
-                          .style("fill-opacity", 0.4);
+
+                    g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", cfg.standard_opacity);
                   });
                 }
               }
@@ -95,20 +101,26 @@ function TableChart(props) {
                   tr.append("td").text(data.diabetes_prevalence[i])
                   tr.append("td").text(data.median_age[i])
                   tr.on('click', function (d){
-                    d3.select(this).style("background-color", "blue");
-                    var id = d3.select(this).attr("id");
+                    d3.select(this).style("background-color", cfg.color[1]);
+                    var id = d3.select(this).attr("id").replace(/\s/g, "");
+                    var g = d3.select("#polygons");
                     var z = d3.select("#polygon"+id);
-                          z.transition(200)
-                          .style("fill-opacity", 0); 
-                          z.transition(200)
-                          .style("fill-opacity", 0.8);
+
+                    g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", 0); 
+                    z.transition(200)
+                        .style("fill-opacity", cfg.full_opacity);
                   });
                   tr.on('mouseout', function(){
-                    d3.select(this).style("background-color", "#292b2c");
-                    var id = d3.select(this).attr("id");
+                    d3.select(this).style("background-color", cfg.color[0]);
+                    var id = d3.select(this).attr("id").replace(/\s/g, "");
+                    var g = d3.select("#polygons");
                     var z = d3.select("#polygon"+id);
-                          z.transition(200)
-                          .style("fill-opacity", 0.4);
+
+                    g.selectAll("polygon")
+                        .transition(200)
+                        .style("fill-opacity", cfg.standard_opacity);
                   });
                 }
               }
@@ -123,7 +135,9 @@ function TableChart(props) {
         var cfg = {
             w: 400,
             h: 200,
-            color: d3.scaleOrdinal(d3.schemeCategory10)
+            standard_opacity: 0.4,
+            full_opacity: 0.8,
+            color: ["#292b2c", "#3399ff"]
         };
     
         if(data.radarData != null && data.radarData.length != 0){

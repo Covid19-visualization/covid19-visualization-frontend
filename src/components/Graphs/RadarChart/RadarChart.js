@@ -6,6 +6,9 @@ import { CONST } from '../../../utils/const';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
 
+import "./RadarChart.css"
+
+
 function RadarChart(props) {
 
     const type = props.type;
@@ -36,12 +39,16 @@ function RadarChart(props) {
             var g = d3.select(id)
                     .append("svg")
                     .attr("width", 847/*cfg.w + margin.left + margin.right*/)
-                    .attr("height", 354 /*cfg.h+ margin.top + margin.bottom*/)
+                    .attr("height", 310 /*cfg.h+ margin.top + margin.bottom*/)
                     .append("g")
+                    .attr("id", "polygons")
                     .attr("transform", `translate(${margin.left},${margin.top})`);
                     ;
 
-            var tooltip;
+            var tooltipRadar = g.append('text')
+                    .style('opacity', 0)
+                    .style('font-family', 'sans-serif')
+                    .style('font-size', '13px');
             
             //Circular segments
             for(var j=0; j<cfg.levels; j++){
@@ -181,7 +188,7 @@ function RadarChart(props) {
                         var newX =  parseFloat(d3.select(this).attr('cx')) - 10;
                         var newY =  parseFloat(d3.select(this).attr('cy')) - 5;
 
-                        tooltip
+                        tooltipRadar
                             .attr('x', newX)
                             .attr('y', newY)
                             .text(Format(d3.select(this).select("title").text()))
@@ -197,7 +204,7 @@ function RadarChart(props) {
                             .style("fill-opacity", 0.8);
                     })
                     .on('mouseout', function(){
-                        tooltip
+                        tooltipRadar
                             .transition(200)
                             .style('opacity', 0);
                         g.selectAll("polygon")
@@ -209,11 +216,6 @@ function RadarChart(props) {
 
                 series++;
             });
-            //Tooltip
-            tooltip = g.append('text')
-                    .style('opacity', 0)
-                    .style('font-family', 'sans-serif')
-                    .style('font-size', '13px');
 
             
             ////////////////////////////////////////////
@@ -238,7 +240,7 @@ function RadarChart(props) {
                 .attr('transform', 'translate(90,0)') 
                 .attr("x", 450) // cfg.w 
                 .attr("y", 70) // cfg.h
-                .attr("font-size", "18px")
+                .attr("font-size", "15px")
                 .attr("fill", "#404040")
                 .text("Selected:");
                     
@@ -248,68 +250,89 @@ function RadarChart(props) {
                     .attr("class", "legend")
                     .attr("height", 100)
                     .attr("width", 200)
-                    .attr('transform', 'translate(90,20)') 
-                    ;
+                    .attr('transform', 'translate(90,20)') ;
+                
+                var tooltipLegend;
 
-                    //Create colour squares
-                    legend.selectAll('rect')
-                    .data(LegendOptions).enter()
-                    .append("rect")
-                    .attr("x", cfg.w + 110)
-                    .attr("y", function(d, i){ return 70 + (i * 20);})
-                    .attr("id", function(d){return d;})
-                    .attr("width", 10)
-                    .attr("height", 10)
-                    .style("fill", function(d, i){ return colorscale(i);})
-                    .on('mouseover', function (c){
-                        var id = d3.select(this).attr('id').replace(/\s/g, "")
-                        console.log(id)
-                        var z = "polygon#"+d3.select("#polygon"+id).attr("id");
-                        g.selectAll("polygon")
-                        .transition(200)
-                        .style("fill-opacity", 0); 
-                        g.selectAll(z)
-                        .transition(200)
-                        .style("fill-opacity", 0.8);
+                //Create colour squares
+                legend.selectAll('rect')
+                .data(LegendOptions).enter()
+                .append("rect")
+                .attr("x", cfg.w + 150)
+                .attr("y", function(d, i){ return 70 + (i * 20);})
+                .attr("id", function(d){return d;})
+                .attr("width", 10)
+                .attr("height", 10)
+                .style("fill", function(d, i){ return colorscale(i);})
+                .on('mouseover', function (c){
+                    var id = d3.select(this).attr('id').replace(/\s/g, "")
+                    var z = "polygon#"+d3.select("#polygon"+id).attr("id");
+                    g.selectAll("polygon")
+                    .transition(200)
+                    .style("fill-opacity", 0); 
+                    g.selectAll(z)
+                    .transition(200)
+                    .style("fill-opacity", 0.8);
 
-                        /*
-                        tooltip
-                            .attr('x', d3.select(this).attr("x"))
-                            .attr('y', d3.select(this).attr("y"))
-                            .text(generateTooltip(completeData, id))
-                            .transition(200)
-                            .style('opacity', 1);
-                        */
-                    })
-                    .on('mouseout', function(){
-                        g.selectAll("polygon")
+
+                    var z2 = "circle#"+id;
+                    var pca = d3.select("#pca_container")
+                    pca.selectAll("circle")
+                    .transition(200)
+                    .style("fill-opacity", 0); 
+                    pca.selectAll(z2)
+                    .transition(200)
+                    .style("fill-opacity", 1);
+
+                    /*
+                    tooltipLegend = legend
+                        .append('title')
+                        .attr('x', d3.select(this).attr("x"))
+                        .attr('y', d3.select(this).attr("y"))
+                        .attr('class', 'tooltiptext')
+                        .attr("data-html", "true");
+
+                    tooltipLegend
+                        .text(generateTooltip(completeData, id))
                         .transition(200)
-                        .style("fill-opacity", cfg.opacityArea);
-                        
-                        /*
-                        tooltip
-                            .transition(200)
-                            .style('opacity', 0);
-                        */
-                    });
-                    ;
+                        .style('opacity', 1)
+                        .style('visibility', 'visible');
+                    */
+                })
+                .on('mouseout', function(){
+                    g.selectAll("polygon")
+                    .transition(200)
+                    .style("fill-opacity", cfg.opacityArea);
+
+                    var pca = d3.select("#pca_container")
+                    pca.selectAll("circle")
+                    .transition(200)
+                    .style("fill-opacity", 1);
                     
+                    /*
+                    tooltipLegend
+                        .transition(200)
+                        .style('opacity', 0);
+                    */
+                });
+                ;
+                
 
-                    //Create text next to squares
-                    legend.selectAll('text')
-                    .data(LegendOptions).enter()
-                    .append("text")
-                    .attr("x", cfg.w + 130)
-                    .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
-                    .attr("font-size", "14px")
-                    .attr("fill", "#737373")
-                    .text(function(d) { return d; });  
+                //Create text next to squares
+                legend.selectAll('text')
+                .data(LegendOptions).enter()
+                .append("text")
+                .attr("x", cfg.w + 170)
+                .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
+                .attr("font-size", "12px")
+                .attr("fill", "#737373")
+                .text(function(d) { return d; });  
             }
         }
     };
 
     function drawChart(europeFiltered, data) {
-        var w = 300, h = 300;
+        var w = 250, h = 250;
 
         //Options for the Radar chart, other than default
         var cfg = {
