@@ -76,7 +76,6 @@ export function parseData (from, to, data) {
 }
 
 function insertRadarEntry(country, radarData) {
-    var ep = 0
     console.log(radarData)
     let radarDataEntry = {
         name: country.dailyData[0].name,

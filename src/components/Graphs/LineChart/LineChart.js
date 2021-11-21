@@ -58,11 +58,6 @@ function LineChart(props) {
         svg.append("g")
             .call(yAxis);
 
-        var tooltip = svg.append('text')
-            .style('opacity', 0)
-            .style('font-family', 'sans-serif')
-            .style('font-size', '13px');
-
         svg.append("path")
             .datum(europeFiltered)
             .sort()
@@ -127,7 +122,8 @@ export default LineChart;
 
 function generateScaleY(dataset, height, margin) {
     return d3.scaleLinear()
-        .domain([0, d3.max(dataset, d => d.value)]).nice()
+        .nice()
+        .domain([0, d3.max(dataset, d => d.value)])
         .range([height - margin.bottom, margin.top]);
 }
 
