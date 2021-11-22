@@ -38,7 +38,7 @@ function PcaChart(props) {
     function createPcaData(selectedData) {
         let pcaMatrix = []
         let countries = []
-        console.log(selectedData)
+        //console.log(selectedData)
 
         for(var i = 0; i < selectedData.length; i++){
             insertPcaEntries(selectedData[i], pcaMatrix, countries);
@@ -56,7 +56,7 @@ function PcaChart(props) {
         // Dimensionality Reduction
         var resMat = math.multiply(origMat, math.transpose(vectMat))
 
-        console.log(countries)
+        //console.log(countries)
 
         pcaData = countries;
 

@@ -24,59 +24,60 @@ function addZeros(date) {
 export function getLastPeriod(year, month, day) {
 
     var today = new Date();
-    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() -1 , 0).getDate() - (day - today.getDate()) : today.getDate() - day
+    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() - 1, 0).getDate() - (day - today.getDate()) : today.getDate() - day
     let fixedMonth = today.getDate() - day <= 0 ? today.getMonth() - month : today.getMonth() + 1 - month
 
     return new Date(`${today.getFullYear() - year}-${fixedMonth}-${dayOfTheMonth}`);
 }
 
 export function differenceBetweenDays(from, to) {
-    
+
     const utc1 = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
     const utc2 = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
-  
-    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
+
+    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);
 }
 
-export function parseData (from, to, data) {
+export function parseData(from, to, data) {
     let europeData = {}, selectedCountriesData = {};
+    
     data.forEach(country => {
         let dailyDataList = country.dailyData;
         var vaccinations = [], cases = [], radarData = [];
 
         dailyDataList.forEach(day => {
             let currentDay = new Date(day._id);
-
-            if(currentDay >= from && currentDay <= to) {
+            if (currentDay >= from && currentDay <= to) {
                 generateAndInsertEntry(day, country, currentDay, vaccinations, cases);
             }
         });
 
-        if(country._id == "SC" && dailyDataList.length != 0)
-            insertRadarEntry(country, radarData);
+        if (country._id == "SC" && dailyDataList.length != 0) {
+             insertRadarEntry(country, radarData);
+        }
 
-        if(country._id == CONST.EUROPE.ID ) {
+        if (country._id == CONST.EUROPE.ID) {
             europeData.vaccinations = vaccinations;
             europeData.cases = cases;
             europeData.cases.sort(function (a, b) { return a.date - b.date; });
             europeData.vaccinations.sort(function (a, b) { return a.date - b.date; });
         }
-        else { 
+        else {
             selectedCountriesData.vaccinations = vaccinations;
             selectedCountriesData.cases = cases;
             selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
             selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
-            
+
             selectedCountriesData.radarData = radarData;
         }
 
     });
 
-    return {europeData, selectedCountriesData};
+    return { europeData, selectedCountriesData };
 }
 
 function insertRadarEntry(country, radarData) {
-    console.log(radarData)
+    //console.log(radarData)
     let radarDataEntry = {
         name: country.dailyData[0].name,
         life_expectancy: country.dailyData[0].life_expectancy,
@@ -96,14 +97,14 @@ function insertRadarEntry(country, radarData) {
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
     let value = valueAssembler(day);
-    
+    let countryName = countryAssembler(day);
     let vaccinatioEntry = {
         label: country._id,
         value: value.vaccinations,
-        tooltipContent: `<b>${visualizeDate(currentDay)}\nCountry: </b>${country._id}\n<b>Vaccinations: </b>${value.vaccinations}`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/>Country: </b>${country._id}<br/><b>Vaccinations: </b>${value.vaccinations}`,
         date: currentDay,
     };
-    
+
     let casesEntry = {
         label: country._id,
         value: value.cases,
@@ -116,7 +117,11 @@ function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
 }
 
 function valueAssembler(day) {
-     return { cases: newCasesInDate(day), vaccinations:  newVaccinationsInDate(day)}
+    return { cases: newCasesInDate(day), vaccinations: newVaccinationsInDate(day) }
+}
+
+function countryAssembler(day) {
+   //console.log(day);
 }
 
 function newVaccinationsInDate(day) {
@@ -126,42 +131,42 @@ function newVaccinationsInDate(day) {
 function newCasesInDate(day) {
     return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
 }
- 
+
 //Data for test
 export const mock_data2_vacs = [
     [
-        {axis:"Population density / 10",value:0},
-        {axis:"Life Expect",value:0},
-        {axis:"GDP per Capita / 1000",value:0},
+        { axis: "Population density / 10", value: 0 },
+        { axis: "Life Expect", value: 0 },
+        { axis: "GDP per Capita / 1000", value: 0 },
         //{axis:"Extreme Poverty",value:0},
-        {axis:"Median age",value:0},
-        {axis:"HDI",value:0}
+        { axis: "Median age", value: 0 },
+        { axis: "HDI", value: 0 }
     ]
 ];
 
 export const mock_data2_cases = [
     [
-        {axis:"Population density / 10",value:0},
-        {axis:"Smokers",value:0},
-        {axis:"Cardiovasc death rate",value:0},
-        {axis:"Diabetes prevalence",value:0},
-        {axis:"Median age",value:0}
+        { axis: "Population density / 10", value: 0 },
+        { axis: "Smokers", value: 0 },
+        { axis: "Cardiovasc death rate", value: 0 },
+        { axis: "Diabetes prevalence", value: 0 },
+        { axis: "Median age", value: 0 }
     ]
 ];
 
 export const mock_data3 = [
     [
-        {axis:"Email",value:0.59},
-        {axis:"Social Networks",value:0.56},
-        {axis:"Internet Banking",value:0.42},
-        {axis:"News Sportsites",value:0.34},
-        {axis:"Search Engine",value:0.48}
-    ],[
-        {axis:"Email",value:0.48},
-        {axis:"Social Networks",value:0.41},
-        {axis:"Internet Banking",value:0.27},
-        {axis:"News Sportsites",value:0.28},
-        {axis:"Search Engine",value:0.46}
+        { axis: "Email", value: 0.59 },
+        { axis: "Social Networks", value: 0.56 },
+        { axis: "Internet Banking", value: 0.42 },
+        { axis: "News Sportsites", value: 0.34 },
+        { axis: "Search Engine", value: 0.48 }
+    ], [
+        { axis: "Email", value: 0.48 },
+        { axis: "Social Networks", value: 0.41 },
+        { axis: "Internet Banking", value: 0.27 },
+        { axis: "News Sportsites", value: 0.28 },
+        { axis: "Search Engine", value: 0.46 }
     ]
 ];
 
@@ -189,7 +194,7 @@ export const dbLabelStatic = [
     "life_expectancy",
     "human_development_index"
 ]
-    
+
 export const dbLabelDaily = [
     "new_cases",
     "new_cases_smoothed",
@@ -259,3 +264,12 @@ export const countriesNames = [
     "Vatican",
     "United Kingdom"
 ]
+
+export function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}

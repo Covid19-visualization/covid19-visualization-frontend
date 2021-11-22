@@ -404,7 +404,7 @@ function generateRadarData(data, type){
 function generateLegendOptions(data){
     var legendOptions = [];
 
-    console.log(data)
+    //console.log(data)
     
     for(let i = 0; i < data.name.length; i++){
         legendOptions.push(data.name[i]);
