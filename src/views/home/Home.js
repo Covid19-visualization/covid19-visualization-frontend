@@ -11,7 +11,7 @@ import { API } from "../../utils/API";
 import { parseData } from "../../utils/utility";
 
 const Home = () => {
-    const { selectedPeriod, selectedCountries, isCasesVisualization, setEuropeData, setSelectedCountriesData  } = useContext(Context);
+    const { selectedPeriod, selectedCountries, isCasesVisualization, setEuropeData, setSelectedCountriesData, setSelectedCountriesDataByName} = useContext(Context);
 
     useEffect(() => {
         let data = {
@@ -27,6 +27,7 @@ const Home = () => {
         let parsedData = parseData(selectedPeriod.from, selectedPeriod.to, newData)
         setEuropeData(parsedData.europeData);
         setSelectedCountriesData(parsedData.selectedCountriesData);
+        setSelectedCountriesDataByName(parsedData.selectedCountriesDataByName);
     }
 
     return (

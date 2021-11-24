@@ -51,4 +51,5 @@ export const CONST = {
     },
     EUROPE: { NAME: "Europe", ID: "EU" },
     SELECTED_COUNTRIES: { NAME: "Selected Countries", ID: "SC" },
+    SELECTED_COUNTRIES_BY_NAME: { NAME: "Selected Countries By Name", ID: "SCBN"},
 }

@@ -39,30 +39,43 @@ export function differenceBetweenDays(from, to) {
 }
 
 export function parseData(from, to, data) {
-    let europeData = {}, selectedCountriesData = {};
-    
-    data.forEach(country => {
-        let dailyDataList = country.dailyData;
-        var vaccinations = [], cases = [], radarData = [];
+    let europeData = {}, selectedCountriesData = {}, selectedCountriesDataByName = [];
 
-        dailyDataList.forEach(day => {
-            let currentDay = new Date(day._id);
-            if (currentDay >= from && currentDay <= to) {
-                generateAndInsertEntry(day, country, currentDay, vaccinations, cases);
+    data.forEach(element => {
+        let dailyDataList = element.dailyData;
+        var vaccinations = [], cases = [], radarData = [], countries = [];
+
+        dailyDataList.forEach(data => {
+            let currentDay = new Date(data._id);
+            let id = data._id;
+
+            if (element._id === CONST.SELECTED_COUNTRIES_BY_NAME.ID) {
+                currentDay = new Date(id.date);
+                if (!countries.includes(id.name)) {
+                    selectedCountriesDataByName.push({ id: id.name, cases: [], vaccinations: [] })
+                    countries.push(id.name);
+                }
+                if (currentDay >= from && currentDay <= to) {
+                    generateAndInsertEntryByCountry(data, currentDay, selectedCountriesDataByName);
+                    console.log(selectedCountriesDataByName)
+                }
+            }
+            else if (currentDay >= from && currentDay <= to) {
+                generateAndInsertEntry(data, element, currentDay, vaccinations, cases);
             }
         });
 
-        if (country._id == "SC" && dailyDataList.length != 0) {
-             insertRadarEntry(country, radarData);
+        if (element._id === "SC" && dailyDataList.length !== 0) {
+            insertRadarEntry(element, radarData);
         }
 
-        if (country._id == CONST.EUROPE.ID) {
+        if (element._id === CONST.EUROPE.ID) {
             europeData.vaccinations = vaccinations;
             europeData.cases = cases;
             europeData.cases.sort(function (a, b) { return a.date - b.date; });
             europeData.vaccinations.sort(function (a, b) { return a.date - b.date; });
         }
-        else {
+        else if (element._id === CONST.SELECTED_COUNTRIES.ID) {
             selectedCountriesData.vaccinations = vaccinations;
             selectedCountriesData.cases = cases;
             selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
@@ -70,10 +83,16 @@ export function parseData(from, to, data) {
 
             selectedCountriesData.radarData = radarData;
         }
+        else {
+            selectedCountriesDataByName.map((country) => {
+                country.cases.sort(function (a, b) { return a.date - b.date; });
+                country.vaccinations.sort(function (a, b) { return a.date - b.date; });
+            })
+        }
 
     });
 
-    return { europeData, selectedCountriesData };
+    return { europeData, selectedCountriesData, selectedCountriesDataByName };
 }
 
 function insertRadarEntry(country, radarData) {
@@ -97,7 +116,6 @@ function insertRadarEntry(country, radarData) {
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
     let value = valueAssembler(day);
-    let countryName = countryAssembler(day);
     let vaccinatioEntry = {
         label: country._id,
         value: value.vaccinations,
@@ -116,20 +134,43 @@ function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
     cases.push(casesEntry);
 }
 
+function generateAndInsertEntryByCountry(data, currentDay, selectedCountriesData) {
+    let id = data._id;
+    let value = valueAssembler(data);
+
+    let vaccinatioEntry = {
+        label: id.name,
+        value: value.vaccinations,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/>Country: </b>${id.name}<br/><b>Vaccinations: </b>${value.vaccinations}`,
+        date: currentDay,
+    };
+
+    let casesEntry = {
+        label: id.name,
+        value: value.cases,
+        tooltipContent: `<b>Country: </b>${id.name}\n<b>Cases: </b>${value.cases}`,
+        date: currentDay,
+    }
+
+    selectedCountriesData.map((item) => {
+        if(item.id == id.name) {
+            item.vaccinations.push(vaccinatioEntry);
+            item.cases.push(casesEntry);
+        }
+    })
+
+}
+
 function valueAssembler(day) {
     return { cases: newCasesInDate(day), vaccinations: newVaccinationsInDate(day) }
 }
 
-function countryAssembler(day) {
-   //console.log(day);
+function newCasesInDate(day) {
+    return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
 }
 
 function newVaccinationsInDate(day) {
     return day.new_vaccinations_smoothed ? day.new_vaccinations_smoothed : 0;
-}
-
-function newCasesInDate(day) {
-    return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
 }
 
 //Data for test
@@ -173,12 +214,6 @@ export const mock_data3 = [
 export const mock_pca_data = [
     { country: "", pca: [[0, 0]] }
 ];
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
 
 export const dbLabelStatic = [
     "population",

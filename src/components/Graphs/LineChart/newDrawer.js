@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import * as d3 from 'd3';
+import { useContext } from 'react';
 import { colors } from '../../../utils/colors';
 import { CONST } from '../../../utils/const';
 import { getRandomColor } from '../../../utils/utility';
@@ -10,11 +11,11 @@ const chartHeightPosition = window.innerHeight / 2;
 
 function lineWidth() {
     //return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
-    return CONST.LINECHAR.WIDTH.REGULAR;
+    return CONST.LINECHAR.WIDTH.LARGE;
 }
 
 
-export function drawChart(europeFiltered, selectedCountriesFiltered, width, height) {
+export function drawChart(europeFiltered, selectedCountriesFiltered, width, height, type) {
     const svg =
         d3.select('.svg-container')
 
@@ -38,7 +39,7 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
 
     const yScale = d3
         .scaleLinear()
-        .domain(d3.extent(europeFiltered, yAccessor))
+        .domain(d3.extent([0, d3.max(europeFiltered, yAccessor)]))
         .range([boundedHeight, 0]);
 
     const xScale = d3
@@ -83,7 +84,6 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
         .attr("width", boundedWidth)
         .attr("height", boundedHeight)
         .on('mousemove', onMouseOver)
-        .on('mouseleave', onMouseOut)
         .on('mouseout', onMouseOut)
 
 
@@ -120,8 +120,9 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
 
     function onMouseOut() {
         tooltip.style("opacity", 0);
-        circlePointer.style("opacity", 0);
-        xAxisLine.style("opacity", 0);
+        // circlePointer.style("opacity", 0);
+        // xAxisLine.style("opacity", 0);
+        xAxisLine.attr("x", xScale(0));
 
     }
 
@@ -174,16 +175,14 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
 
     function assembleCirclePointerSelectedCountries() {
 
-        selectedCountriesFiltered.map((item) => {
-            console.log(item);
-        })
 
         selectedCountriesFiltered.map((data) => {
-            if (data.length > 0) {
+            let typedDate = type == CONST.CHART_TYPE.VACCINATIONS ? data.vaccinations : data.cases;
+            if (typedDate.length > 0) {
                 const color = getRandomColor();
                 bounds
                     .append("path")
-                    .attr("d", lineGenerator(data))
+                    .attr("d", lineGenerator(typedDate))
                     .attr("fill", "none")
                     .attr("stroke", color) //TODO will be randomized
                     .attr("stroke-width", lineWidth())
@@ -191,8 +190,8 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
                     .attr("stroke-linecap", "round")
 
                 circlePointerSelectedCountries.push({
-                    name: data[0].label,
-                    data: data,
+                    name: typedDate[0].label,
+                    data: typedDate,
                     pointer: bounds
                         .append("circle")
                         .attr("class", "tooltiplinechart-circle")
