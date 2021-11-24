@@ -7,6 +7,7 @@ export const API = {
     GET_SELECTED_COUNTRIES_DATA: `${backendUrl}data/getSelectedCountriesInfo`,
     UPDATE_DATA: `${backendUrl}data/updateData`,
     COMPUTE_PCA: `${backendUrl}data/computePca`,
+    GET_PEOPLE_VACCINATED: `${backendUrl}data/getPeopleVaccinated`,
     METHOD: {
         POST: "POST",
         GET: "GET",

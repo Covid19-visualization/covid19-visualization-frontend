@@ -166,6 +166,21 @@ export const mock_data3 = [
     ]
 ];
 
+export const bar_mock_data1 = [
+    {group:"banana",people_fully_vaccinated: 12,people_vaccinated: 1},
+    {group:"poacee",people_fully_vaccinated: 6,people_vaccinated: 6},
+    {group:"sorgho",people_fully_vaccinated: 11,people_vaccinated: 28},
+    {group:"triticum",people_fully_vaccinated: 19,people_vaccinated: 6},
+    {group:"1",people_fully_vaccinated: 11,people_vaccinated: 28},
+    {group:"2",people_fully_vaccinated: 19,people_vaccinated: 6},
+    {group:"3",people_fully_vaccinated: 11,people_vaccinated: 28},
+    {group:"4",people_fully_vaccinated: 19,people_vaccinated: 6}
+];
+
+export const bar_mock_data2 = [
+    {group:"",people_fully_vaccinated: 0,people_vaccinated: 0},
+];
+
 export const mock_pca_data = [
     { country: "", pca: [[0, 0]] }
 ];

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import LineChart from "../../components/Graphs/LineChart/LineChart";
 import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
-import PcaChart from "../../components/Graphs/PcaChart/PcaChart";
+import BarChart from "../../components/Graphs/BarChart/BarChart";
 
 import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
@@ -38,7 +38,7 @@ const Vaccinations = () => {
                         </div>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        <PcaChart type={CONST.CHART_TYPE.VACCINATIONS} />
+                        <BarChart type={CONST.CHART_TYPE.VACCINATIONS} />
                     </div>
                 </div>
 

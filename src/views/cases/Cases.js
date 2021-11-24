@@ -38,6 +38,7 @@ const Vaccinations = () => {
                         </div>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
+                        <PcaChart type={CONST.CHART_TYPE.VACCINATIONS} />
                     </div>
                 </div>
 
