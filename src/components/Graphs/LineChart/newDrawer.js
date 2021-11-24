@@ -15,7 +15,10 @@ function lineWidth() {
 }
 
 
-export function drawChart(europeFiltered, selectedCountriesFiltered, width, height, type) {
+export function drawChart(europeData, selectedCountriesFiltered, width, height, type) {
+    const europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
+
+
     const svg =
         d3.select('.svg-container')
 
