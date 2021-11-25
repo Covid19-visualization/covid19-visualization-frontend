@@ -9,13 +9,12 @@ import { CONST } from "../../utils/const";
 import { regenerateData, } from "../../utils/utility";
 import "./Cases.css";
 
-const Vaccinations = () => {
+const Cases = () => {
 
     const debug = false;
     const height = window.innerHeight;
     const width = window.innerWidth;
     const { selectedCountries } = useContext(Context);
-
 
 
     return (
@@ -48,4 +47,4 @@ const Vaccinations = () => {
     );
 }
 
-export default Vaccinations;
+export default Cases;

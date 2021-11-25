@@ -8,7 +8,6 @@ import { API } from '../../../utils/API';
 
 import "./RadarChart.css"
 
-
 function RadarChart(props) {
 
     const type = props.type;

@@ -38,6 +38,12 @@ export function differenceBetweenDays(from, to) {
     return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);
 }
 
+export function prettyCounterHandler(counter, type) {
+    return type === CONST.COUNTER_HANDLER.LONG 
+        ? (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + " M" : (counter / CONST.THOUSAND).toFixed(1) + " k"
+        : (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + "M" : (counter / CONST.THOUSAND).toFixed(1) + "k"
+}
+
 export function parseData(from, to, data) {
     let europeData = {}, selectedCountriesData = {}, selectedCountriesDataByName = [];
 
@@ -57,7 +63,6 @@ export function parseData(from, to, data) {
                 }
                 if (currentDay >= from && currentDay <= to) {
                     generateAndInsertEntryByCountry(data, currentDay, selectedCountriesDataByName);
-                    console.log(selectedCountriesDataByName)
                 }
             }
             else if (currentDay >= from && currentDay <= to) {
@@ -119,14 +124,14 @@ function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
     let vaccinatioEntry = {
         label: country._id,
         value: value.vaccinations,
-        tooltipContent: `<b>${visualizeDate(currentDay)}<br/>Country: </b>${country._id}<br/><b>Vaccinations: </b>${value.vaccinations}`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: ${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     };
 
     let casesEntry = {
         label: country._id,
         value: value.cases,
-        tooltipContent: `<b>Country: </b>${country._id}\n<b>Cases: </b>${value.cases}`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     }
 
@@ -141,14 +146,14 @@ function generateAndInsertEntryByCountry(data, currentDay, selectedCountriesData
     let vaccinatioEntry = {
         label: id.name,
         value: value.vaccinations,
-        tooltipContent: `<b>${visualizeDate(currentDay)}<br/>Country: </b>${id.name}<br/><b>Vaccinations: </b>${value.vaccinations}`,
+        tooltipContent: `<br/><b>${id.name}</b>: </b>${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     };
 
     let casesEntry = {
         label: id.name,
         value: value.cases,
-        tooltipContent: `<b>Country: </b>${id.name}\n<b>Cases: </b>${value.cases}`,
+        tooltipContent: `<br/><b>${id.name}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     }
 

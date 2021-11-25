@@ -12,7 +12,12 @@ function LineChart(props) {
     const { europeData, selectedCountriesDataByName } = useContext(Context);
 
     useEffect(() => {
-        drawChart(europeData, selectedCountriesDataByName, width, height, type);
+        var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
+
+        if (europeFiltered.length > 0 ) {
+            drawChart(europeFiltered, selectedCountriesDataByName, width, height, type); 
+        }
+
     }, [selectedCountriesDataByName])
 
 

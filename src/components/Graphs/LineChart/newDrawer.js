@@ -15,9 +15,7 @@ function lineWidth() {
 }
 
 
-export function drawChart(europeData, selectedCountriesFiltered, width, height, type) {
-    const europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
-
+export function drawChart(europeFiltered, selectedCountriesFiltered, width, height, type) {
 
     const svg =
         d3.select('.svg-container')
@@ -114,18 +112,26 @@ export function drawChart(europeData, selectedCountriesFiltered, width, height, 
 
         const getDistanceFromHoveredDate = (d) => Math.abs(xAccessor(d) - hoveredDate);
 
-        drawEuropeCirclePointer(getDistanceFromHoveredDate);
+        let closestEuropeIndex = drawEuropeCirclePointer(getDistanceFromHoveredDate);
+        var tooltipHtml = europeFiltered[closestEuropeIndex].tooltipContent;
 
         if (circlePointerSelectedCountries.length > 0) {
-            drawSelectedCountriesCirclePointer(getDistanceFromHoveredDate);
+            let closestCountryIndex
+            circlePointerSelectedCountries.map((country) => {
+                closestCountryIndex = drawSelectedCountriesCirclePointer(getDistanceFromHoveredDate, country);
+                tooltipHtml += country.data[closestCountryIndex].tooltipContent;
+            });
         }
+
+        tooltip.select("#value").html(tooltipHtml);
+
     }
 
     function onMouseOut() {
         tooltip.style("opacity", 0);
         // circlePointer.style("opacity", 0);
         // xAxisLine.style("opacity", 0);
-        xAxisLine.attr("x", xScale(0));
+        // xAxisLine.attr("x", xScale(0));
 
     }
 
@@ -138,8 +144,6 @@ export function drawChart(europeData, selectedCountriesFiltered, width, height, 
         //console.table(closestDataPoint);
         const closestXValue = xAccessor(closestDataPoint);
         const closestYValue = yAccessor(closestDataPoint);
-
-        tooltip.select("#value").html(closestDataPoint.tooltipContent);
 
         const x = xScale(closestXValue) + 60 + margin.left;
         const y = yScale(closestYValue) + chartHeightPosition + margin.top * 2;
@@ -155,25 +159,27 @@ export function drawChart(europeData, selectedCountriesFiltered, width, height, 
             .attr("cy", yScale(closestYValue))
             .style("opacity", 1);
 
-        xAxisLine.style("opacity", 1);
+        // xAxisLine.style("opacity", 1);
 
-        xAxisLine.attr("x", xScale(closestXValue));
+        // xAxisLine.attr("x", xScale(closestXValue));
+
+        return closestIndex
     }
 
-    function drawSelectedCountriesCirclePointer(getDistanceFromHoveredDate) {
-        circlePointerSelectedCountries.map((country) => {
-            let closestIndexSC = d3.scan(country.data,
-                (a, b) => getDistanceFromHoveredDate(a) - getDistanceFromHoveredDate(b)
-            );
-            let closestDataPointSC = country.data[closestIndexSC];
-            let closestXValueSC = xAccessor(closestDataPointSC);
-            let closestYValueSC = yAccessor(closestDataPointSC);
+    function drawSelectedCountriesCirclePointer(getDistanceFromHoveredDate, country) {
+        let closestIndexSC = d3.scan(country.data,
+            (a, b) => getDistanceFromHoveredDate(a) - getDistanceFromHoveredDate(b)
+        );
+        let closestDataPointSC = country.data[closestIndexSC];
+        let closestXValueSC = xAccessor(closestDataPointSC);
+        let closestYValueSC = yAccessor(closestDataPointSC);
 
-            country.pointer
-                .attr("cx", xScale(closestXValueSC))
-                .attr("cy", yScale(closestYValueSC))
-                .style("opacity", 1);
-        });
+        country.pointer
+            .attr("cx", xScale(closestXValueSC))
+            .attr("cy", yScale(closestYValueSC))
+            .style("opacity", 1);
+
+        return closestIndexSC;
     }
 
     function assembleCirclePointerSelectedCountries() {
