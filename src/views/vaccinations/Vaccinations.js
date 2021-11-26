@@ -38,7 +38,7 @@ const Vaccinations = () => {
                         </div>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        <BarChart type={CONST.CHART_TYPE.VACCINATIONS} />
+                        <BarChart />
                     </div>
                 </div>
 

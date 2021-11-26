@@ -10,7 +10,7 @@ import { bar_mock_data1, bar_mock_data2 } from '../../../utils/utility';
 
 function BarChart(props) {
 
-    const margin = {top: 40, right: 30, bottom: 20, left: 50};
+    const margin = {top: 10, right: 30, bottom: 20, left: 50};
 
     const { europeData, selectedCountriesData, selectedPeriod, selectedCountries } = useContext(Context);
 
@@ -28,7 +28,6 @@ function BarChart(props) {
     }, [europeData, selectedCountriesData]);
 
     function createBarData(selectedData) {
-        console.log(selectedData)
         var resData = []
         selectedData.forEach(data => {
             var entryData = {}
@@ -37,9 +36,7 @@ function BarChart(props) {
             entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
             resData.push(entryData);
         })
-
-        console.log(resData)
-
+        
         drawChart(resData);
     }
 
@@ -47,9 +44,9 @@ function BarChart(props) {
         draw: function(id, data, cfg){
             d3.select(id).select("svg").remove();
 
-            var colorscale = cfg.color;
+            var tooltipBar = 0;
 
-            //console.log(data)
+            var colorscale = cfg.color;
 
             // append the svg object to the body of the page
             var svg = d3.select(id)
@@ -66,9 +63,8 @@ function BarChart(props) {
             // List of groups = species here = value of the first column called group -> I show them on the X axis
             // var groups = ["Italy", "France", "Germany"]
             var groups = d3.map(data, function(d){return(d.group)})
-            //console.log(groups)
 
-            // Add X axis
+            ///////// Add X axis
             var x = d3.scaleBand()
                 .domain(groups)
                 .range([0, cfg.w])
@@ -77,23 +73,19 @@ function BarChart(props) {
                 .attr("transform", "translate(0," + cfg.h + ")")
                 .call(d3.axisBottom(x).tickSizeOuter(0));
 
-            // Add Y axis
+            ////////// Add Y axis
             var y = d3.scaleLinear()
                 .domain([0, 100])
                 .range([ cfg.h, 0 ]);
             svg.append("g")
                 .call(d3.axisLeft(y));
 
-            //console.log(data)
-
-            //stack the data? --> stack per subgroup
+            ////////// Stack the data --> stack per subgroup
             var stackedData = d3.stack()
                 .keys(subgroups)
                 (data)
             
-            //console.log(stackedData)
-
-            // Show the bars
+            ////////// Show the bars
             svg.append("g")
                 .selectAll("g")
                 // Enter in the stack data = loop key per key = group per group
@@ -104,10 +96,40 @@ function BarChart(props) {
                 // enter a second time = loop subgroup per subgroup to add all rectangles
                 .data(function(d) { return d; })
                 .enter().append("rect")
+                    .attr("id", function(d) {
+                        var idx = d.data.group.replace(/\s/g, "")
+                        return `rect${idx}`; 
+                    })
                     .attr("x", function(d) { return x(d.data.group); })
                     .attr("y", function(d) { return y(d[1]); })
                     .attr("height", function(d) { return y(d[0]) - y(d[1]); })
                     .attr("width", x.bandwidth())
+                    .attr("text", function(d) {return d[1]})
+
+                    .on('mouseover', function (event, c){
+                        var newX = d3.select(this).attr("x")
+                        var newY = d3.select(this).attr("y")
+                        var text = d3.select(this).attr("text");
+                        var width = d3.select(this).attr("width");
+
+                        tooltipBar = svg.append('text')
+                            .style('opacity', 0)
+                            .style('font-family', 'sans-serif')
+                            .style('font-size', '13px'); 
+                        tooltipBar
+                            .attr('x', newX)
+                            .attr('y', newY)
+                            .attr("transform", `translate(${width/2},0)`)
+                            .text(`${text}%`)
+                            .transition(200)
+                            .style('opacity', 1);
+                    })
+
+                    .on('mouseout', function(){
+                        tooltipBar
+                            .transition(200)
+                            .style('opacity', 0);
+                    })
 
             ////////////////////////////////////////////
             /////////////// LEGEND /////////////////////
@@ -126,7 +148,7 @@ function BarChart(props) {
             var text = svgl.append("text")
                 .attr("class", "title")
                 .attr('transform', 'translate(90,10)') 
-                .attr("x", 450) // cfg.w 
+                .attr("x", 480) // cfg.w 
                 .attr("y", 20) // cfg.h
                 .attr("font-size", "15px")
                 .attr("fill", "#404040")
@@ -139,18 +161,14 @@ function BarChart(props) {
                     .attr('transform', 'translate(90,-20)') ;
                 
                 //Create colour squares
-                legend.selectAll('rect')
+                legend.selectAll('circle')
                 .data(LegendOptions).enter()
-                .append("rect")
-                .attr("x", cfg.lw + 150)
-                .attr("y", function(d, i){ return 70 + (i * 20);})
+                .append("circle")
+                .attr("cx", cfg.lw + 220)
+                .attr("cy", function(d, i){ return 75 + (i * 20);})
                 .attr("id", function(d){return d})
-                .attr("width", 10)
-                .attr("height", 10)
-                .style("fill", function(d, i){
-                    console.log(i) 
-                    return colorscale(i);
-                })
+                .attr("r", 5)
+                .style("fill", function(d, i){ return colorscale(i); })
                 /*
                 .on('mouseover', function (c){
                     var id = d3.select(this).attr('id')
@@ -175,7 +193,7 @@ function BarChart(props) {
                 legend.selectAll('text')
                     .data(LegendOptions).enter()
                     .append("text")
-                    .attr("x", cfg.lw + 170)
+                    .attr("x", cfg.lw + 230)
                     .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
                     .attr("font-size", "12px")
                     .attr("fill", "#737373")
@@ -188,7 +206,7 @@ function BarChart(props) {
 
         var cfg = {
             w: 500,
-            h: 250,
+            h: 310,
             lw: 250,
             lh: 250,
             standard_opacity: 0.4,

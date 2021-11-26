@@ -1,12 +1,12 @@
 #table_container{
-  height:150px;
-  max-height:100px;
   border-width: 0px;
 }
 
 .table {
     width: 100%;
     max-width: 85%;
+    max-height:95px;
+
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
     margin-left: 1rem;

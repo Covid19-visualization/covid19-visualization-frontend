@@ -29,7 +29,7 @@ const Vaccinations = () => {
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
-                    <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center" }}>
+                    <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center"}}>
                         <div className={"top-half"} style={{ width: "100%", height: "70%", backgroundColor: debug ? "azure" : null, justifyContent: "center", alignItems: "center" }}>
                             <RadarChart type={CONST.CHART_TYPE.CASES} />
                         </div>
@@ -38,7 +38,7 @@ const Vaccinations = () => {
                         </div>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        <PcaChart type={CONST.CHART_TYPE.VACCINATIONS} />
+                        <PcaChart />
                     </div>
                 </div>
 

@@ -44,6 +44,8 @@ function PcaChart(props) {
             insertPcaEntries(selectedData[i], pcaMatrix, countries);
         }  
 
+        //console.log(pcaMatrix)
+
         // Generate Eigen vectors
         var vectors = PCA.getEigenVectors(pcaMatrix);
 

@@ -14,7 +14,7 @@ function TableChart(props) {
 
     const type = props.type;
 
-    const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
+    const { europeData, selectedCountriesData } = useContext(Context);
 
     const label_vacs = ["Country", "Pop. density", "Life Expect", "GDP", "Median age", "HDI"]
     const label_cases = ["Country", "Pop. density", "Smokers", "CDR", "Diab preval", "Median age"]
@@ -32,7 +32,7 @@ function TableChart(props) {
             // Create table
             var table = d3.select(id)
                 .append("table")
-                .attr("class", "table table-inverse")
+                .attr("class", "table table-inverse table-responsive")
             
             // Create head row
             var first_row = table.append("thead")
@@ -61,23 +61,33 @@ function TableChart(props) {
                     d3.select(this).style("background-color", cfg.color[1]);
                     var id = d3.select(this).attr("id").replace(/\s/g, "");
                     var g = d3.select("#polygons");
-                    var z = d3.select("#polygon"+id);
+                    var p_selected = d3.select("#polygon"+id);
+                    var r_selected = d3.selectAll("#rect"+id);
+                    var bar = d3.select("#bar_container");
 
                     g.selectAll("polygon")
                         .transition(200)
                         .style("fill-opacity", 0); 
-                    z.transition(200)
+                    bar.selectAll("rect")
+                        .transition(200)
+                        .style("fill-opacity", 0.2); 
+                    p_selected.transition(200)
                         .style("fill-opacity", cfg.full_opacity);
+                    r_selected.transition(200)
+                        .style("fill-opacity", 1);
                   });
                   tr.on('mouseout', function(){
                     d3.select(this).style("background-color", cfg.color[0]);
                     var id = d3.select(this).attr("id").replace(/\s/g, "");
                     var g = d3.select("#polygons");
-                    var z = d3.select("#polygon"+id);
+                    var bar = d3.select("#bar_container");
 
                     g.selectAll("polygon")
                         .transition(200)
                         .style("fill-opacity", cfg.standard_opacity);
+                    bar.selectAll("rect")
+                        .transition(200)
+                        .style("fill-opacity", 1);
                   });
                 }
               }
@@ -104,20 +114,34 @@ function TableChart(props) {
                     d3.select(this).style("background-color", cfg.color[1]);
                     var id = d3.select(this).attr("id").replace(/\s/g, "");
                     var g = d3.select("#polygons");
-                    var z = d3.select("#polygon"+id);
+                    var p_selected = d3.select("#polygon"+id);
+                    var c_selected = "circle#"+id;
+                    var pca = d3.select("#pca_container");
 
                     g.selectAll("polygon")
                         .transition(200)
+                        .style("fill-opacity", 0);
+
+                    pca.selectAll("circle")
+                        .transition(200)
                         .style("fill-opacity", 0); 
-                    z.transition(200)
+
+                    pca.selectAll(c_selected)
+                        .transition(200)
+                        .style("fill-opacity", 1);
+
+                    p_selected.transition(200)
                         .style("fill-opacity", cfg.full_opacity);
                   });
+
                   tr.on('mouseout', function(){
                     d3.select(this).style("background-color", cfg.color[0]);
-                    var id = d3.select(this).attr("id").replace(/\s/g, "");
                     var g = d3.select("#polygons");
-                    var z = d3.select("#polygon"+id);
+                    var pca = d3.select("#pca_container");
 
+                    pca.selectAll("circle")
+                        .transition(200)
+                        .style("fill-opacity", 1);
                     g.selectAll("polygon")
                         .transition(200)
                         .style("fill-opacity", cfg.standard_opacity);
@@ -125,8 +149,8 @@ function TableChart(props) {
                 }
               }
         },
-        clean: function(idx){
-            d3.select(idx).select("table").remove();
+        clean: function(ids){
+            d3.select(ids).select("table").remove();
         }
     }
 
