@@ -11,7 +11,7 @@ import { API } from "../../utils/API";
 import { parseData } from "../../utils/utility";
 
 const Home = () => {
-    const { selectedPeriod, selectedCountries, isCasesVisualization, setEuropeData, setSelectedCountriesData  } = useContext(Context);
+    const { selectedPeriod, selectedCountries, isCasesVisualization, setEuropeData, setSelectedCountriesData, setSelectedCountriesDataByName } = useContext(Context);
 
     useEffect(() => {
         let data = {
@@ -19,7 +19,6 @@ const Home = () => {
             selectedCountries: selectedCountries
         }
         fetchHandler(data, API.METHOD.POST, API.GET_SELECTED_COUNTRIES_DATA, regenerateData);
-
     }, [selectedCountries, selectedPeriod])
 
     function regenerateData(newData) {
@@ -27,15 +26,20 @@ const Home = () => {
         let parsedData = parseData(selectedPeriod.from, selectedPeriod.to, newData)
         setEuropeData(parsedData.europeData);
         setSelectedCountriesData(parsedData.selectedCountriesData);
+        setSelectedCountriesDataByName(parsedData.selectedCountriesDataByName);
     }
 
     return (
         <>
             <div className="container" >
                 <div className="container_selected_countries">
-                    {selectedCountries.map((item, index) => {
-                        return <FlagButton height={40} width={40} marginBottom={5} flagIcon={item} type={CONST.FLAG_BUTTON.TYPE.SIDE} key={item+index}/>
-                    })}
+                    {selectedCountries.length > 0
+                        ? selectedCountries.map((item, index) => {
+                            return <FlagButton height={40} width={40} marginBottom={5} flagIcon={item} type={CONST.FLAG_BUTTON.TYPE.SIDE} key={item + index} />
+                        })
+                        : null
+                    }
+
                 </div>
                 <div className="container_graph" style={{ borderRadius: 5, padding: 0 }}>
                     {isCasesVisualization ? <Cases /> : <Vaccinations />}

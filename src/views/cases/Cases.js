@@ -9,13 +9,12 @@ import { CONST } from "../../utils/const";
 import { regenerateData, } from "../../utils/utility";
 import "./Cases.css";
 
-const Vaccinations = () => {
+const Cases = () => {
 
     const debug = false;
     const height = window.innerHeight;
     const width = window.innerWidth;
     const { selectedCountries } = useContext(Context);
-
 
 
     return (
@@ -25,7 +24,7 @@ const Vaccinations = () => {
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }}>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "brown" : null }}>
-                        <LineChart width={500} height={200} type={CONST.CHART_TYPE.CASES} />
+                        <LineChart width={600} height={300} type={CONST.CHART_TYPE.CASES} />
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
@@ -49,4 +48,4 @@ const Vaccinations = () => {
     );
 }
 
-export default Vaccinations;
+export default Cases;

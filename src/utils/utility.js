@@ -24,60 +24,84 @@ function addZeros(date) {
 export function getLastPeriod(year, month, day) {
 
     var today = new Date();
-    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() -1 , 0).getDate() - (day - today.getDate()) : today.getDate() - day
+    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() - 1, 0).getDate() - (day - today.getDate()) : today.getDate() - day
     let fixedMonth = today.getDate() - day <= 0 ? today.getMonth() - month : today.getMonth() + 1 - month
 
     return new Date(`${today.getFullYear() - year}-${fixedMonth}-${dayOfTheMonth}`);
 }
 
 export function differenceBetweenDays(from, to) {
-    
+
     const utc1 = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
     const utc2 = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
-  
-    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
+
+    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);
 }
 
-export function parseData (from, to, data) {
-    let europeData = {}, selectedCountriesData = {};
-    data.forEach(country => {
-        let dailyDataList = country.dailyData;
-        var vaccinations = [], cases = [], radarData = [];
+export function prettyCounterHandler(counter, type) {
+    return type === CONST.COUNTER_HANDLER.LONG 
+        ? (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + " M" : (counter / CONST.THOUSAND).toFixed(1) + " k"
+        : (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + "M" : (counter / CONST.THOUSAND).toFixed(1) + "k"
+}
 
-        dailyDataList.forEach(day => {
-            let currentDay = new Date(day._id);
+export function parseData(from, to, data) {
+    let europeData = {}, selectedCountriesData = {}, selectedCountriesDataByName = [];
 
-            if(currentDay >= from && currentDay <= to) {
-                generateAndInsertEntry(day, country, currentDay, vaccinations, cases);
+    data.forEach(element => {
+        let dailyDataList = element.dailyData;
+        var vaccinations = [], cases = [], radarData = [], countries = [];
+
+        dailyDataList.forEach(data => {
+            let currentDay = new Date(data._id);
+            let id = data._id;
+
+            if (element._id === CONST.SELECTED_COUNTRIES_BY_NAME.ID) {
+                currentDay = new Date(id.date);
+                if (!countries.includes(id.name)) {
+                    selectedCountriesDataByName.push({ id: id.name, cases: [], vaccinations: [] })
+                    countries.push(id.name);
+                }
+                if (currentDay >= from && currentDay <= to) {
+                    generateAndInsertEntryByCountry(data, currentDay, selectedCountriesDataByName);
+                }
+            }
+            else if (currentDay >= from && currentDay <= to) {
+                generateAndInsertEntry(data, element, currentDay, vaccinations, cases);
             }
         });
 
-        if(country._id == "SC" && dailyDataList.length != 0)
-            insertRadarEntry(country, radarData);
+        if (element._id === "SC" && dailyDataList.length !== 0) {
+            insertRadarEntry(element, radarData);
+        }
 
-        if(country._id == CONST.EUROPE.ID ) {
+        if (element._id === CONST.EUROPE.ID) {
             europeData.vaccinations = vaccinations;
             europeData.cases = cases;
             europeData.cases.sort(function (a, b) { return a.date - b.date; });
             europeData.vaccinations.sort(function (a, b) { return a.date - b.date; });
         }
-        else { 
+        else if (element._id === CONST.SELECTED_COUNTRIES.ID) {
             selectedCountriesData.vaccinations = vaccinations;
             selectedCountriesData.cases = cases;
             selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
             selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
-            
+
             selectedCountriesData.radarData = radarData;
+        }
+        else {
+            selectedCountriesDataByName.map((country) => {
+                country.cases.sort(function (a, b) { return a.date - b.date; });
+                country.vaccinations.sort(function (a, b) { return a.date - b.date; });
+            })
         }
 
     });
 
-    return {europeData, selectedCountriesData};
+    return { europeData, selectedCountriesData, selectedCountriesDataByName };
 }
 
 function insertRadarEntry(country, radarData) {
-    var ep = 0
-    console.log(radarData)
+    //console.log(radarData)
     let radarDataEntry = {
         name: country.dailyData[0].name,
         life_expectancy: country.dailyData[0].life_expectancy,
@@ -97,18 +121,17 @@ function insertRadarEntry(country, radarData) {
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
     let value = valueAssembler(day);
-    
     let vaccinatioEntry = {
         label: country._id,
         value: value.vaccinations,
-        tooltipContent: `<b>${visualizeDate(currentDay)}\nCountry: </b>${country._id}\n<b>Vaccinations: </b>${value.vaccinations}`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: ${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     };
-    
+
     let casesEntry = {
         label: country._id,
         value: value.cases,
-        tooltipContent: `<b>Country: </b>${country._id}\n<b>Cases: </b>${value.cases}`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     }
 
@@ -116,53 +139,80 @@ function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
     cases.push(casesEntry);
 }
 
+function generateAndInsertEntryByCountry(data, currentDay, selectedCountriesData) {
+    let id = data._id;
+    let value = valueAssembler(data);
+
+    let vaccinatioEntry = {
+        label: id.name,
+        value: value.vaccinations,
+        tooltipContent: `<br/><b>${id.name}</b>: </b>${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
+        date: currentDay,
+    };
+
+    let casesEntry = {
+        label: id.name,
+        value: value.cases,
+        tooltipContent: `<br/><b>${id.name}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
+        date: currentDay,
+    }
+
+    selectedCountriesData.map((item) => {
+        if(item.id == id.name) {
+            item.vaccinations.push(vaccinatioEntry);
+            item.cases.push(casesEntry);
+        }
+    })
+
+}
+
 function valueAssembler(day) {
-     return { cases: newCasesInDate(day), vaccinations:  newVaccinationsInDate(day)}
+    return { cases: newCasesInDate(day), vaccinations: newVaccinationsInDate(day) }
+}
+
+function newCasesInDate(day) {
+    return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
 }
 
 function newVaccinationsInDate(day) {
     return day.new_vaccinations_smoothed ? day.new_vaccinations_smoothed : 0;
 }
 
-function newCasesInDate(day) {
-    return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
-}
- 
 //Data for test
 export const mock_data2_vacs = [
     [
-        {axis:"Population density / 10",value:0},
-        {axis:"Life Expect",value:0},
-        {axis:"GDP per Capita / 1000",value:0},
+        { axis: "Population density / 10", value: 0 },
+        { axis: "Life Expect", value: 0 },
+        { axis: "GDP per Capita / 1000", value: 0 },
         //{axis:"Extreme Poverty",value:0},
-        {axis:"Median age",value:0},
-        {axis:"HDI",value:0}
+        { axis: "Median age", value: 0 },
+        { axis: "HDI", value: 0 }
     ]
 ];
 
 export const mock_data2_cases = [
     [
-        {axis:"Population density / 10",value:0},
-        {axis:"Smokers",value:0},
-        {axis:"Cardiovasc death rate",value:0},
-        {axis:"Diabetes prevalence",value:0},
-        {axis:"Median age",value:0}
+        { axis: "Population density / 10", value: 0 },
+        { axis: "Smokers", value: 0 },
+        { axis: "Cardiovasc death rate", value: 0 },
+        { axis: "Diabetes prevalence", value: 0 },
+        { axis: "Median age", value: 0 }
     ]
 ];
 
 export const mock_data3 = [
     [
-        {axis:"Email",value:0.59},
-        {axis:"Social Networks",value:0.56},
-        {axis:"Internet Banking",value:0.42},
-        {axis:"News Sportsites",value:0.34},
-        {axis:"Search Engine",value:0.48}
-    ],[
-        {axis:"Email",value:0.48},
-        {axis:"Social Networks",value:0.41},
-        {axis:"Internet Banking",value:0.27},
-        {axis:"News Sportsites",value:0.28},
-        {axis:"Search Engine",value:0.46}
+        { axis: "Email", value: 0.59 },
+        { axis: "Social Networks", value: 0.56 },
+        { axis: "Internet Banking", value: 0.42 },
+        { axis: "News Sportsites", value: 0.34 },
+        { axis: "Search Engine", value: 0.48 }
+    ], [
+        { axis: "Email", value: 0.48 },
+        { axis: "Social Networks", value: 0.41 },
+        { axis: "Internet Banking", value: 0.27 },
+        { axis: "News Sportsites", value: 0.28 },
+        { axis: "Search Engine", value: 0.46 }
     ]
 ];
 
@@ -185,12 +235,6 @@ export const mock_pca_data = [
     { country: "", pca: [[0, 0]] }
 ];
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
-
 export const dbLabelStatic = [
     "population",
     "total_cases",
@@ -205,7 +249,7 @@ export const dbLabelStatic = [
     "life_expectancy",
     "human_development_index"
 ]
-    
+
 export const dbLabelDaily = [
     "new_cases",
     "new_cases_smoothed",
@@ -275,3 +319,12 @@ export const countriesNames = [
     "Vatican",
     "United Kingdom"
 ]
+
+export function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
