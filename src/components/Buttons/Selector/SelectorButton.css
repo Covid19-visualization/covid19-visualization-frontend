@@ -1,0 +1,43 @@
+.selector-group {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    display: inline-block;
+    border-radius: 10px;
+    border: 3px solid #003399;
+    margin-left: 10px;
+    background-color: white;
+    position: absolute;
+    text-align: center;
+    padding: 3px;
+    cursor: pointer;
+    font-family: 'PT Sans', sans-serif;
+    color: #003399;
+}
+
+.selector-group-no-data {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    display: inline-block;
+    border-radius: 10px;
+    border: 3px solid rgba(28, 27, 27, 0.747);
+    margin-left: 10px;
+    background-color: white;
+    position: absolute;
+    text-align: center;
+    padding: 3px;
+    cursor: pointer;
+    font-family: 'PT Sans', sans-serif;
+    color: rgba(28, 27, 27, 0.877);
+    opacity: 0.3;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.touched {
+    opacity: 0.5;
+}
+

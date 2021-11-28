@@ -1,5 +1,5 @@
 import "./CountryItem.css"
-import FlagButton from "../../components/Buttons/flag/FlagButton";
+import FlagButton from "../Buttons/Flag/FlagButton";
 import { useContext, useState } from "react";
 import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";

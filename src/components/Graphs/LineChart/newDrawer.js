@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { useContext } from 'react';
 import { colors } from '../../../utils/colors';
 import { CONST } from '../../../utils/const';
-import { getRandomColor } from '../../../utils/utility';
+import { getRandomColor, visualizeDate } from '../../../utils/utility';
 import './LineChart.css';
 
 const margin = { top: 58, right: 10, bottom: 20, left: 80 };
@@ -15,7 +15,8 @@ function lineWidth() {
 }
 
 
-export function drawChart(europeFiltered, selectedCountriesFiltered, width, height, type) {
+export function drawChart(europeFiltered, europeDeaths, selectedCountriesFiltered, width, height, type, showEuropeData) {
+    const colorscale = d3.scaleOrdinal(d3.schemeCategory10)
 
     const svg =
         d3.select('.svg-container')
@@ -38,10 +39,27 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
         .append("g")
         .style("transform", `translate(${margin.left}px,${margin.top}px)`);
 
-    const yScale = d3
-        .scaleLinear()
-        .domain(d3.extent([0, d3.max(europeFiltered, yAccessor)]))
-        .range([boundedHeight, 0]);
+    var yScale;
+    if (showEuropeData) {
+        yScale = d3
+            .scaleLinear()
+            .domain(d3.extent([0, d3.max(europeFiltered, yAccessor)]))
+            .range([boundedHeight, 0]);
+    }
+    else {
+        let maxValue = 0;
+        selectedCountriesFiltered.map((country) => {
+            let currentMax =
+                type == CONST.CHART_TYPE.VACCINATIONS
+                    ? d3.max(country.vaccinations, yAccessor)
+                    : d3.max(country.cases, yAccessor)
+            if (currentMax > maxValue) maxValue = currentMax;
+        })
+        yScale = d3
+            .scaleLinear()
+            .domain(d3.extent([0, maxValue]))
+            .range([boundedHeight, 0]);
+    }
 
     const xScale = d3
         .scaleTime()
@@ -54,14 +72,17 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
         .y((d) => yScale(yAccessor(d)))
         .curve(d3.curveBasis);
 
-    const europePath = bounds
-        .append("path")
-        .attr("d", lineGenerator(europeFiltered))
-        .attr("fill", "none")
-        .attr("stroke", colors.green)
-        .attr("stroke-width", lineWidth())
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
+    if (showEuropeData) {
+        bounds
+            .append("path")
+            .attr("d", lineGenerator(europeFiltered))
+            .attr("fill", "none")
+            .attr("stroke", colors.europeBlue)
+            .attr("stroke-width", lineWidth())
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+
+    }
 
     const circlePointerSelectedCountries = [];
 
@@ -101,7 +122,7 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
         .append("circle")
         .attr("class", "tooltiplinechart-circle")
         .attr("r", 4)
-        .attr("stroke", colors.green)
+        .attr("stroke", colors.europeBlue)
         .attr("fill", "white")
         .attr("stroke-width", 2)
         .style("opacity", 0);
@@ -113,14 +134,41 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
         const getDistanceFromHoveredDate = (d) => Math.abs(xAccessor(d) - hoveredDate);
 
         let closestEuropeIndex = drawEuropeCirclePointer(getDistanceFromHoveredDate);
-        var tooltipHtml = europeFiltered[closestEuropeIndex].tooltipContent;
+        var tooltipHtml = showEuropeData
+            ? europeFiltered[closestEuropeIndex].tooltipContent
+            : "";
 
         if (circlePointerSelectedCountries.length > 0) {
-            let closestCountryIndex
-            circlePointerSelectedCountries.map((country) => {
-                closestCountryIndex = drawSelectedCountriesCirclePointer(getDistanceFromHoveredDate, country);
-                tooltipHtml += country.data[closestCountryIndex].tooltipContent;
+            var countryData, maxValue = 0, highestX, highestY;
+
+            circlePointerSelectedCountries.map((country, index) => {
+                let color = colorscale(index);
+
+                countryData = drawSelectedCountriesCirclePointer(getDistanceFromHoveredDate, country);
+                if (countryData.value > maxValue) {
+                    maxValue = countryData.value;
+                    highestX = countryData.date;
+                    highestY = countryData.value;
+                }
+
+                if (index === 0 && !showEuropeData) tooltipHtml = `<b>${visualizeDate(countryData.date) + tooltipHtml}</b>`;
+                var text = country.data[countryData.closestIndex].tooltipContent;
+                let coloredText = text.replace(/<b>/i,`<b style = "color:${color}">`);
+             
+                tooltipHtml += coloredText;
             });
+
+            if (!showEuropeData) {
+                const x = xScale(highestX) + 60 + margin.left;
+                const y = yScale(highestY) + chartHeightPosition + margin.top * 2;
+
+                //Grab the x and y position of our closest point,
+                //shift our tooltip, and hide/show our tooltip appropriately
+                tooltip.style("transform", `translate(calc( -50% + ${x}px), calc(-100% + ${y}px))`);
+
+                tooltip.style("opacity", 1);
+            }
+
         }
 
         tooltip.select("#value").html(tooltipHtml);
@@ -145,23 +193,28 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
         const closestXValue = xAccessor(closestDataPoint);
         const closestYValue = yAccessor(closestDataPoint);
 
-        const x = xScale(closestXValue) + 60 + margin.left;
-        const y = yScale(closestYValue) + chartHeightPosition + margin.top * 2;
+        if (showEuropeData) {
 
-        //Grab the x and y position of our closest point,
-        //shift our tooltip, and hide/show our tooltip appropriately
-        tooltip.style("transform", `translate(calc( -50% + ${x}px), calc(-100% + ${y}px))`);
+            const x = xScale(closestXValue) + 60 + margin.left;
+            const y = yScale(closestYValue) + chartHeightPosition + margin.top * 2;
 
-        tooltip.style("opacity", 1);
+            //Grab the x and y position of our closest point,
+            //shift our tooltip, and hide/show our tooltip appropriately
+            tooltip.style("transform", `translate(calc( -50% + ${x}px), calc(-100% + ${y}px))`);
 
-        circlePointer
-            .attr("cx", xScale(closestXValue))
-            .attr("cy", yScale(closestYValue))
-            .style("opacity", 1);
+            tooltip.style("opacity", 1);
 
-        // xAxisLine.style("opacity", 1);
+            circlePointer
+                .attr("cx", xScale(closestXValue))
+                .attr("cy", yScale(closestYValue))
+                .style("opacity", 1);
 
-        // xAxisLine.attr("x", xScale(closestXValue));
+            // xAxisLine.style("opacity", 1);
+
+            // xAxisLine.attr("x", xScale(closestXValue));
+        }
+
+
 
         return closestIndex
     }
@@ -179,16 +232,16 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
             .attr("cy", yScale(closestYValueSC))
             .style("opacity", 1);
 
-        return closestIndexSC;
+        return { closestIndex: closestIndexSC, date: closestXValueSC, value: closestYValueSC };
     }
 
     function assembleCirclePointerSelectedCountries() {
 
-
-        selectedCountriesFiltered.map((data) => {
+        selectedCountriesFiltered.map((data, index) => {
             let typedDate = type == CONST.CHART_TYPE.VACCINATIONS ? data.vaccinations : data.cases;
             if (typedDate.length > 0) {
-                const color = getRandomColor();
+
+                const color = colorscale(index);
                 bounds
                     .append("path")
                     .attr("d", lineGenerator(typedDate))
