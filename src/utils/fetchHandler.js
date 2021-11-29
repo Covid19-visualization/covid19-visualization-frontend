@@ -13,7 +13,7 @@ export const fetchHandler = (data, method, url, callback) => {
     })
         .then((response) => response.json())
         .then((response) => {
-            //console.log(`${url} -> ${response.status}`);
+            console.log(`${url} -> ${response.status}`);
             callback(response.data)
         })
         .catch((error) => {

@@ -7,6 +7,7 @@ import { Context } from "../../context/Provider";
 const SearchBar = (props) => {
     const { countries } = useContext(Context);
 
+
     const height = props.height;
     const width = props.width;
     const visible = props.visible;
@@ -16,7 +17,7 @@ const SearchBar = (props) => {
 
     useEffect(() => {
         setFilteredList(countries)
-
+        //console.log(countries)
     }, [countries])
 
 
