@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import { CONST } from "./const";
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -45,11 +46,11 @@ export function prettyCounterHandler(counter, type) {
 }
 
 export function parseData(from, to, data) {
-    let europeData = {}, selectedCountriesData = {}, selectedCountriesDataByName = [];
+    let europeData = {}, selectedCountriesDataByName = [];
 
     data.forEach(element => {
         let dailyDataList = element.dailyData;
-        var vaccinations = [], cases = [], deaths = [], radarData = [], countries = [];
+        var vaccinations = [], cases = [], deaths = [], countries = [];
 
         dailyDataList.forEach(data => {
             let currentDay = new Date(data._id);
@@ -59,7 +60,8 @@ export function parseData(from, to, data) {
                 currentDay = new Date(id.date);
                 
                 if (!countries.includes(id.name)) {
-                    selectedCountriesDataByName.push({ id: id.name, cases: [], vaccinations: [] })
+                    let radarData = insertRadarEntry(data);
+                    selectedCountriesDataByName.push({ id: id.name, cases: [], vaccinations: [], radarData: radarData })
                     countries.push(id.name);
                 }
                 if (currentDay >= from && currentDay <= to) {
@@ -71,26 +73,17 @@ export function parseData(from, to, data) {
             }
         });
 
-        if (element._id === "SC" && dailyDataList.length !== 0) {
-            insertRadarEntry(element, radarData);
-        }
-
         if (element._id === CONST.EUROPE.ID) {
             europeData.cases = cases;
             europeData.vaccinations = vaccinations;
             europeData.deaths = deaths;
 
+            europeData.radarData = insertEuropeRadarEntry(element.dailyData[0]);
+            europeData.barData = insertEuropeBarEntry(element.dailyData)
+
             europeData.cases.sort(function (a, b) { return a.date - b.date; });
             europeData.vaccinations.sort(function (a, b) { return a.date - b.date; });
             europeData.deaths.sort(function (a, b) { return a.date - b.date; });
-        }
-        else if (element._id === CONST.SELECTED_COUNTRIES.ID) {
-            selectedCountriesData.vaccinations = vaccinations;
-            selectedCountriesData.cases = cases;
-            selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
-            selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
-
-            selectedCountriesData.radarData = radarData;
         }
         else {
             selectedCountriesDataByName.map((country) => {
@@ -101,26 +94,59 @@ export function parseData(from, to, data) {
 
     });
 
-    return { europeData, selectedCountriesData, selectedCountriesDataByName };
+    return { europeData, selectedCountriesDataByName };
 }
 
-function insertRadarEntry(country, radarData) {
-    //console.log(radarData)
+function insertEuropeRadarEntry(country) {
     let radarDataEntry = {
-        name: country.dailyData[0].name,
-        life_expectancy: country.dailyData[0].life_expectancy,
-        population_density: country.dailyData[0].population_density,
-        gdp_per_capita: country.dailyData[0].gdp_per_capita,
-        //extreme_poverty: country.dailyData[0].extreme_poverty.length < country.dailyData[0].name.length ? country.dailyData[0].extreme_poverty : 0,
-        human_development_index: country.dailyData[0].human_development_index,
-        cardiovasc_death_rate: country.dailyData[0].cardiovasc_death_rate,
-        diabetes_prevalence: country.dailyData[0].diabetes_prevalence,
-        male_smokers: country.dailyData[0].male_smokers,
-        female_smokers: country.dailyData[0].female_smokers,
-        median_age: country.dailyData[0].median_age
+        life_expectancy: country.life_expectancy / 51,
+        population_density: country.population_density / 51,
+        gdp_per_capita: country.gdp_per_capita / 51,
+        human_development_index: country.human_development_index / 51,
+        cardiovasc_death_rate: country.cardiovasc_death_rate / 51,
+        diabetes_prevalence: country.diabetes_prevalence / 51,
+        male_smokers: country.male_smokers / 51,
+        female_smokers: country.female_smokers / 51,
+        median_age: country.median_age / 51,
+        population: country.population
     };
 
-    radarData.push(radarDataEntry);
+    return radarDataEntry;
+}
+
+function insertEuropeBarEntry(country) {
+    let sortedResult = country.sort( (a,b) => {
+        return a.people_vaccinated - b.people_vaccinated;
+      })
+    let last = sortedResult[sortedResult.length - 1];
+    let sortedResult_fully = country.sort( (a,b) => {
+        return a.people_fully_vaccinated - b.people_fully_vaccinated;
+      })
+    let last_fully = sortedResult_fully[sortedResult_fully.length - 1];
+    let barDataEntry = {
+        name: "Europe",
+        population: last.population,
+        people_fully_vaccinated: last_fully.people_fully_vaccinated,
+        people_vaccinated: last.people_vaccinated
+    };
+    return barDataEntry;
+}
+
+function insertRadarEntry(country) {
+    let radarDataEntry = {
+        life_expectancy: country.life_expectancy,
+        population_density: country.population_density,
+        gdp_per_capita: country.gdp_per_capita,
+        human_development_index: country.human_development_index,
+        cardiovasc_death_rate: country.cardiovasc_death_rate,
+        diabetes_prevalence: country.diabetes_prevalence,
+        male_smokers: country.male_smokers,
+        female_smokers: country.female_smokers,
+        median_age: country.median_age,
+        population: country.population
+    };
+
+    return radarDataEntry;
 }
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases, deaths) {
@@ -193,59 +219,6 @@ function newVaccinationsInDate(day) {
 function newDeathsInDate(day) {
     return day.new_deaths ? day.new_deaths : day.new_deaths_smoothed ? day.new_deaths_smoothed : 0;
 }
-
-//Data for test
-export const mock_data2_vacs = [
-    [
-        { axis: "Population density / 10", value: 0 },
-        { axis: "Life Expect", value: 0 },
-        { axis: "GDP per Capita / 1000", value: 0 },
-        //{axis:"Extreme Poverty",value:0},
-        { axis: "Median age", value: 0 },
-        { axis: "HDI", value: 0 }
-    ]
-];
-
-export const mock_data2_cases = [
-    [
-        { axis: "Population density / 10", value: 0 },
-        { axis: "Smokers", value: 0 },
-        { axis: "Cardiovasc death rate", value: 0 },
-        { axis: "Diabetes prevalence", value: 0 },
-        { axis: "Median age", value: 0 }
-    ]
-];
-
-export const mock_data3 = [
-    [
-        { axis: "Email", value: 0.59 },
-        { axis: "Social Networks", value: 0.56 },
-        { axis: "Internet Banking", value: 0.42 },
-        { axis: "News Sportsites", value: 0.34 },
-        { axis: "Search Engine", value: 0.48 }
-    ], [
-        { axis: "Email", value: 0.48 },
-        { axis: "Social Networks", value: 0.41 },
-        { axis: "Internet Banking", value: 0.27 },
-        { axis: "News Sportsites", value: 0.28 },
-        { axis: "Search Engine", value: 0.46 }
-    ]
-];
-
-export const bar_mock_data1 = [
-    { group: "banana", people_fully_vaccinated: 12, people_vaccinated: 1 },
-    { group: "poacee", people_fully_vaccinated: 6, people_vaccinated: 6 },
-    { group: "sorgho", people_fully_vaccinated: 11, people_vaccinated: 28 },
-    { group: "triticum", people_fully_vaccinated: 19, people_vaccinated: 6 },
-    { group: "1", people_fully_vaccinated: 11, people_vaccinated: 28 },
-    { group: "2", people_fully_vaccinated: 19, people_vaccinated: 6 },
-    { group: "3", people_fully_vaccinated: 11, people_vaccinated: 28 },
-    { group: "4", people_fully_vaccinated: 19, people_vaccinated: 6 }
-];
-
-export const bar_mock_data2 = [
-    { group: "", people_fully_vaccinated: 0, people_vaccinated: 0 },
-];
 
 export const mock_pca_data = [
     { country: "", pca: [[0, 0]] }
@@ -343,4 +316,8 @@ export function getRandomColor() {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
-}
+};
+
+export var countries_colors = {
+    "Europe": "#003399"
+};

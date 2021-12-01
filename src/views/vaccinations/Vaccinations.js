@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from "react";
 import LineChart from "../../components/Graphs/LineChart/LineChart";
 import RadarChart from "../../components/Graphs/RadarChart/RadarChart";

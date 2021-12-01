@@ -1,8 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
 import { CONST } from '../../../utils/const';
-import { drawChart } from './newDrawer';
+import { drawChart } from './Drawer';
 import SelectorButton from '../../../components/Buttons/Selector/SelectorButton';
 import './LineChart.css';
 import { compositionDependencies } from 'mathjs';
@@ -31,18 +31,17 @@ function LineChart(props) {
     function handleShowEuropeData(isVisible) {
         console.log(isVisible);
         setShowEuropeData(() => isVisible);
-
     }
 
     return (
         <div>
             <SelectorButton type={europePath} onClick={handleShowEuropeData} />
             <div id="graph-wrapper">
-                <div id="tooltiplinechart" class="tooltiplinechart">
-                    <div class="tooltiplinechart-date">
+                <div id="tooltiplinechart" className="tooltiplinechart">
+                    <div className="tooltiplinechart-date">
                         <span id="date"></span>
                     </div>
-                    <div class="tooltiplinechart-value">
+                    <div className="tooltiplinechart-value">
                         <span id="value"></span>
                     </div>
                 </div>

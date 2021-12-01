@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useState, useContext, useEffect } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";

@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from "react";
 import FlagButton from "../../components/Buttons/flag/FlagButton";
 import { Context } from "../../context/Provider";
@@ -8,7 +8,9 @@ import Vaccinations from "../vaccinations/Vaccinations";
 import "./Home.css";
 import { fetchHandler } from '../../utils/fetchHandler';
 import { API } from "../../utils/API";
-import { parseData } from "../../utils/utility";
+import { parseData, countries_colors } from "../../utils/utility";
+import * as d3 from 'd3'
+
 
 const Home = () => {
     const { selectedPeriod, selectedCountries, isCasesVisualization, setEuropeData, setSelectedCountriesData, setSelectedCountriesDataByName } = useContext(Context);
@@ -22,12 +24,22 @@ const Home = () => {
     }, [selectedCountries, selectedPeriod])
 
     function regenerateData(newData) {
-
         let parsedData = parseData(selectedPeriod.from, selectedPeriod.to, newData)
+        setCountriesColors(parsedData.selectedCountriesDataByName)
         setEuropeData(parsedData.europeData);
         setSelectedCountriesData(parsedData.selectedCountriesData);
         setSelectedCountriesDataByName(parsedData.selectedCountriesDataByName);
     }
+
+    function setCountriesColors(data){
+        var series = 0;
+        var colors = d3.scaleOrdinal(d3.schemeCategory10);
+        data.forEach(country => {
+            countries_colors[country.id] = colors(series);
+            series++;
+        })
+    }
+
 
     return (
         <>

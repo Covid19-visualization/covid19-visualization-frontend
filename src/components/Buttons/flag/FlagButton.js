@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useState } from "react";
 import { Context } from "../../../context/Provider";
 import { CONST } from "../../../utils/const";
