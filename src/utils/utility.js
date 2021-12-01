@@ -1,15 +1,21 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import { CONST } from "./const";
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export function DateHandler(from, to) {
-    let shortMonthName = months.map((item) => { return item.substr(0, 3) })
 
-    return `${addZeros(from)} ${shortMonthName[from.getMonth()]} ${from.getFullYear()} - ${addZeros(to)} ${shortMonthName[to.getMonth()]} ${to.getFullYear()}  `
+    return `${visualizeDate(from)} - ${visualizeDate(to)} `;
     /* return from == to
      ? `${from.getDay()} ${shortMonthName[from.getMonth()]} ${to.getFullYear()} - ${to.getDay()} ${shortMonthName[to.getMonth()]} ${to.getFullYear()}`
      : `${from.getDay()} ${shortMonthName[from.getMonth()]} ${to.getFullYear()}` */
+}
+
+export function visualizeDate(date) {
+    let shortMonthName = months.map((item) => { return item.substr(0, 3) })
+
+    return `${addZeros(date)} ${shortMonthName[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 function addZeros(date) {
@@ -19,133 +25,299 @@ function addZeros(date) {
 export function getLastPeriod(year, month, day) {
 
     var today = new Date();
-    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() -1 , 0).getDate() - (day - today.getDate()) : today.getDate() - day
+    let dayOfTheMonth = today.getDate() - day <= 0 ? new Date(today.getYear(), today.getMonth() - 1, 0).getDate() - (day - today.getDate()) : today.getDate() - day
     let fixedMonth = today.getDate() - day <= 0 ? today.getMonth() - month : today.getMonth() + 1 - month
 
     return new Date(`${today.getFullYear() - year}-${fixedMonth}-${dayOfTheMonth}`);
 }
 
 export function differenceBetweenDays(from, to) {
-    
+
     const utc1 = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
     const utc2 = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
-  
-    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);   
+
+    return Math.floor((utc2 - utc1) / CONST.MS_PER_DAY);
 }
 
-export function parseData (from, to, data) {
-    let europeData = {}, selectedCountriesData = {};
+export function prettyCounterHandler(counter, type) {
+    return type === CONST.COUNTER_HANDLER.LONG
+        ? (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + " M" : (counter / CONST.THOUSAND).toFixed(1) + " k"
+        : (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + "M" : (counter / CONST.THOUSAND).toFixed(1) + "k"
+}
 
-    data.forEach(country => {
-        let dailyDataList = country.dailyData;
-        var vaccinations = [], cases= [];
+export function parseData(from, to, data) {
+    let europeData = {}, selectedCountriesDataByName = [];
 
-        dailyDataList.forEach(day => {
-            let currentDay = new Date(day._id);
+    data.forEach(element => {
+        let dailyDataList = element.dailyData;
+        var vaccinations = [], cases = [], deaths = [], countries = [];
 
-            if(currentDay >= from && currentDay <= to) {
-                generateAndInsertEntry(day, country, currentDay, vaccinations, cases);
+        dailyDataList.forEach(data => {
+            let currentDay = new Date(data._id);
+            let id = data._id;
+
+            if (element._id === CONST.SELECTED_COUNTRIES_BY_NAME.ID) {
+                currentDay = new Date(id.date);
+                
+                if (!countries.includes(id.name)) {
+                    let radarData = insertRadarEntry(data);
+                    selectedCountriesDataByName.push({ id: id.name, cases: [], vaccinations: [], radarData: radarData })
+                    countries.push(id.name);
+                }
+                if (currentDay >= from && currentDay <= to) {
+                    generateAndInsertEntryByCountry(data, currentDay, selectedCountriesDataByName);
+                }
+            }
+            else if (currentDay >= from && currentDay <= to) {
+                generateAndInsertEntry(data, element, currentDay, vaccinations, cases, deaths);
             }
         });
 
-        if(country._id == CONST.EUROPE.ID ) {
-            europeData.vaccinations = vaccinations;
+        if (element._id === CONST.EUROPE.ID) {
             europeData.cases = cases;
+            europeData.vaccinations = vaccinations;
+            europeData.deaths = deaths;
+
+            europeData.radarData = insertEuropeRadarEntry(element.dailyData[0]);
+            europeData.barData = insertEuropeBarEntry(element.dailyData)
+
             europeData.cases.sort(function (a, b) { return a.date - b.date; });
             europeData.vaccinations.sort(function (a, b) { return a.date - b.date; });
+            europeData.deaths.sort(function (a, b) { return a.date - b.date; });
         }
-        else { 
-            selectedCountriesData.vaccinations = vaccinations;
-            selectedCountriesData.cases = cases;
-            selectedCountriesData.cases.sort(function (a, b) { return a.date - b.date; });
-            selectedCountriesData.vaccinations.sort(function (a, b) { return a.date - b.date; });
+        else {
+            selectedCountriesDataByName.map((country) => {
+                country.cases.sort(function (a, b) { return a.date - b.date; });
+                country.vaccinations.sort(function (a, b) { return a.date - b.date; });
+            })
         }
 
     });
 
-    return {europeData, selectedCountriesData};
+    return { europeData, selectedCountriesDataByName };
 }
 
-function generateAndInsertEntry(day, country, currentDay, vaccinations, cases) {
-    let value = valueAssembler(day);
+function insertEuropeRadarEntry(country) {
+    let radarDataEntry = {
+        life_expectancy: country.life_expectancy / 51,
+        population_density: country.population_density / 51,
+        gdp_per_capita: country.gdp_per_capita / 51,
+        human_development_index: country.human_development_index / 51,
+        cardiovasc_death_rate: country.cardiovasc_death_rate / 51,
+        diabetes_prevalence: country.diabetes_prevalence / 51,
+        male_smokers: country.male_smokers / 51,
+        female_smokers: country.female_smokers / 51,
+        median_age: country.median_age / 51,
+        population: country.population
+    };
 
-    let vaccinatioEntry = {
+    return radarDataEntry;
+}
+
+function insertEuropeBarEntry(country) {
+    let sortedResult = country.sort( (a,b) => {
+        return a.people_vaccinated - b.people_vaccinated;
+      })
+    let last = sortedResult[sortedResult.length - 1];
+    let sortedResult_fully = country.sort( (a,b) => {
+        return a.people_fully_vaccinated - b.people_fully_vaccinated;
+      })
+    let last_fully = sortedResult_fully[sortedResult_fully.length - 1];
+    let barDataEntry = {
+        name: "Europe",
+        population: last.population,
+        people_fully_vaccinated: last_fully.people_fully_vaccinated,
+        people_vaccinated: last.people_vaccinated
+    };
+    return barDataEntry;
+}
+
+function insertRadarEntry(country) {
+    let radarDataEntry = {
+        life_expectancy: country.life_expectancy,
+        population_density: country.population_density,
+        gdp_per_capita: country.gdp_per_capita,
+        human_development_index: country.human_development_index,
+        cardiovasc_death_rate: country.cardiovasc_death_rate,
+        diabetes_prevalence: country.diabetes_prevalence,
+        male_smokers: country.male_smokers,
+        female_smokers: country.female_smokers,
+        median_age: country.median_age,
+        population: country.population
+    };
+
+    return radarDataEntry;
+}
+
+function generateAndInsertEntry(day, country, currentDay, vaccinations, cases, deaths) {
+    let value = valueAssembler(day);
+    let vaccinationEntry = {
         label: country._id,
         value: value.vaccinations,
-        tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: ${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     };
-    
+
     let casesEntry = {
         label: country._id,
         value: value.cases,
-        tooltipContent: `<b>x: </b>${country._id}<br><b>y: </b>${value}`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     }
 
-    vaccinations.push(vaccinatioEntry);
+    let deathEntry = {
+        label: country._id,
+        value: value.deaths,
+        tooltipContent: `<b>${prettyCounterHandler(value.deaths, CONST.COUNTER_HANDLER.LONG)}<b/>`,
+        date: currentDay,
+    };
+
+    deaths.push(deathEntry);
+    vaccinations.push(vaccinationEntry);
     cases.push(casesEntry);
 }
 
-function valueAssembler(day) {
-     return { cases: newCasesInDate(day), vaccinations:  newVaccinationsInDate(day)}
+function generateAndInsertEntryByCountry(data, currentDay, selectedCountriesData) {
+    let id = data._id;
+    let value = valueAssembler(data);
+
+    let vaccinatioEntry = {
+        label: id.name,
+        value: value.vaccinations,
+        tooltipContent: `<br/><b>${id.name}</b>: </b>${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
+        date: currentDay,
+    };
+
+    let casesEntry = {
+        label: id.name,
+        value: value.cases,
+        tooltipContent: `<br/><b>${id.name}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
+        date: currentDay,
+    }
+
+    selectedCountriesData.map((item) => {
+        if (item.id == id.name) {
+            item.vaccinations.push(vaccinatioEntry);
+            item.cases.push(casesEntry);
+        }
+    })
+
 }
 
-function newVaccinationsInDate(day) {
-    return day.new_vaccinations_smoothed ? day.new_vaccinations_smoothed : 0;
+function valueAssembler(day) {
+    return { cases: newCasesInDate(day), vaccinations: newVaccinationsInDate(day), deaths: newDeathsInDate(day) }
 }
 
 function newCasesInDate(day) {
     return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
 }
 
-export const mock_data = [
-    { year: 1980, efficiency: 24.3, sales: 8949000 },
-    { year: 1985, efficiency: 27.6, sales: 10979000 },
-    { year: 1990, efficiency: 28, sales: 9303000 },
-    { year: 1991, efficiency: 28.4, sales: 8185000 },
-    { year: 1992, efficiency: 27.9, sales: 8213000 },
-    { year: 1993, efficiency: 28.4, sales: 8518000 },
-    { year: 1994, efficiency: 28.3, sales: 8991000 },
-    { year: 1995, efficiency: 28.6, sales: 8620000 },
-    { year: 1996, efficiency: 28.5, sales: 8479000 },
-    { year: 1997, efficiency: 28.7, sales: 8217000 },
-    { year: 1998, efficiency: 28.8, sales: 8085000 },
-    { year: 1999, efficiency: 28.3, sales: 8638000 },
-    { year: 2000, efficiency: 28.5, sales: 8778000 },
-    { year: 2001, efficiency: 28.8, sales: 8352000 },
-    { year: 2002, efficiency: 29, sales: 8042000 },
-    { year: 2003, efficiency: 29.5, sales: 7556000 },
-    { year: 2004, efficiency: 29.5, sales: 7483000 },
-    { year: 2005, efficiency: 30.3, sales: 7660000 },
-    { year: 2006, efficiency: 30.1, sales: 7762000 },
-    { year: 2007, efficiency: 31.2, sales: 7562000 },
-    { year: 2008, efficiency: 31.5, sales: 6769000 },
-    { year: 2009, efficiency: 32.9, sales: 5402000 },
-    { year: 2010, efficiency: 33.9, sales: 5636000 },
-    { year: 2011, efficiency: 33.1, sales: 6093000 },
-    { year: 2012, efficiency: 35.3, sales: 7245000 },
-    { year: 2013, efficiency: 36.4, sales: 7586000 },
-    { year: 2014, efficiency: 36.5, sales: 7708000 },
-    { year: 2015, efficiency: 37.2, sales: 7517000 },
-    { year: 2016, efficiency: 37.7, sales: 6873000 },
-    { year: 2017, efficiency: 39.4, sales: 6081000 },
-]
+function newVaccinationsInDate(day) {
+    return day.new_vaccinations_smoothed ? day.new_vaccinations_smoothed : 0;
+}
 
-//Data for test
-export const mock_data2_vacs = [
-    [
-        {axis:"Population density / 10",value:0},
-        {axis:"Life Expect",value:0},
-        {axis:"GDP per Capita / 1000",value:0},
-        //{axis:"Extreme Poverty",value:0},
-        {axis:"Median age",value:0},
-        {axis:"HDI",value:0}
-    ]
+function newDeathsInDate(day) {
+    return day.new_deaths ? day.new_deaths : day.new_deaths_smoothed ? day.new_deaths_smoothed : 0;
+}
+
+export const mock_pca_data = [
+    { country: "", pca: [[0, 0]] }
 ];
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
+export const dbLabelStatic = [
+    "population",
+    "total_cases",
+    "population_density",
+    "median_age",
+    "gdp_per_capita",
+    "extreme_poverty",
+    "cardiovasc_death_rate",
+    "diabetes_prevalence",
+    "female_smokers",
+    "male_smokers",
+    "life_expectancy",
+    "human_development_index"
+]
+
+export const dbLabelDaily = [
+    "new_cases",
+    "new_cases_smoothed",
+    "total_deaths",
+    "new_deaths",
+    "new_deaths_smoothed",
+    "new_deaths_per_million",
+    "reproduction_rate",
+    "positive_rate",
+    "tests_per_case",
+    "stringency_index",
+    "new_vaccinations_smoothed",
+    "people_fully_vaccinated",
+    "people_vaccinated"
+]
+
+export const countriesNames = [
+    "Netherlands",
+    "North Macedonia",
+    "Switzerland",
+    "Latvia",
+    "Slovenia",
+    "Bulgaria",
+    "Cyprus",
+    "Croatia",
+    "Czechia",
+    "Isle of Man",
+    "Jersey",
+    "Monaco",
+    "France",
+    "Austria",
+    "Estonia",
+    "Slovakia",
+    "Sweden",
+    "Lithuania",
+    "San Marino",
+    "Denmark",
+    "Belgium",
+    "Russia",
+    "Serbia",
+    "Hungary",
+    "Greece",
+    "Guernsey",
+    "Bosnia and Herzegovina",
+    "Faeroe Islands",
+    "Kosovo",
+    "Gibraltar",
+    "Finland",
+    "Ireland",
+    "Liechtenstein",
+    "Belarus",
+    "Moldova",
+    "Spain",
+    "Poland",
+    "Iceland",
+    "Romania",
+    "Italy",
+    "Andorra",
+    "Malta",
+    "Germany",
+    "Albania",
+    "Montenegro",
+    "Norway",
+    "Luxembourg",
+    "Portugal",
+    "Ukraine",
+    "Vatican",
+    "United Kingdom"
+]
+
+export function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+};
+
+export var countries_colors = {
+    "Europe": "#003399"
+};

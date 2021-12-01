@@ -1,87 +1,71 @@
-import React from 'react';
-import * as d3 from 'd3';
-import { useBarChart } from './useBarChart';
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
+import React, { useContext, useEffect, useState } from 'react';
+import { Context } from '../../../context/Provider';
+import { fetchHandler } from '../../../utils/fetchHandler';
+import { API } from '../../../utils/API';
+import { countries_colors } from '../../../utils/utility';
+import { MyBarChart } from './Drawer';
+
+import './BarChart.css';
 
 
+function BarChart(props) {
 
-function BarChart({ data }) {
-    const ref = useBarChart(
-        (svg) => {
-            const height = 500;
-            const width = 500;
-            const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+    const { europeData, selectedCountriesData, selectedPeriod, selectedCountries } = useContext(Context);
 
-            const x = d3
-                .scaleBand()
-                .domain(data.map((d) => d.year))
-                .rangeRound([margin.left, width - margin.right])
-                .padding(0.1);
+    useEffect(() => {
+        if(selectedCountries.length != 0){
+            let data = {
+                ...selectedPeriod,
+                selectedCountries: selectedCountries
+            }
+            fetchHandler(data, API.METHOD.POST, API.GET_PEOPLE_VACCINATED, createBarData) 
+        }
+        else{
+            if(europeData.barData != null)
+                createBarData([europeData.barData])
+        }
+    }, [europeData, selectedCountriesData]);
 
-            const y1 = d3
-                .scaleLinear()
-                .domain([0, d3.max(data, (d) => d.sales)])
-                .rangeRound([height - margin.bottom, margin.top]);
+    function createBarData(selectedData) {
+        var resData = []
+        selectedData.forEach(data => {
+            var entryData = {}
+            entryData["group"] = data.name;
+            entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population);
+            entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
+            resData.push(entryData);
+        })
+        
+        drawChart(resData);
+    }
 
-            const xAxis = (g) =>
-                g.attr("transform", `translate(0,${height - margin.bottom})`).call(
-                    d3
-                        .axisBottom(x)
-                        .tickValues(
-                            d3
-                                .ticks(...d3.extent(x.domain()), width / 40)
-                                .filter((v) => x(v) !== undefined)
-                        )
-                        .tickSizeOuter(0)
-                );
+    function drawChart(data) {
 
-            const y1Axis = (g) =>
-                g
-                    .attr("transform", `translate(${margin.left},0)`)
-                    .style("color", "steelblue")
-                    .call(d3.axisLeft(y1).ticks(null, "s"))
-                    .call((g) => g.select(".domain").remove())
-                    .call((g) =>
-                        g
-                            .append("text")
-                            .attr("x", -margin.left)
-                            .attr("y", 10)
-                            .attr("fill", "currentColor")
-                            .attr("text-anchor", "start")
-                            .text(data.y1)
-                    );
+        var cfg = {
+            w: 500,
+            h: 310,
+            lw: 250,
+            lh: 250,
+            standard_opacity: 0.4,
+            full_opacity: 0.8,
+            colorSelection: ["#0B9B6F", "#034F34"],
+            color: countries_colors
+        };
+        if(data.length != 0){
+            MyBarChart.draw("#bar_container", data, cfg);
+        }
+    }
 
-            svg.select(".x-axis").call(xAxis);
-            svg.select(".y-axis").call(y1Axis);
-
-            svg
-                .select(".plot-area")
-                .attr("fill", "steelblue")
-                .selectAll(".bar")
-                .data(data)
-                .join("rect")
-                .attr("class", "bar")
-                .attr("x", (d) => x(d.year))
-                .attr("width", x.bandwidth())
-                .attr("y", (d) => y1(d.sales))
-                .attr("height", (d) => y1(0) - y1(d.sales));
-        },
-        [data.length]
-    );
-
-    return (
-        <svg
-            ref={ref}
-            style={{
-                height: 500,
-                width: "100%",
-                marginRight: "0px",
-                marginLeft: "0px",
-            }}
-        >
-            <g className="plot-area" />
-            <g className="x-axis" />
-            <g className="y-axis" />
-        </svg>
+    return(
+        <div>
+            <div id="tooltipbarchart" className="tooltipbarchart">
+                <div className="tooltipbarchart-value">
+                    <span id="value"></span>
+                </div>
+            </div>
+            <div id="bar_container" />
+        </div>
     );
 }
 

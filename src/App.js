@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useState, useContext, useEffect } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
@@ -16,10 +17,11 @@ function App() {
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedCountriesData, setSelectedCountriesData] = useState({vaccinations: [], cases: []});
   const [europeData, setEuropeData] = useState({vaccinations: [], cases: []});
+  const [selectedCountriesDataByName, setSelectedCountriesDataByName] = useState([]);
 
   const [newAccess, setNewAccess] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState({
-    from: new Date("2020-01-01"),
+    from: new Date("2021-06-01"),
     to: new Date()
   });
 
@@ -36,6 +38,8 @@ function App() {
     setSelectedPeriod: setSelectedPeriod,
     isCasesVisualization: isCasesVisualization,
     setIsCasesVisualization: setIsCasesVisualization,
+    selectedCountriesDataByName: selectedCountriesDataByName,
+    setSelectedCountriesDataByName: setSelectedCountriesDataByName
     
   }
 

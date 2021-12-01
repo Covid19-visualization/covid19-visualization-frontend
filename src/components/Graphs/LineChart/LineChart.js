@@ -1,109 +1,56 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import * as d3 from 'd3';
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
-import { API } from '../../../utils/API';
-import { colors } from '../../../utils/colors';
 import { CONST } from '../../../utils/const';
-import { differenceBetweenDays, refreshData } from '../../../utils/utility';
+import { drawChart } from './Drawer';
+import SelectorButton from '../../../components/Buttons/Selector/SelectorButton';
 import './LineChart.css';
-
+import { compositionDependencies } from 'mathjs';
+import { colors } from '../../../utils/colors';
 
 function LineChart(props) {
     const { width, height, type } = props;
 
-    const { europeData, selectedCountriesData, selectedPeriod } = useContext(Context);
+    const { europeData, selectedCountriesDataByName } = useContext(Context);
+    const europePath = {
+        id: CONST.EUROPE.ID,
+        name: "Europe",
+        color: colors.europeBlue,
+    }
+    const [showEuropeData, setShowEuropeData] = useState(true)
 
-    const margin = { top: 50, right: 50, bottom: 50, left: 100 };
-
-    useEffect(() => { 
+    useEffect(() => {
         var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
-        var selectedCountriesFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? selectedCountriesData.vaccinations : selectedCountriesData.cases;
-        drawChart(europeFiltered, selectedCountriesFiltered);
-   
-    }, [europeData, selectedCountriesData])
 
+        if (europeFiltered.length > 0) {
+            drawChart(europeFiltered, europeData.deaths, selectedCountriesDataByName, width, height, type, showEuropeData);
+        }
 
-    function drawChart(europeFiltered, selectedCountriesFiltered) {
+    }, [selectedCountriesDataByName, showEuropeData]);
 
- 
-        const xScale = generateScaleX(europeFiltered, margin, width)
-
-        const yScale = generateScaleY(europeFiltered, height, margin)
-
-        const line = d3.line()
-            .defined(d => !isNaN(d.value))
-            .x(d => xScale(d.date))
-            .y(d => yScale(d.value))
-            .curve(d3.curveBasis);
-
-        const xAxis = g => g
-            .attr("transform", `translate(0,${height - margin.bottom})`)
-            .call(d3.axisBottom(xScale).ticks(width / 80).tickSizeInner((-height / 2)).tickPadding(10))
-
-        const yAxis = g => g
-            .attr("transform", `translate(${margin.left},0)`)
-            .call(d3.axisLeft(yScale).tickSizeInner((-width / 1.5) - 17).tickPadding(10))
-
-        const svg =
-            d3.select('.svg-canvas')
-                .attr("viewBox", [0, 0, width, height]);
-
-        svg.selectAll("*").remove()
-
-        svg.append("g")
-            .call(xAxis);
-
-        svg.append("g")
-            .call(yAxis);
-
-        svg.append("path")
-            .datum(europeFiltered)
-            .sort()
-            .attr("fill", "none")
-            .attr("stroke", colors.green)
-            .attr("stroke-width", lineWidth())
-            .attr("stroke-linejoin", "round")
-            .attr("stroke-linecap", "round")
-            .attr("d", line);
-
-        svg.append("path")
-            .datum(selectedCountriesFiltered)
-            .attr("fill", "none")
-            .attr("stroke", colors.azure)
-            .attr("stroke-width", lineWidth())
-            .attr("stroke-linejoin", "round")
-            .attr("stroke-linecap", "round")
-            .attr("d", line);
-       
-        d3.selectAll('g.tick')
-            //only ticks that returned true for the filter will be included
-            //in the rest of the method calls:
-            .select('line') //grab the tick line
-            .attr('class', 'quadrantBorder') //style with a custom class and CSS
-            .style('stroke-width', 0.1); //or style directly with attributes or inline styles
+    function handleShowEuropeData(isVisible) {
+        console.log(isVisible);
+        setShowEuropeData(() => isVisible);
     }
 
-    function lineWidth() {
-        return differenceBetweenDays(selectedPeriod.from, selectedPeriod.to) > CONST.DATE.MONTH ? CONST.LINECHAR.WIDTH.REGULAR : CONST.LINECHAR.WIDTH.LARGE;
-    }
+    return (
+        <div>
+            <SelectorButton type={europePath} onClick={handleShowEuropeData} />
+            <div id="graph-wrapper">
+                <div id="tooltiplinechart" className="tooltiplinechart">
+                    <div className="tooltiplinechart-date">
+                        <span id="date"></span>
+                    </div>
+                    <div className="tooltiplinechart-value">
+                        <span id="value"></span>
+                    </div>
+                </div>
+                <div id="line_container" className="svg-container" />
+            </div>
+        </div>
 
-    return <svg className="svg-canvas" />;
+    );
 }
 
 export default LineChart;
-
-
-function generateScaleY(dataset, height, margin) {
-    return d3.scaleLinear()
-        .domain([0, d3.max(dataset, d => d.value)]).nice()
-        .range([height - margin.bottom, margin.top]);
-}
-
-function generateScaleX(dataset, margin, width) {
-    return d3.scaleTime()
-        .nice()
-        .domain(d3.extent(dataset, d => d.date))
-        .range([margin.left, width - margin.right]);
-}
 

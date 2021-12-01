@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import './CustomCalendar.css';
 import Calendar from 'react-calendar'

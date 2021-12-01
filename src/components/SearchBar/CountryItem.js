@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import "./CountryItem.css"
-import FlagButton from "../../components/Buttons/flag/FlagButton";
+import FlagButton from "../Buttons/flag/FlagButton";
 import { useContext, useState } from "react";
 import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
+import { prettyCounterHandler } from "../../utils/utility";
 
 const CountryItem = (props) => {
 
@@ -27,9 +29,10 @@ const CountryItem = (props) => {
     }
 
     const displayCounter = () => {
-       let total_population = (population / CONST.MILION).toFixed(1) >= 1 ? (population / CONST.MILION).toFixed(1)+ "M" : (population / CONST.THOUSAND).toFixed(1) + "k"
-       let total_cases = (cases / CONST.MILION).toFixed(1) >= 1 ? (cases / CONST.MILION).toFixed(1)+ "M cases" : (cases / CONST.THOUSAND).toFixed(1) + "k cases"
+       let total_population = prettyCounterHandler(population, CONST.COUNTER_HANDLER.SHORT);
+       let total_cases = prettyCounterHandler(cases, CONST.COUNTER_HANDLER.SHORT) + " cases";
        return `${total_population} - ${total_cases}`
+    
     }
 
     return (

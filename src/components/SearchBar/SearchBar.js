@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useState, useEffect, useContext } from "react";
 import { colors } from "../../utils/colors";
 import "./SearchBar.css";

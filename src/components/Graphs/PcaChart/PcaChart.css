@@ -1,0 +1,12 @@
+#pca_container{
+    border-width: 0px;
+}
+
+.legend {
+    font-family: 'Raleway', sans-serif;
+    fill: #333333;
+}
+
+.tooltip {
+    fill: #333333;
+}
