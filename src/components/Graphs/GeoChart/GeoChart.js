@@ -33,36 +33,17 @@ function GeoChart(props) {
     }
     
   }
-  
+
   // will be called initially and on every data change
   useEffect(() => {
     //let covidCountries = countries.filter((item)=>selectedCountries.includes(item._id));
     //console.log(covidCountries);
-    /*const processCovidData = (covidCountries) => {
-      
-      for (let i=0; i<data.features.length; i++){
-        selectedCountry = data.features[i];
-        const covidCountry = covidCountries.find(
-          (covidCountry) => covidCountry._id === selectedCountry.properties.name
-        );
 
-        selectedCountry.properties.confirmed = 0;
-        selectedCountry.properties.confirmedText = "0";
-
-        if(covidCountry != null){
-          let confirmed = Number(covidCountry.confirmed);
-          selectedCountry.properties.confirmed = confirmed;
-          selectedCountry.properties.confirmedText = confirmed;
-        }
-      }
-      this.setState(data.features);
-
-    }*/
     //console.log(processCovidData)
     //countries.map((item)=>console.log(item))
     //let countryAux = countries.filter((item)=>selectedCountries.includes(item._id));
     //let countryAux = countries.filter((item)=>countries.includes(item._id));
-    let countryAux = countries.filter((item)=>countries.includes(item));
+    //let countryAux = countries.filter((item)=>countries.includes(item));
     //console.log(countryAux);
     /*if(type == CONST.CHART_TYPE.VACCINATIONS){
       var selectedCountriesFiltered = countryAux.total_vaccinations;
@@ -74,9 +55,9 @@ function GeoChart(props) {
       //console.log(countryAux[0].total_cases)
       DrawMap(countryAux)
     }*/
-
+    var countryAux = type == CONST.CHART_TYPE.VACCINATIONS ? countries.total_vaccinations : countries.total_cases;
     
-    DrawMap(countryAux)
+    DrawMap(countries)
   }, [countries, selectedCountries, selectedCountry, data]);
 
   function DrawMap(countriesFiltered){
@@ -84,30 +65,26 @@ function GeoChart(props) {
     const svg = select(svgRef.current)
       .attr("viewBox", [1200, 300, 950, 600])
 
-    //var mapData = generateMapData(selectedCountriesFiltered, type)
-    
-    //coloring the map
-    /*for(let i = 0; i<countriesFiltered.length; i++){
-      
-    }*/
-    const minProp = min(countriesFiltered, countries => countries.total_vaccinations);
-    const maxProp = max(countriesFiltered, countries => countries.total_vaccinations);
-    console.log(minProp, maxProp)
-    console.log(data)
-    console.log(countries)
+    console.log(data.features)
+    console.log(countriesFiltered)
     let data2 = []
-    for(let i=0; i<data.length; i++) {
+    for(let i=0; i<data.features.length; i++) {
       data2.push({
-        ...data[i], 
-        ...(countries.find((itmInner) => itmInner._id === data[i].features.properties.sovereignt))}
+        ...data.features[i], 
+        ...(countriesFiltered.find((itmInner) => itmInner._id === data.features[i].properties.sovereignt))}
       );
     }
     console.log(data2) 
-
+  
+    //coloring the map
+    const minProp = min(data2, feature => type == CONST.CHART_TYPE.VACCINATIONS ? feature.total_vaccinations : feature.total_cases);
+    const maxProp = max(data2, feature => type == CONST.CHART_TYPE.VACCINATIONS ? feature.total_vaccinations : feature.total_cases);
+    console.log(minProp, maxProp)
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
       .range(["#ccc", "red"]);
-
+    
+    
     // use resized dimensions
     // but fall back to getBoundingClientRect, if no dimensions yet.
     //const height = svgRef.current.clientHeight
@@ -128,7 +105,7 @@ function GeoChart(props) {
     // render each country
     svg
       .selectAll(".country")
-      .data(data.features)
+      .data(data2)
       .join("path")
       .on("click", (e, feature) => {
         handleCountrySelection(feature.properties.sovereignt);
@@ -137,17 +114,13 @@ function GeoChart(props) {
       .attr("class", "country")
       .transition()
       .duration(1000)
-      .attr("fill", (feature, countries) => {
-        if(feature.properties.sovereignt === countries._id){
-          colorScale(countries.total_vaccinations)
-        }
-      })
+      .attr("fill", feature => colorScale(type == CONST.CHART_TYPE.VACCINATIONS ? feature.total_vaccinations : feature.total_cases))
       .attr("d", feature => pathGenerator(feature));
     // render text
     /*if(feature=>feature.properties.name === selectedCountriesFiltered[0]._id){
       var textData = selectedCountriesFiltered.total_vaccinations
     }*/
-    svg
+    /*svg
       .selectAll(".label")
       .data([selectedCountry])
       .join("text")
@@ -156,13 +129,14 @@ function GeoChart(props) {
       .text(
         feature =>
           feature &&
-            feature.properties.name + ":"
-        /*type == CONST.CHART_TYPE.VACCINATIONS 
+             feature.properties.name + ":" + feature.total_cases
+        type == CONST.CHART_TYPE.VACCINATIONS 
           ? countriesFiltered[0].total_vaccinations 
-          : countriesFiltered[0].total_cases*/
+          : countriesFiltered[0].total_cases
       )
       .attr("x", 1200) //2000
-      .attr("y", 800); //800
+      .attr("y", 800); //800*/
+      
   }
 
   return (
