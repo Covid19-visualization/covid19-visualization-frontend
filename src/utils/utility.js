@@ -114,40 +114,30 @@ function insertEuropeRadarEntry(country) {
     return radarDataEntry;
 }
 
-function insertEuropeBarEntry(country) {
+function sortByItem(country, item){
     let sortedResult = country.sort( (a,b) => {
-        return a.people_vaccinated - b.people_vaccinated;
+        return a[item] - b[item];
       })
     let last = sortedResult[sortedResult.length - 1];
+    return last
+}
 
-    let sortedResult_fully = country.sort( (a,b) => {
-        return a.people_fully_vaccinated - b.people_fully_vaccinated;
-      })
-    let last_fully = sortedResult_fully[sortedResult_fully.length - 1];
+function insertEuropeBarEntry(country) {
 
-    let sorted_total_d = country.sort( (a,b) => {
-        return a.total_deaths - b.total_deaths;
-      })
-    let last_total_d = sorted_total_d[sorted_total_d.length - 1];
-
-    let sorted_total_c = country.sort( (a,b) => {
-        return a.total_cases - b.total_cases;
-      })
-    let last_total_c = sorted_total_c[sorted_total_c.length - 1];
-
-    let sorted_total_t = country.sort( (a,b) => {
-        return a.total_tests - b.total_tests;
-      })
-    let last_total_t = sorted_total_t[sorted_total_t.length - 1];
+    let last_vacc = sortByItem(country, "people_vaccinated")
+    let last_fully = sortByItem(country, "people_fully_vaccinated")
+    let last_total_d = sortByItem(country, "total_deaths")
+    
+    let reducer = (accumulator, curr) => accumulator + curr;
+    let total_cases = last_total_d.total_cases.map(x => parseInt(x))
 
     let barDataEntry = {
         name: "Europe",
-        population: last.population,
+        population: last_vacc.population,
         people_fully_vaccinated: last_fully.people_fully_vaccinated,
-        people_vaccinated: last.people_vaccinated,
-        deaths: last_total_d.total_deaths,
-        cases: last_total_c.total_cases,
-        tests: last_total_t.total_tests,
+        people_vaccinated: last_vacc.people_vaccinated,
+        total_deaths: last_total_d.total_deaths,
+        total_cases: total_cases.reduce(reducer)
     };
     return barDataEntry;
 }

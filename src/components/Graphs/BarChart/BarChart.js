@@ -35,12 +35,12 @@ function BarChart(props) {
             entryData["group"] = data.name;
             entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population);
             entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
-            entryData["deaths"] = Math.floor((data.deaths * 100) / data.population) - entryData["people_fully_vaccinated"];
-            entryData["cases"] = Math.floor((data.cases * 100) / data.population) - entryData["people_fully_vaccinated"];
-            entryData["tests"] = Math.floor((data.tests * 100) / data.population) - entryData["people_fully_vaccinated"];
+            entryData["deaths"] = (data.total_deaths * 100) / data.population
+            entryData["deaths2"] = (data.total_deaths * 100) / data.total_cases - entryData["deaths"]
+            entryData["cases"] = Math.floor((parseInt(data.total_cases) * 100) / data.population) - entryData["deaths2"] - entryData["deaths"];
             resData.push(entryData);
         })
-        
+        //console.log(resData)
         drawChart(resData);
     }
 
@@ -62,9 +62,9 @@ function BarChart(props) {
             MyBarChartVaccinations.draw("#bar_container", data, cfg);
         }
         else if(data.length != 0 && props.type == CONST.CHART_TYPE.DEATHS){
-            cfg["colorSelection"] =  ["red", "brown", "green"];
-            cfg["legendOptions"] = ["deaths", "cases", "tests"];
-            //MyBarChartDeaths.draw("#bar_container", data, cfg);
+            cfg["colorSelection"] =  ["red", "brown", "#ff6666"];
+            cfg["legendOptions"] = ["deaths/pop", "deaths/posit", "cases"];
+            MyBarChartDeaths.draw("#bar_container", data, cfg);
         }
     }
 
