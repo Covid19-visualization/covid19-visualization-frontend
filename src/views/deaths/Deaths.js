@@ -5,24 +5,22 @@ import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
 import BarChart from "../../components/Graphs/BarChart/BarChart";
 
-import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
-import { regenerateData, } from "../../utils/utility";
-import "./Vaccinations.css";
+import "./Deaths.css";
 
-const Vaccinations = () => {
+const Deaths = () => {
 
     const debug = false;
 
 
     return (
         <>
-            <div className={"vaccination-container"} style={{ width: "100%", height: "100%", display: "flex", backgroundColor: debug ? "beige" : null }} >
+            <div className={"death-container"} style={{ width: "100%", height: "100%", display: "flex", backgroundColor: debug ? "beige" : null }} >
                 <div className={"first-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }}>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "brown" : null, justifyContent: "center", alignItems: "center" }}>
-                        <LineChart width={600} height={300} type={CONST.CHART_TYPE.VACCINATIONS} />
+                        <LineChart width={600} height={300} type={CONST.CHART_TYPE.DEATHS} />
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
@@ -35,7 +33,7 @@ const Vaccinations = () => {
                         </div>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        <BarChart type={CONST.CHART_TYPE.VACCINATIONS}/>
+                        <BarChart type={CONST.CHART_TYPE.DEATHS}/>
                     </div>
                 </div>
             </div>
@@ -43,4 +41,4 @@ const Vaccinations = () => {
     );
 }
 
-export default Vaccinations;
+export default Deaths;

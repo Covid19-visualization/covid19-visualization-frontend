@@ -4,7 +4,8 @@ import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
 import { countries_colors } from '../../../utils/utility';
-import { MyBarChart } from './Drawer';
+import { MyBarChartVaccinations, MyBarChartDeaths } from './Drawer';
+import { CONST } from "../../../utils/const";
 
 import './BarChart.css';
 
@@ -34,6 +35,9 @@ function BarChart(props) {
             entryData["group"] = data.name;
             entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population);
             entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
+            entryData["deaths"] = Math.floor((data.deaths * 100) / data.population) - entryData["people_fully_vaccinated"];
+            entryData["cases"] = Math.floor((data.cases * 100) / data.population) - entryData["people_fully_vaccinated"];
+            entryData["tests"] = Math.floor((data.tests * 100) / data.population) - entryData["people_fully_vaccinated"];
             resData.push(entryData);
         })
         
@@ -52,8 +56,15 @@ function BarChart(props) {
             colorSelection: ["#0B9B6F", "#034F34"],
             color: countries_colors
         };
-        if(data.length != 0){
-            MyBarChart.draw("#bar_container", data, cfg);
+        if(data.length != 0 && props.type == CONST.CHART_TYPE.VACCINATIONS){
+            cfg["colorSelection"] =  ["#0B9B6F", "#034F34"];
+            cfg["legendOptions"] = ["2 doses", "1 dose"];
+            MyBarChartVaccinations.draw("#bar_container", data, cfg);
+        }
+        else if(data.length != 0 && props.type == CONST.CHART_TYPE.DEATHS){
+            cfg["colorSelection"] =  ["red", "brown", "green"];
+            cfg["legendOptions"] = ["deaths", "cases", "tests"];
+            //MyBarChartDeaths.draw("#bar_container", data, cfg);
         }
     }
 

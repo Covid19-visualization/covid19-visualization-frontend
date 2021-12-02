@@ -5,6 +5,7 @@ import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
 import Cases from "../cases/Cases";
 import Vaccinations from "../vaccinations/Vaccinations";
+import Deaths from "../deaths/Deaths";
 import "./Home.css";
 import { fetchHandler } from '../../utils/fetchHandler';
 import { API } from "../../utils/API";
@@ -54,7 +55,7 @@ const Home = () => {
 
                 </div>
                 <div className="container_graph" style={{ borderRadius: 5, padding: 0 }}>
-                    {isCasesVisualization ? <Cases /> : <Vaccinations />}
+                    {isCasesVisualization > 0 ? (isCasesVisualization > 1 ? <Deaths /> : <Vaccinations /> ): <Cases />}
                 </div>
             </div>
         </>
