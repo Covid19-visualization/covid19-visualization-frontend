@@ -13,7 +13,7 @@ import './BarChart.css';
 function BarChart(props) {
 
     const { europeData, selectedCountriesData, selectedPeriod, selectedCountries } = useContext(Context);
-
+    
     useEffect(() => {
         if(selectedCountries.length != 0){
             let data = {

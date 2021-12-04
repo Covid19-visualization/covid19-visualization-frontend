@@ -49,7 +49,7 @@ function GeoChart(props) {
       .attr("viewBox", [1200, 300, 950, 600])
 
     //console.log(data.features)
-    //console.log(countries)
+    //console.log(countriesFiltered)
     let data2 = []
     for(let i=0; i<data.features.length; i++) {
       data2.push({
@@ -60,10 +60,8 @@ function GeoChart(props) {
     //console.log(data2) 
   
     //coloring the map
-    const minProp = min(data2, feature => type === CONST.CHART_TYPE.VACCINATIONS ? 
-      feature.total_vaccinations : feature.total_cases);
-    const maxProp = max(data2, feature => type === CONST.CHART_TYPE.VACCINATIONS ? 
-      feature.total_vaccinations : feature.total_cases);
+    const minProp = min(data2, feature => feature.total_new_deaths);
+    const maxProp = max(data2, feature => feature.total_new_deaths);
     console.log(minProp, maxProp)
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
@@ -97,8 +95,7 @@ function GeoChart(props) {
       .attr("class", "country")
       .transition()
       .duration(1000)
-      .attr("fill", feature => colorScale(type === CONST.CHART_TYPE.VACCINATIONS ? 
-        feature.total_vaccinations : feature.total_cases))
+      .attr("fill", feature => colorScale(feature.total_new_deaths))
       .attr("d", feature => pathGenerator(feature));
     // render text
     /*svg
@@ -129,6 +126,3 @@ function GeoChart(props) {
 }
 
 export default GeoChart;
-
-
-

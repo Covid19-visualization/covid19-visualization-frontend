@@ -9,8 +9,9 @@ import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
 import { regenerateData, } from "../../utils/utility";
 import "./Cases.css";
-import GeoData from "../vaccinations/Europe.geo.json";
+import GeoData from "../Europe.geo.json";
 import GeoChart from "../../components/Graphs/GeoChart/GeoChart";
+
 
 const Cases = () => {
 
@@ -28,10 +29,7 @@ const Cases = () => {
                         <GeoChart data={GeoData} type={CONST.CHART_TYPE.CASES} />
                     </div>
 
-                    <div className={"second-component"} style={{ width: "100%", height: "40%", backgroundColor: debug ? "brown" : null }} />
-                    <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }}>
-                    </div>
-                    <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "brown" : null }}>
+                    <div className={"second-component"} style={{ width: "100%", height: "40%", backgroundColor: debug ? "brown" : null }} >
                         <LineChart width={600} height={300} type={CONST.CHART_TYPE.CASES} />
                     </div>
                 </div>
