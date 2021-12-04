@@ -4,7 +4,8 @@ import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
 import { countries_colors } from '../../../utils/utility';
-import { MyBarChart } from './Drawer';
+import { MyBarChartVaccinations, MyBarChartDeaths } from './Drawer';
+import { CONST } from "../../../utils/const";
 
 import './BarChart.css';
 
@@ -34,9 +35,12 @@ function BarChart(props) {
             entryData["group"] = data.name;
             entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population);
             entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
+            entryData["deaths"] = (data.total_deaths * 100) / data.population
+            entryData["deaths2"] = (data.total_deaths * 100) / data.total_cases - entryData["deaths"]
+            entryData["cases"] = Math.floor((parseInt(data.total_cases) * 100) / data.population) - entryData["deaths2"] - entryData["deaths"];
             resData.push(entryData);
         })
-        
+        //console.log(resData)
         drawChart(resData);
     }
 
@@ -52,8 +56,15 @@ function BarChart(props) {
             colorSelection: ["#0B9B6F", "#034F34"],
             color: countries_colors
         };
-        if(data.length != 0){
-            MyBarChart.draw("#bar_container", data, cfg);
+        if(data.length != 0 && props.type == CONST.CHART_TYPE.VACCINATIONS){
+            cfg["colorSelection"] =  ["#0B9B6F", "#034F34"];
+            cfg["legendOptions"] = ["2 doses", "1 dose"];
+            MyBarChartVaccinations.draw("#bar_container", data, cfg);
+        }
+        else if(data.length != 0 && props.type == CONST.CHART_TYPE.DEATHS){
+            cfg["colorSelection"] =  ["red", "brown", "#ff6666"];
+            cfg["legendOptions"] = ["deaths/pop", "deaths/posit", "cases"];
+            MyBarChartDeaths.draw("#bar_container", data, cfg);
         }
     }
 

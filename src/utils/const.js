@@ -29,6 +29,10 @@ export const CONST = {
             LABEL: "Vaccinations",
             VALUE: 1
         },
+        DEATHS: {
+            LABEL: "Deaths",
+            VALUE: 2
+        },
     },
     DATE: {
         WEEK: 7,
@@ -47,13 +51,13 @@ export const CONST = {
     },
     CHART_TYPE: {
         VACCINATIONS: 0,
-        CASES: 1
+        CASES: 1,
+        DEATHS: 2
     },
     COUNTER_HANDLER: {
         SHORT: 0,
         LONG: 1
     },
     EUROPE: { NAME: "Europe", ID: "EU" },
-    SELECTED_COUNTRIES: { NAME: "Selected Countries", ID: "SC" },
     SELECTED_COUNTRIES_BY_NAME: { NAME: "Selected Countries By Name", ID: "SCBN"},
 }

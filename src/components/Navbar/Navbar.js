@@ -97,7 +97,7 @@ function Navbar() {
   };
 
   const toggleVisualzation = (type) => {
-    setIsCasesVisualization(type == CONST.VISUALZATION.CASES.VALUE)
+    setIsCasesVisualization(type)
   };
 
   window.addEventListener('resize', handleResize)
@@ -122,6 +122,15 @@ function Navbar() {
             <i className={click ? "fas fa-times" : "fas fa-bars"} />
           </div>
           <ul className={click ? "nav-menu active" : "nav-menu"}>
+            <li className="nav-item">
+              <Link
+                to="/"
+                className="nav-links"
+                onClick={() => toggleVisualzation(CONST.VISUALZATION.DEATHS.VALUE)}
+              >
+                {CONST.VISUALZATION.DEATHS.LABEL}
+              </Link>
+            </li>
             <li className="nav-item">
               <Link
                 to="/"
