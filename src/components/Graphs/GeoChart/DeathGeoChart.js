@@ -76,7 +76,7 @@ function GeoChart(props) {
     // projects geo-coordinates on a 2D plane
 
     const projection = geoMercator()
-      .fitSize([width*2.3, height*1.8], data) //2.3 1.8
+      .fitSize([width*3.9, height*2.7], data) //2.3 1.8
       .precision(100);
 
     // takes geojson data,
