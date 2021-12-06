@@ -41,8 +41,8 @@ export function differenceBetweenDays(from, to) {
 
 export function prettyCounterHandler(counter, type) {
     return type === CONST.COUNTER_HANDLER.LONG
-        ? (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + " M" : (counter / CONST.THOUSAND).toFixed(1) + " k"
-        : (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + "M" : (counter / CONST.THOUSAND).toFixed(1) + "k"
+        ? (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + " M" : (counter / CONST.THOUSAND).toFixed(1) >= 1 ? (counter / CONST.THOUSAND).toFixed(1) + " k" : (counter / CONST.THOUSAND).toFixed(1)
+        : (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + "M" : (counter / CONST.THOUSAND).toFixed(1) >= 1 ? (counter / CONST.THOUSAND).toFixed(1) + "k" : (counter / CONST.THOUSAND).toFixed(1)
 }
 
 export function parseData(from, to, data) {
@@ -98,7 +98,7 @@ export function parseData(from, to, data) {
 }
 
 function insertEuropeRadarEntry(country) {
-    let radarDataEntry = {
+    return {
         life_expectancy: country.life_expectancy / 51,
         population_density: country.population_density / 51,
         gdp_per_capita: country.gdp_per_capita / 51,
@@ -110,8 +110,6 @@ function insertEuropeRadarEntry(country) {
         median_age: country.median_age / 51,
         population: country.population
     };
-
-    return radarDataEntry;
 }
 
 function sortByItem(country, item){
@@ -131,7 +129,7 @@ function insertEuropeBarEntry(country) {
     let reducer = (accumulator, curr) => accumulator + curr;
     let total_cases = last_total_d.total_cases.map(x => parseInt(x))
 
-    let barDataEntry = {
+    return {
         name: "Europe",
         population: last_vacc.population,
         people_fully_vaccinated: last_fully.people_fully_vaccinated,
@@ -139,11 +137,10 @@ function insertEuropeBarEntry(country) {
         total_deaths: last_total_d.total_deaths,
         total_cases: total_cases.reduce(reducer)
     };
-    return barDataEntry;
 }
 
 function insertRadarEntry(country) {
-    let radarDataEntry = {
+    return {
         life_expectancy: country.life_expectancy,
         population_density: country.population_density,
         gdp_per_capita: country.gdp_per_capita,
@@ -156,7 +153,6 @@ function insertRadarEntry(country) {
         population: country.population
     };
 
-    return radarDataEntry;
 }
 
 function generateAndInsertEntry(day, country, currentDay, vaccinations, cases, deaths) {
@@ -178,7 +174,7 @@ function generateAndInsertEntry(day, country, currentDay, vaccinations, cases, d
     let deathEntry = {
         label: country._id,
         value: value.deaths,
-        tooltipContent: `<b>${prettyCounterHandler(value.deaths, CONST.COUNTER_HANDLER.LONG)}<b/>`,
+        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.deaths, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     };
 
