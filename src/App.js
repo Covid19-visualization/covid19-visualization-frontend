@@ -43,6 +43,7 @@ function App() {
     
   }
 
+
   useEffect(() => {
     //newAccess ? fetchHandler({}, API.METHOD.POST, API.UPDATE_DATA, getCountries) : getCountries();
     getCountries()
@@ -53,6 +54,7 @@ function App() {
     setNewAccess(false);
   }
   return (
+    
     <>
       <Context.Provider value={AppContext}>
         <Router>
@@ -64,6 +66,7 @@ function App() {
         </Router>
       </Context.Provider>
     </>
+    
   );
 }
 
