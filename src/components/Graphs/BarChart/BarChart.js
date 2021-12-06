@@ -30,17 +30,18 @@ function BarChart(props) {
 
     function createBarData(selectedData) {
         var resData = []
-        selectedData.forEach(data => {
-            var entryData = {}
-            entryData["group"] = data.name;
-            entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population);
-            entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
-            entryData["deaths"] = (data.total_deaths * 100) / data.population
-            entryData["deaths2"] = (data.total_deaths * 100) / data.total_cases - entryData["deaths"]
-            entryData["cases"] = Math.floor((parseInt(data.total_cases) * 100) / data.population) - entryData["deaths2"] - entryData["deaths"];
-            resData.push(entryData);
-        })
-        //console.log(resData)
+        if(selectedData[0] != null){
+            selectedData.forEach(data => {
+                var entryData = {}
+                entryData["group"] = data.name;
+                entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population);
+                entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
+                entryData["deaths"] = (data.total_deaths * 100) / data.population
+                entryData["deaths2"] = (data.total_deaths * 100) / data.total_cases - entryData["deaths"]
+                entryData["cases"] = (parseInt(data.total_cases) * 100) / data.population - entryData["deaths2"] - entryData["deaths"];
+                resData.push(entryData);
+            })
+        }
         drawChart(resData);
     }
 
@@ -65,6 +66,9 @@ function BarChart(props) {
             cfg["colorSelection"] =  ["red", "brown", "#ff6666"];
             cfg["legendOptions"] = ["deaths/pop", "deaths/posit", "cases"];
             MyBarChartDeaths.draw("#bar_container", data, cfg);
+        }
+        else{
+            MyBarChartDeaths.draw("#bar_container", [], cfg);
         }
     }
 

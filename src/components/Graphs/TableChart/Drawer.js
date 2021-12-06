@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import * as d3 from 'd3';
 import { CONST } from '../../../utils/const';
+import { prettyCounterHandler } from '../../../utils/utility'
 
 import "./TableChart.css"
 
@@ -17,6 +18,7 @@ export const MyTableChart = {
         d3.select(id).select("table").remove();
 
         var Format = d3.format('.6');
+        var FormatLong = (a) => prettyCounterHandler(a, CONST.COUNTER_HANDLER.LONG)
 
         // Create table
         var table = d3.select(id)
@@ -41,7 +43,7 @@ export const MyTableChart = {
               tr.append("th")
               .attr("scope", "row")
               .html(`<a style='color: ${cfg.color[country.id]};'>${country.id}</a>`);
-              tr.append("td").text(Format(country.radarData.population))
+              tr.append("td").text(FormatLong(country.radarData.population))
               tr.append("td").text(Format(country.radarData.population_density))
               tr.append("td").text(Format(country.radarData.life_expectancy))
               tr.append("td").text(Format(country.radarData.gdp_per_capita))
@@ -109,7 +111,7 @@ export const MyTableChart = {
               tr.append("th")
               .attr("scope", "row")
               .html(`<a style='color: ${cfg.color[country.id]}'>${country.id}</a>`)
-              tr.append("td").text(Format(country.radarData.population))
+              tr.append("td").text(FormatLong(country.radarData.population))
               tr.append("td").text(Format(country.radarData.population_density))
               tr.append("td").text(Format(country.radarData.male_smokers + country.radarData.female_smokers))
               tr.append("td").text(Format(country.radarData.cardiovasc_death_rate))

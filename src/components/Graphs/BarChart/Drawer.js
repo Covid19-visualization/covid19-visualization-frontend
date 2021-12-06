@@ -165,7 +165,7 @@ export const MyBarChartDeaths = {
 
                 .on('mouseover', function (event, d){
                     tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
-                    `<a style='color: ${cfg.colorSelection[2]}'">Share of <b>positives</b>/population: </a>${d.data.deaths + d.data.cases + d.data.deaths2}%` +
+                    `<a style='color: ${cfg.colorSelection[2]}'">Share of <b>positives</b>/population: </a>${Format(d.data.deaths + d.data.cases + d.data.deaths2)}%` +
                     "<br>" + 
                     `<a style='color: ${cfg.colorSelection[1]}'">Share of <b>deaths</b>/positives: </a>${Format(d.data.deaths2 + d.data.deaths)}%` +
                     "<br>" + 
@@ -187,7 +187,7 @@ export const MyBarChartDeaths = {
                         .style('opacity', 0)
                 })
         generateLegend(id, cfg);
-    }  
+    }
 }
 
 function generateLegend(id, cfg){
@@ -244,5 +244,5 @@ function getMaxPerc(data){
         var temp = Math.floor(country.deaths + country.cases + country.deaths2)
         if(temp > max) max = temp;
     })
-    return max
+    return max = max > 0 ? max : 8
 }
