@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
-import { countries_colors } from '../../../utils/utility';
+import { countries_colors, computeDim } from '../../../utils/utility';
 import { MyBarChartVaccinations, MyBarChartDeaths } from './Drawer';
 import { CONST } from "../../../utils/const";
 
@@ -11,6 +11,8 @@ import './BarChart.css';
 
 
 function BarChart(props) {
+
+    const {type, innerHeight, innerWidth} = props;
 
     const { europeData, selectedCountriesData, selectedPeriod, selectedCountries } = useContext(Context);
     
@@ -47,15 +49,21 @@ function BarChart(props) {
 
     function drawChart(data) {
 
+        var dim = computeDim(500, 310, innerWidth, innerHeight)
+        var w = dim[0], h = dim[1];
+        
         var cfg = {
-            w: 500,
-            h: 310,
-            lw: 250,
-            lh: 250,
+            innerHeight: innerHeight,
+            innerWidth: innerWidth,
+            w: w,
+            h: h,
+            lw: computeDim(250, 250, innerWidth, innerHeight)[0],
+            lh: computeDim(230, 250, innerWidth, innerHeight)[1],
             standard_opacity: 0.4,
             full_opacity: 0.8,
             colorSelection: ["#0B9B6F", "#034F34"],
-            color: countries_colors
+            color: countries_colors,
+            props:props
         };
         if(data.length != 0 && props.type == CONST.CHART_TYPE.VACCINATIONS){
             cfg["colorSelection"] =  ["#0B9B6F", "#034F34"];

@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import * as d3 from 'd3';
 import './BarChart.css';
+import {computeDim } from '../../../utils/utility';
+
 
 export const MyBarChartVaccinations = {
     draw: function(id, data, cfg){
@@ -76,8 +78,11 @@ export const MyBarChartVaccinations = {
 
                     const mousePosition = d3.pointer(event);
 
-                    var X = mousePosition[0] + 830
-                    var Y = mousePosition[1] + 480
+                    var proportion = computeDim(830, 480, cfg.props.innerWidth, cfg.props.innerHeight)
+                    console.log(proportion)
+
+                    var X = mousePosition[0] + proportion[0]
+                    var Y = mousePosition[1] + proportion[1]
 
                     tooltip.style("transform", `translate(calc( -50% + ${X}px), calc(-100% + ${Y}px))`)
                     tooltip.select("#value").html(tooltipText);
@@ -173,8 +178,17 @@ export const MyBarChartDeaths = {
 
                     const mousePosition = d3.pointer(event);
 
-                    var X = mousePosition[0] + 830
-                    var Y = mousePosition[1] + 480
+                    function computeDim(w, h, innerWidth, innerHeight){
+                        var ww = (w * innerWidth) / 1440;
+                        var hh = (h * innerHeight) / 821;
+                        return [ww, hh];
+                    }
+
+                    var proportion = computeDim(830, 480, cfg.props.innerWidth, cfg.props.innerHeight)
+                    console.log(proportion)
+
+                    var X = mousePosition[0] + proportion[0]
+                    var Y = mousePosition[1] + proportion[1]
 
                     tooltip.style("transform", `translate(calc( -50% + ${X}px), calc(-100% + ${Y}px))`)
                     tooltip.select("#value").html(tooltipText);
@@ -204,8 +218,8 @@ function generateLegend(id, cfg){
     var text = svgl.append("text")
         .attr("class", "title")
         .attr('transform', 'translate(90,10)') 
-        .attr("x", 460) // cfg.w 
-        .attr("y", 20) // cfg.h
+        .attr("x", computeDim(460, 20, cfg.innerWidth, cfg.innerHeight)[0]) // cfg.w 
+        .attr("y", computeDim(460, 20, cfg.innerWidth, cfg.innerHeight)[1]) // cfg.h
         .attr("font-size", "15px")
         .attr("fill", "#404040")
         .text("Legend:");
@@ -220,7 +234,7 @@ function generateLegend(id, cfg){
         legend.selectAll('circle')
         .data(LegendOptions).enter()
         .append("circle")
-        .attr("cx", cfg.lw + 220)
+        .attr("cx", cfg.lw + computeDim(220, 20, cfg.innerWidth, cfg.innerHeight)[0])
         .attr("cy", function(d, i){ return 75 + (i * 20);})
         .attr("id", function(d){return d})
         .attr("r", 5)
@@ -230,7 +244,7 @@ function generateLegend(id, cfg){
         legend.selectAll('text')
             .data(LegendOptions).enter()
             .append("text")
-            .attr("x", cfg.lw + 230)
+            .attr("x", cfg.lw + computeDim(230, 20, cfg.innerWidth, cfg.innerHeight)[0])
             .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
             .attr("font-size", "12px")
             .attr("fill", "#737373")

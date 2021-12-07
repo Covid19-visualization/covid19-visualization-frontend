@@ -331,3 +331,9 @@ export function getRandomColor() {
 export var countries_colors = {
     "Europe": "#003399"
 };
+
+export function computeDim(w, h, innerWidth, innerHeight){
+    var ww = (w * innerWidth) / 1440;
+    var hh = (h * innerHeight) / 821;
+    return [ww, hh];
+}

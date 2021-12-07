@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import { useEffect, useState } from "react";
 import ResizeObserver from "resize-observer-polyfill";
 

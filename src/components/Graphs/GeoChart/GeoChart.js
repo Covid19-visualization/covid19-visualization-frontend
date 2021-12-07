@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useRef, useEffect, useState } from "react";
 import { select, geoPath, geoMercator, min, max, scaleLinear } from "d3";
 import { Context } from '../../../context/Provider';
@@ -5,13 +6,14 @@ import { Context } from '../../../context/Provider';
 import { CONST } from "../../../utils/const";
 import { NavItem } from "react-bootstrap";
 import useResizeObserver from "./useResizeObserver";
+import { computeDim } from "../../../utils/utility";
 
 /**
  * Component that renders a map
  */
 
 function GeoChart(props) {
-  const { data, type } = props;
+  const { data, type, innerHeight, innerWidth} = props;
   const { selectedCountries, countries, setSelectedCountries } = useContext(Context);
 
   const svgRef = useRef();
@@ -67,7 +69,7 @@ function GeoChart(props) {
     console.log(minProp, maxProp)
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
-      .range(["#ccc", "red"]);
+      .range(["#ccc", type === CONST.CHART_TYPE.VACCINATIONS ? "green" : "blue"]);
     
     
     // use resized dimensions
@@ -77,9 +79,14 @@ function GeoChart(props) {
 
     // projects geo-coordinates on a 2D plane
 
+    var dim1 = computeDim(3.9, 3.2, innerWidth, innerHeight)
+    var dim2 = computeDim(1400, 1030, innerWidth, innerHeight)
+
+    console.log(dim1)
     const projection = geoMercator()
-      .fitSize([width*3.9, height*2.7], data) //2.3 1.8(3-2.3)
-      .precision(100);
+      .fitSize([width*dim1[0], height*dim1[1]], data) //2.3 1.8
+      .precision(100)
+   		.translate([dim2[0],dim2[1]]);
 
     // takes geojson data,
     // transforms that into the d attribute of a path element

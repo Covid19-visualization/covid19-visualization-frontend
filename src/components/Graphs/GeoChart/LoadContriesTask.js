@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import papa from "papaparse";
 import React, { useContext, useEffect, useState } from 'react';
 import { features } from "../../../views/vaccinations/Europe.geo.json"

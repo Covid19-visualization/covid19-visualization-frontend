@@ -19,8 +19,8 @@ export const MyRadarChart = {
         
         var g = d3.select(id)
                 .append("svg")
-                .attr("width", 847/*cfg.w + margin.left + margin.right*/)
-                .attr("height", 310 /*cfg.h+ margin.top + margin.bottom*/)
+                .attr("width", 1000/*cfg.w + margin.left + margin.right*/)
+                .attr("height", 400 /*cfg.h+ margin.top + margin.bottom*/)
                 .append("g")
                 .attr("id", "polygons")
                 .attr("transform", `translate(${margin.left},${margin.top})`);

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
-import {countries_colors } from '../../../utils/utility';
+import {countries_colors, computeDim } from '../../../utils/utility';
 import { CONST } from '../../../utils/const';
 import { MyRadarChart } from './Drawer';
 
@@ -10,17 +10,19 @@ import "./RadarChart.css"
 
 function RadarChart(props) {
 
-    const type = props.type;
+    const {type, innerHeight, innerWidth} = props;
 
     const { europeData, selectedCountriesDataByName } = useContext(Context);
     
     useEffect(() => { 
         drawChart(europeData, selectedCountriesDataByName);
     }, [europeData, selectedCountriesDataByName])
-    
 
     function drawChart(europeData, countriesData) {
-        var w = 250, h = 250;
+
+        var dim = computeDim(250, 250, innerWidth, innerHeight)
+        var w = dim[0], h = dim[1];
+
 
         //Options for the Radar chart, other than default
         var cfg = {

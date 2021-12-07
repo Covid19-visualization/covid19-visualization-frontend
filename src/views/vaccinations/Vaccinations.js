@@ -20,8 +20,8 @@ const Vaccinations = () => {
     //const data2 = regenerateData();
     //const [props] = useState("total_vaccinations");
     const { selectedCountries } = useContext(Context);
-
-
+    const innerHeight = window.innerHeight;
+    const innerWidth = window.innerWidth;
 
     return (
         <>
@@ -29,23 +29,23 @@ const Vaccinations = () => {
             
                 <div className={"first-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }}>
-                        <GeoChart data={GeoData} type={CONST.CHART_TYPE.VACCINATIONS} />
+                        <GeoChart data={GeoData} type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth} />
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "brown" : null, justifyContent: "center", alignItems: "center" }}>
-                        <LineChart width={600} height={300} type={CONST.CHART_TYPE.VACCINATIONS} />
+                        <LineChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth} />
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center" }}>
                         <div className={"top-half"} style={{ width: "100%", height: "70%", backgroundColor: debug ? "azure" : null, justifyContent: "center", alignItems: "center" }}>
-                             <RadarChart type={CONST.CHART_TYPE.VACCINATIONS} /> 
+                             <RadarChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth} /> 
                         </div>
                         <div className={"bottom-half"} style={{ width: "100%", height: "30%", backgroundColor: debug ? "grey" : null, justifyContent: "center", alignItems: "center" }}>
                              <TableChart type={CONST.CHART_TYPE.VACCINATIONS} /> 
                         </div>
                     </div>
                     <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        <BarChart type={CONST.CHART_TYPE.VACCINATIONS}/>
+                        <BarChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth}/>
                     </div>
                 </div>
             </div>
