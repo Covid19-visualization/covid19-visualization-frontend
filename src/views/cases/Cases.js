@@ -9,7 +9,7 @@ import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
 import { regenerateData, } from "../../utils/utility";
 import "./Cases.css";
-import GeoData from "../europe.geo.json";
+import GeoData from "../Europe.geo.json";
 import GeoChart from "../../components/Graphs/GeoChart/GeoChart";
 
 

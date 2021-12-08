@@ -8,7 +8,7 @@ import BarChart from "../../components/Graphs/BarChart/BarChart";
 
 import { Context } from "../../context/Provider";
 import { regenerateData } from "../../utils/utility";
-import GeoData from "../europe.geo.json";
+import GeoData from "../Europe.geo.json";
 import { CONST } from "../../utils/const";
 import "./Vaccinations.css";
 

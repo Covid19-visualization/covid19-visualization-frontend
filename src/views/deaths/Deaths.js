@@ -7,7 +7,7 @@ import BarChart from "../../components/Graphs/BarChart/BarChart";
 
 import { CONST } from "../../utils/const";
 import "./Deaths.css";
-import GeoData from "../europe.geo.json";
+import GeoData from "../Europe.geo.json";
 import GeoChart from "../../components/Graphs/GeoChart/DeathGeoChart";
 
 const Deaths = () => {
