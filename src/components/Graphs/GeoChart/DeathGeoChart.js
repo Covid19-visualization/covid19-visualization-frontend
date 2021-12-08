@@ -76,7 +76,7 @@ function GeoChart(props) {
       dimensions || wrapperRef.current.getBoundingClientRect();*/
 
     // projects geo-coordinates on a 2D plane
-    console.log(selectedCountry)
+    //console.log(selectedCountry)
     const projection = geoMercator()
       .fitSize([width, height], selectedCountry || data) //2.3 1.8
       .precision(100);

@@ -13,7 +13,7 @@ import { computeDim } from "../../../utils/utility";
  */
 
 function GeoChart(props) {
-  const { data, type, innerHeight, innerWidth} = props;
+  const { width, height, data, type } = props;
   const { selectedCountries, countries, setSelectedCountries } = useContext(Context);
 
   const svgRef = useRef();
@@ -48,7 +48,7 @@ function GeoChart(props) {
   function DrawMap(){
     //console.log(selectedCountriesFiltered)
     const svg = select(svgRef.current)
-      .attr("viewBox", [1200, 300, 950, 600])
+      .attr("viewBox", [0, 0, width, height])
 
     //console.log(data.features)
     //console.log(countries)
@@ -56,10 +56,10 @@ function GeoChart(props) {
     for(let i=0; i<data.features.length; i++) {
       data2.push({
         ...data.features[i], 
-        ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.sovereignt))}
+        ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.NAME))}
       );
     }
-    //console.log(data2) 
+    console.log(data2) 
   
     //coloring the map
     const minProp = min(data2, feature => type === CONST.CHART_TYPE.VACCINATIONS ? 
@@ -74,19 +74,19 @@ function GeoChart(props) {
     
     // use resized dimensions
     // but fall back to getBoundingClientRect, if no dimensions yet.
-    const { width, height } =
-      dimensions || wrapperRef.current.getBoundingClientRect();
+    /*const { width, height } =
+      dimensions || wrapperRef.current.getBoundingClientRect();*/
 
     // projects geo-coordinates on a 2D plane
 
-    var dim1 = computeDim(3.9, 3.2, innerWidth, innerHeight)
-    var dim2 = computeDim(2560, 1440, innerWidth, innerHeight)
+    //var dim1 = computeDim(3.9, 3.2, innerWidth, innerHeight)
+    //var dim2 = computeDim(2560, 1440, innerWidth, innerHeight)
 
-    console.log(dim1)
+    //console.log(dim1)
     const projection = geoMercator()
-      .fitSize([width*dim1[0], height*dim1[1]], data) //2.3 1.8
+      .fitSize([width, height], selectedCountry || data) //2.3 1.8
       .precision(100)
-   		.translate([dim2[0],dim2[1]]);
+   		//.translate([dim2[0],dim2[1]]);
 
     // takes geojson data,
     // transforms that into the d attribute of a path element
@@ -98,8 +98,8 @@ function GeoChart(props) {
       .data(data2)
       .join("path")
       .on("click", (e, feature) => {
-        handleCountrySelection(feature.properties.sovereignt);
-        setSelectedCountry(selectedCountry === feature ? null : feature);
+        setSelectedCountry(selectedCountry === null ? feature : null);
+        handleCountrySelection(feature.properties.NAME);
       })
       .attr("class", "country")
       .transition()

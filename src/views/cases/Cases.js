@@ -25,7 +25,7 @@ const Cases = () => {
             <div className={"vaccination-container"} style={{ width: "100%", height: "100%", display: "flex", backgroundColor: debug ? "beige" : null }} >
                 <div className={"first-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }} >
-                        <GeoChart data={GeoData} type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth} />
+                        <GeoChart data={GeoData} type={CONST.CHART_TYPE.CASES} width = {200} height = {100} />
                     </div>
 
                     <div className={"second-component"} style={{ width: "100%", height: "40%", backgroundColor: debug ? "brown" : null }} >
