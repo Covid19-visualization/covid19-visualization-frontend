@@ -80,7 +80,7 @@ function GeoChart(props) {
     // projects geo-coordinates on a 2D plane
 
     var dim1 = computeDim(3.9, 3.2, innerWidth, innerHeight)
-    var dim2 = computeDim(1400, 1030, innerWidth, innerHeight)
+    var dim2 = computeDim(2560, 1440, innerWidth, innerHeight)
 
     console.log(dim1)
     const projection = geoMercator()

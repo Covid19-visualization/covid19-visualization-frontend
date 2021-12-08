@@ -12,7 +12,7 @@ import useResizeObserver from "./useResizeObserver";
  */
 
 function GeoChart(props) {
-  const { data, type } = props;
+  const { width, height, data, type } = props;
   const { selectedCountries, countries, setSelectedCountries } = useContext(Context);
 
   const svgRef = useRef();
@@ -34,7 +34,7 @@ function GeoChart(props) {
     }
     
   }
-
+  
   // will be called initially and on every data change
   useEffect(() => {
 
@@ -47,15 +47,16 @@ function GeoChart(props) {
   function DrawMap(){
     //console.log(selectedCountriesFiltered)
     const svg = select(svgRef.current)
-      .attr("viewBox", [1200, 300, 950, 600])
+      //.attr("viewBox", [150, 0, 1300, 550])
+      .attr("viewBox", [0, 0, width, height])
 
     //console.log(data.features)
-    //console.log(countriesFiltered)
+    //console.log(countries)
     let data2 = []
     for(let i=0; i<data.features.length; i++) {
       data2.push({
         ...data.features[i], 
-        ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.sovereignt))}
+        ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.NAME))}
       );
     }
     //console.log(data2) 
@@ -71,13 +72,13 @@ function GeoChart(props) {
     
     // use resized dimensions
     // but fall back to getBoundingClientRect, if no dimensions yet.
-    const { width, height } =
-      dimensions || wrapperRef.current.getBoundingClientRect();
+    /*const { width, height } = 
+      dimensions || wrapperRef.current.getBoundingClientRect();*/
 
     // projects geo-coordinates on a 2D plane
-
+    console.log(selectedCountry)
     const projection = geoMercator()
-      .fitSize([width*3.9, height*2.7], data) //2.3 1.8
+      .fitSize([width, height], selectedCountry || data) //2.3 1.8
       .precision(100);
 
     // takes geojson data,
@@ -90,8 +91,8 @@ function GeoChart(props) {
       .data(data2)
       .join("path")
       .on("click", (e, feature) => {
-        handleCountrySelection(feature.properties.sovereignt);
-        setSelectedCountry(selectedCountry === feature ? null : feature);
+        setSelectedCountry(selectedCountry === null ? feature : null);
+        handleCountrySelection(feature.properties.NAME);
       })
       .attr("class", "country")
       .transition()
@@ -99,6 +100,7 @@ function GeoChart(props) {
       .attr("fill", feature => colorScale(feature.total_new_deaths))
       .attr("d", feature => pathGenerator(feature));
     // render text
+
     /*svg
       .selectAll(".label")
       .data([selectedCountry])
