@@ -20,7 +20,7 @@ function RadarChart(props) {
 
     function drawChart(europeData, countriesData) {
 
-        var dim = computeDim(250, 250, innerWidth, innerHeight)
+        var dim = computeDim(220, 220, innerWidth, innerHeight)
         var w = dim[0], h = dim[1];
 
 
@@ -63,7 +63,7 @@ function RadarChart(props) {
                 newData.push({axis: "Population density / 10", value: country.radarData.population_density / 10})
                 newData.push({axis: "Life Expect", value: country.radarData.life_expectancy})
                 newData.push({axis: "GDP per Capita / 1000", value: country.radarData.gdp_per_capita / 1000})
-                newData.push({axis: "Median age", value: country.radarData.median_age})
+                newData.push({axis: "Age", value: country.radarData.median_age})
                 newData.push({axis: "HDI", value: country.radarData.human_development_index * 100})
     
                 radarData.push(newData);
@@ -74,9 +74,9 @@ function RadarChart(props) {
                 var newData = []
                 newData.push({axis: "Population density / 10", value: country.radarData.population_density / 10})
                 newData.push({axis: "Smokers", value: country.radarData.male_smokers + country.radarData.female_smokers})
-                newData.push({axis: "Cardiovasc death rate / 10", value: country.radarData.cardiovasc_death_rate / 5})
+                newData.push({axis: "Cardiovasc death rate / 5", value: country.radarData.cardiovasc_death_rate / 5})
                 newData.push({axis: "Diabetes prevalence", value: country.radarData.diabetes_prevalence })
-                newData.push({axis: "Median age", value: country.radarData.median_age})
+                newData.push({axis: "Age", value: country.radarData.median_age})
     
                 radarData.push(newData);
             });

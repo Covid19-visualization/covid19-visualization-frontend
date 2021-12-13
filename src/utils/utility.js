@@ -99,15 +99,15 @@ export function parseData(from, to, data) {
 
 function insertEuropeRadarEntry(country) {
     let radarDataEntry = {
-        life_expectancy: country.life_expectancy / 51,
-        population_density: country.population_density / 51,
-        gdp_per_capita: country.gdp_per_capita / 51,
-        human_development_index: country.human_development_index / 51,
-        cardiovasc_death_rate: country.cardiovasc_death_rate / 51,
-        diabetes_prevalence: country.diabetes_prevalence / 51,
-        male_smokers: country.male_smokers / 51,
-        female_smokers: country.female_smokers / 51,
-        median_age: country.median_age / 51,
+        life_expectancy: country.life_expectancy / 39,
+        population_density: country.population_density / 39,
+        gdp_per_capita: country.gdp_per_capita / 39,
+        human_development_index: country.human_development_index / 39,
+        cardiovasc_death_rate: country.cardiovasc_death_rate / 39,
+        diabetes_prevalence: country.diabetes_prevalence / 39,
+        male_smokers: country.male_smokers / 39,
+        female_smokers: country.female_smokers / 39,
+        median_age: country.median_age / 39,
         population: country.population
     };
 
@@ -127,6 +127,8 @@ function insertEuropeBarEntry(country) {
     let last_vacc = sortByItem(country, "people_vaccinated")
     let last_fully = sortByItem(country, "people_fully_vaccinated")
     let last_total_d = sortByItem(country, "total_deaths")
+    let last_total_b = sortByItem(country, "total_boosters")
+    let last_total_s = sortByItem(country, "stringency_index")
     
     let reducer = (accumulator, curr) => accumulator + curr;
     let total_cases = last_total_d.total_cases.map(x => parseInt(x))
@@ -137,7 +139,9 @@ function insertEuropeBarEntry(country) {
         people_fully_vaccinated: last_fully.people_fully_vaccinated,
         people_vaccinated: last_vacc.people_vaccinated,
         total_deaths: last_total_d.total_deaths,
-        total_cases: total_cases.reduce(reducer)
+        total_cases: total_cases.reduce(reducer),
+        total_boosters: last_total_b.total_boosters,
+        stringency_index: last_total_s.stringency_index / 39
     };
     return barDataEntry;
 }
@@ -337,3 +341,5 @@ export function computeDim(w, h, innerWidth, innerHeight){
     var hh = (h * innerHeight) / 821;
     return [ww, hh];
 }
+
+export var geoData = []

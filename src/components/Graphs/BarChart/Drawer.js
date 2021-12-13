@@ -4,13 +4,13 @@ import './BarChart.css';
 import {computeDim } from '../../../utils/utility';
 
 
-export const MyBarChartVaccinations = {
+export const MyBarChart = {
     draw: function(id, data, cfg){
         d3.select(id).select("svg").remove();
 
         const margin = {top: 10, right: 30, bottom: 20, left: 50};
         const tooltip = d3.select("#tooltipbarchart");
-        var tooltipText = "";
+        var max = cfg.type != 0 ? getMaxPerc(data, cfg.type) + 1 : 100;
 
         // append the svg object to the body of the page
         var svg = d3.select(id)
@@ -22,7 +22,7 @@ export const MyBarChartVaccinations = {
                 "translate(" + margin.left + "," + margin.top + ")");
                 
         // List of subgroups = header of the csv files = soil condition here
-        var subgroups = ["people_fully_vaccinated", "people_vaccinated"];
+        var subgroups = cfg.subgroups
 
         // List of groups = species here = value of the first column called group -> I show them on the X axis
         var groups = d3.map(data, function(d){return(d.group)})
@@ -39,7 +39,7 @@ export const MyBarChartVaccinations = {
 
         ////////// Add Y axis
         var y = d3.scaleLinear()
-            .domain([0, 100])
+            .domain([0, max])
             .range([ cfg.h, 0 ]);
         svg.append("g")
             .call(d3.axisLeft(y));
@@ -71,21 +71,15 @@ export const MyBarChartVaccinations = {
                 .attr("text", function(d) {return d[1]})
 
                 .on('mouseover', function (event, d){
-                    tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
-                    `<a style='color: ${cfg.colorSelection[1]}'">People with <b>1 dose</b> of vaccine: </a>${d.data.people_fully_vaccinated + d.data.people_vaccinated}%` +
-                    "<br>" + 
-                    `<a style='color: ${cfg.colorSelection[0]}'">People with <b>2 doses</b> of vaccine: </a>${d.data.people_fully_vaccinated}%`;
-
                     const mousePosition = d3.pointer(event);
 
                     var proportion = computeDim(830, 480, cfg.props.innerWidth, cfg.props.innerHeight)
-                    console.log(proportion)
 
                     var X = mousePosition[0] + proportion[0]
                     var Y = mousePosition[1] + proportion[1]
 
                     tooltip.style("transform", `translate(calc( -50% + ${X}px), calc(-100% + ${Y}px))`)
-                    tooltip.select("#value").html(tooltipText);
+                    tooltip.select("#value").html(generateTooltipText(d, cfg));
                     tooltip
                         .style('opacity', 1)
                 })
@@ -97,111 +91,6 @@ export const MyBarChartVaccinations = {
 
         generateLegend(id, cfg);
     }  
-}
-
-export const MyBarChartDeaths = {
-    draw: function(id, data, cfg){
-        d3.select(id).select("svg").remove();
-
-        var Format = d3.format('.3');
-        var max = getMaxPerc(data);
-
-        const margin = {top: 10, right: 30, bottom: 20, left: 50};
-        const tooltip = d3.select("#tooltipbarchart");
-        var tooltipText = "";
-
-        // append the svg object to the body of the page
-        var svg = d3.select(id)
-        .append("svg")
-        .attr("width", cfg.w*2 + margin.left + margin.right)
-        .attr("height", cfg.h + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-                
-        // List of subgroups = header of the csv files = soil condition here
-        var subgroups = ["deaths", "deaths2", "cases"];
-
-        // List of groups = species here = value of the first column called group -> I show them on the X axis
-        var groups = d3.map(data, function(d){return(d.group)})
-        
-        ///////// Add X axis
-        var x = d3.scaleBand()
-            .domain(groups)
-            .range([0, cfg.w])
-            .padding(0.4)
-        svg.append("g")
-            .attr("transform", "translate(0," + cfg.h + ")")
-            .call(d3.axisBottom(x).tickSizeOuter(0));
-
-        ////////// Add Y axis
-        var y = d3.scaleLinear()
-            .domain([0, max+1])
-            .range([ cfg.h, 0 ]);
-        svg.append("g")
-            .call(d3.axisLeft(y));
-
-        ////////// Stack the data --> stack per subgroup
-        var stackedData = d3.stack()
-            .keys(subgroups)
-            (data)
-        
-        //console.log(stackedData)
-        ////////// Show the bars
-        svg.append("g")
-            .selectAll("g")
-            // Enter in the stack data = loop key per key = group per group
-            .data(stackedData)
-            .enter().append("g")
-            .attr("fill", function(d, i) { return cfg.colorSelection[i]; })
-            .selectAll("rect")
-            // enter a second time = loop subgroup per subgroup to add all rectangles
-            .data(function(d) { return d; })
-            .enter().append("rect")
-                .attr("id", function(d) {
-                    var idx = d.data.group.replace(/\s/g, "")
-                    return `rect${idx}`; 
-                })
-                .attr("x", function(d) { return x(d.data.group); })
-                .attr("y", function(d) { return y(d[1]); })
-                .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-                .attr("width", x.bandwidth())
-                .attr("text", function(d) {return d[1]})
-
-                .on('mouseover', function (event, d){
-                    tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
-                    `<a style='color: ${cfg.colorSelection[2]}'">Share of <b>positives</b>/population: </a>${Format(d.data.deaths + d.data.cases + d.data.deaths2)}%` +
-                    "<br>" + 
-                    `<a style='color: ${cfg.colorSelection[1]}'">Share of <b>deaths</b>/positives: </a>${Format(d.data.deaths2 + d.data.deaths)}%` +
-                    "<br>" + 
-                    `<a style='color: ${cfg.colorSelection[0]}'">Share of <b>deaths</b>/population: </a>${Format(d.data.deaths)}%`;
-
-                    const mousePosition = d3.pointer(event);
-
-                    function computeDim(w, h, innerWidth, innerHeight){
-                        var ww = (w * innerWidth) / 1440;
-                        var hh = (h * innerHeight) / 821;
-                        return [ww, hh];
-                    }
-
-                    var proportion = computeDim(830, 480, cfg.props.innerWidth, cfg.props.innerHeight)
-                    console.log(proportion)
-
-                    var X = mousePosition[0] + proportion[0]
-                    var Y = mousePosition[1] + proportion[1]
-
-                    tooltip.style("transform", `translate(calc( -50% + ${X}px), calc(-100% + ${Y}px))`)
-                    tooltip.select("#value").html(tooltipText);
-                    tooltip
-                        .style('opacity', 1)
-                })
-
-                .on('mouseout', function(){
-                    tooltip
-                        .style('opacity', 0)
-                })
-        generateLegend(id, cfg);
-    }
 }
 
 function generateLegend(id, cfg){
@@ -252,11 +141,50 @@ function generateLegend(id, cfg){
     }
 }
 
-function getMaxPerc(data){
+function generateTooltipText(d, cfg){
+    var Format = d3.format('.3');
+    var tooltipText = ''
+    if(cfg.type == 0){
+        tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
+            `<a style='color: ${cfg.colorSelection[2]}'">People with <b>1 dose</b> of vaccine: </a>${d.data.people_fully_vaccinated + d.data.people_vaccinated + d.data.total_boosters}%` +
+            "<br>" + 
+            `<a style='color: ${cfg.colorSelection[1]}'">People with <b>2 doses</b> of vaccine: </a>${d.data.people_fully_vaccinated + d.data.total_boosters}%` + 
+            "<br>" + 
+            `<a style='color: ${cfg.colorSelection[0]}'">People with <b>Booster doses</b>: </a>${d.data.total_boosters}%`
+    }
+    else if(cfg.type == 1){
+        tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
+            `<a style='color: ${cfg.colorSelection[2]}'">Share of <b>positives</b>/population: </a>${Format(d.data.deaths + d.data.cases + d.data.deaths2)}%` +
+            "<br>" + 
+            `<a style='color: ${cfg.colorSelection[1]}'">Share of <b>deaths</b>/positives: </a>${Format(d.data.deaths2 + d.data.deaths)}%` +
+            "<br>" + 
+            `<a style='color: ${cfg.colorSelection[0]}'">Share of <b>deaths</b>/population: </a>${Format(d.data.deaths)}%`;
+    }
+    else{
+        tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
+            `<a style='color: ${cfg.colorSelection[2]}'">Stringency index: </a>${Format(d.data.stringency_index + d.data.deaths + d.data.cases2)}%` +
+            "<br>" + 
+            `<a style='color: ${cfg.colorSelection[1]}'">Share of <b>positives</b>: </a>${Format(d.data.deaths + d.data.cases2)}%` +
+            "<br>" + 
+            `<a style='color: ${cfg.colorSelection[0]}'">Share of <b>deaths</b>: </a>${Format(d.data.deaths)}%` ;
+    }
+    return tooltipText;
+}
+
+function getMaxPerc(data, type){
     var max = 0;
-    data.forEach(country =>{
-        var temp = Math.floor(country.deaths + country.cases + country.deaths2)
-        if(temp > max) max = temp;
-    })
-    return max = max > 0 ? max : 8
+    if(type == 1){
+        data.forEach(country =>{
+            var temp = Math.floor(country.deaths + country.cases + country.deaths2)
+            if(temp > max) max = temp;
+        })
+        return max = max > 0 ? max : 8
+    }
+    else if(type == 2){
+        data.forEach(country =>{
+            var temp = Math.floor(country.deaths + country.cases2 + country.stringency_index)
+            if(temp > max) max = temp;
+        })
+        return max = max > 0 ? max : 8
+    }
 }

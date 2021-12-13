@@ -4,7 +4,7 @@ import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
 import { countries_colors, computeDim } from '../../../utils/utility';
-import { MyBarChartVaccinations, MyBarChartDeaths } from './Drawer';
+import { MyBarChart } from './Drawer';
 import { CONST } from "../../../utils/const";
 
 import './BarChart.css';
@@ -36,11 +36,14 @@ function BarChart(props) {
             selectedData.forEach(data => {
                 var entryData = {}
                 entryData["group"] = data.name;
-                entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population);
-                entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"];
+                entryData["total_boosters"] = Math.floor((data.total_boosters * 100) / data.population)
+                entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population) - entryData["total_boosters"];
+                entryData["people_vaccinated"] = Math.floor((data.people_vaccinated * 100) / data.population) - entryData["people_fully_vaccinated"] - entryData["total_boosters"];
                 entryData["deaths"] = (data.total_deaths * 100) / data.population
                 entryData["deaths2"] = (data.total_deaths * 100) / data.total_cases - entryData["deaths"]
                 entryData["cases"] = (parseInt(data.total_cases) * 100) / data.population - entryData["deaths2"] - entryData["deaths"];
+                entryData["cases2"] = (parseInt(data.total_cases) * 100) / data.population - entryData["deaths"];
+                entryData["stringency_index"] = data.stringency_index - entryData["deaths"] - entryData["cases2"];
                 resData.push(entryData);
             })
         }
@@ -66,17 +69,25 @@ function BarChart(props) {
             props:props
         };
         if(data.length != 0 && props.type == CONST.CHART_TYPE.VACCINATIONS){
-            cfg["colorSelection"] =  ["#0B9B6F", "#034F34"];
-            cfg["legendOptions"] = ["2 doses", "1 dose"];
-            MyBarChartVaccinations.draw("#bar_container", data, cfg);
+            cfg["colorSelection"] =  ["green", "#0B9B6F", "#034F34"];
+            cfg["legendOptions"] = ["Booster dose", "Second dose", "First dose"];
+            cfg["subgroups"] = ["total_boosters", "people_fully_vaccinated", "people_vaccinated"];
+            cfg["type"] = 0;
+            MyBarChart.draw("#bar_container", data, cfg);
         }
         else if(data.length != 0 && props.type == CONST.CHART_TYPE.DEATHS){
             cfg["colorSelection"] =  ["red", "brown", "#ff6666"];
-            cfg["legendOptions"] = ["deaths/pop", "deaths/posit", "cases"];
-            MyBarChartDeaths.draw("#bar_container", data, cfg);
+            cfg["legendOptions"] = ["Deaths", "Deaths/Cases", "Cases"];
+            cfg["subgroups"] = ["deaths", "deaths2", "cases"];
+            cfg["type"] = 1;
+            MyBarChart.draw("#bar_container", data, cfg);
         }
         else{
-            MyBarChartDeaths.draw("#bar_container", [], cfg);
+            cfg["colorSelection"] =  ["black", "#1E90FF", "blue"];
+            cfg["legendOptions"] = ["Deaths", "Cases", "Stringency Index"];
+            cfg["subgroups"] = ["deaths", "cases2", "stringency_index"];
+            cfg["type"] = 2;
+            MyBarChart.draw("#bar_container", data, cfg);
         }
     }
 

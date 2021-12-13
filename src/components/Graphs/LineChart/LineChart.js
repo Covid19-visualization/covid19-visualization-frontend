@@ -35,7 +35,6 @@ function LineChart(props) {
     }, [selectedCountriesDataByName, showEuropeData]);
 
     function handleShowEuropeData(isVisible) {
-        console.log(isVisible);
         setShowEuropeData(() => isVisible);
     }
 

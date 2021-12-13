@@ -13,13 +13,13 @@ export const MyRadarChart = {
         var total = allAxis.length;
         var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
         var Format = d3.format('.4');
-        const margin = { top: 50, right: 50, bottom: 100, left: 100 };
+        const margin = { top: 50, right: 50, bottom: 100, left: 63 };
 
         d3.select(id).select("svg").remove();
         
         var g = d3.select(id)
                 .append("svg")
-                .attr("width", 1000/*cfg.w + margin.left + margin.right*/)
+                .attr("width", 420/*cfg.w + margin.left + margin.right*/)
                 .attr("height", 400 /*cfg.h+ margin.top + margin.bottom*/)
                 .append("g")
                 .attr("id", "polygons")
@@ -198,119 +198,5 @@ export const MyRadarChart = {
 
             series++;
         });
-
-        /*
-        ////////////////////////////////////////////
-        /////////////// LEGEND /////////////////////
-        ////////////////////////////////////////////
-
-        
-        var colorscale = cfg.color;
-
-        //Legend titles
-        var LegendOptions = legendOptions;
-
-        var svg = d3.select('#container2')
-        .selectAll('svg')
-        .append('g')
-        .attr("width", cfg.w)
-        .attr("height", cfg.h)
-
-        //Create the title for the legend
-        var text = svg.append("text")
-            .attr("class", "title")
-            .attr('transform', 'translate(90,0)') 
-            .attr("x", 450) // cfg.w 
-            .attr("y", 70) // cfg.h
-            .attr("font-size", "15px")
-            .attr("fill", "#404040")
-            .text("Selected:");
-                
-        if(LegendOptions != null){
-            //Initiate Legend	
-            var legend = svg.append("g")
-                .attr("class", "legend")
-                .attr("height", 100)
-                .attr("width", 200)
-                .attr('transform', 'translate(90,20)') ;
-            
-            var tooltipLegend;
-
-            //Create colour squares
-            legend.selectAll('rect')
-            .data(LegendOptions).enter()
-            .append("rect")
-            .attr("x", cfg.w + 150)
-            .attr("y", function(d, i){ return 70 + (i * 20);})
-            .attr("id", function(d){return d;})
-            .attr("width", 10)
-            .attr("height", 10)
-            .style("fill", function(d, i){ return colorscale(i);})
-            .on('mouseover', function (c){
-                var id = d3.select(this).attr('id').replace(/\s/g, "")
-                var z = "polygon#"+d3.select("#polygon"+id).attr("id");
-                g.selectAll("polygon")
-                .transition(200)
-                .style("fill-opacity", 0); 
-                g.selectAll(z)
-                .transition(200)
-                .style("fill-opacity", 0.8);
-
-
-                var z2 = "circle#"+id;
-                var pca = d3.select("#pca_container")
-                pca.selectAll("circle")
-                .transition(200)
-                .style("fill-opacity", 0); 
-                pca.selectAll(z2)
-                .transition(200)
-                .style("fill-opacity", 1);
-
-                
-                tooltipLegend = legend
-                    .append('title')
-                    .attr('x', d3.select(this).attr("x"))
-                    .attr('y', d3.select(this).attr("y"))
-                    .attr('class', 'tooltiptext')
-                    .attr("data-html", "true");
-
-                tooltipLegend
-                    .text(generateTooltip(completeData, id))
-                    .transition(200)
-                    .style('opacity', 1)
-                    .style('visibility', 'visible');
-                
-            })
-            .on('mouseout', function(){
-                g.selectAll("polygon")
-                .transition(200)
-                .style("fill-opacity", cfg.opacityArea);
-
-                var pca = d3.select("#pca_container")
-                pca.selectAll("circle")
-                .transition(200)
-                .style("fill-opacity", 1);
-                
-                
-                tooltipLegend
-                    .transition(200)
-                    .style('opacity', 0);
-                
-            });
-            ;
-
-            
-
-            //Create text next to squares
-            legend.selectAll('text')
-            .data(LegendOptions).enter()
-            .append("text")
-            .attr("x", cfg.w + 170)
-            .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
-            .attr("font-size", "12px")
-            .attr("fill", "#737373")
-            .text(function(d) { return d; });  
-        }
-        */
     }
 };

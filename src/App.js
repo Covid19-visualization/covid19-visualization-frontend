@@ -18,6 +18,7 @@ function App() {
   const [selectedCountriesData, setSelectedCountriesData] = useState({vaccinations: [], cases: []});
   const [europeData, setEuropeData] = useState({vaccinations: [], cases: []});
   const [selectedCountriesDataByName, setSelectedCountriesDataByName] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const [newAccess, setNewAccess] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState({
@@ -39,8 +40,9 @@ function App() {
     isCasesVisualization: isCasesVisualization,
     setIsCasesVisualization: setIsCasesVisualization,
     selectedCountriesDataByName: selectedCountriesDataByName,
-    setSelectedCountriesDataByName: setSelectedCountriesDataByName
-    
+    setSelectedCountriesDataByName: setSelectedCountriesDataByName,
+    selectedCountry: selectedCountry,
+    setSelectedCountry: setSelectedCountry
   }
 
 
