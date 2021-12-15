@@ -42,6 +42,9 @@ export function legend({
         .style("display", "block");
     
     let x;
+
+    console.log(ticks)
+    console.log(tickSize)
     
       // Continuous
     if (color.interpolator) {
@@ -55,7 +58,7 @@ export function legend({
         svg.append("image")
             .attr("x", marginLeft)
             .attr("y", marginTop)
-            .attr("width", width - marginLeft - marginRight )
+            .attr("width", width - marginLeft - marginRight + 50)
             .attr("height", height - marginTop - marginBottom + 600)
             .attr("preserveAspectRatio", "none")
             .attr("xlink:href", ramp(color.interpolator()).toDataURL());

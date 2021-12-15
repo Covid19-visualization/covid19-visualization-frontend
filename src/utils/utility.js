@@ -238,91 +238,6 @@ export const mock_pca_data = [
     { country: "", pca: [[0, 0]] }
 ];
 
-export const dbLabelStatic = [
-    "population",
-    "total_cases",
-    "population_density",
-    "median_age",
-    "gdp_per_capita",
-    "extreme_poverty",
-    "cardiovasc_death_rate",
-    "diabetes_prevalence",
-    "female_smokers",
-    "male_smokers",
-    "life_expectancy",
-    "human_development_index"
-]
-
-export const dbLabelDaily = [
-    "new_cases",
-    "new_cases_smoothed",
-    "total_deaths",
-    "new_deaths",
-    "new_deaths_smoothed",
-    "new_deaths_per_million",
-    "reproduction_rate",
-    "positive_rate",
-    "tests_per_case",
-    "stringency_index",
-    "new_vaccinations_smoothed",
-    "people_fully_vaccinated",
-    "people_vaccinated"
-]
-
-export const countriesNames = [
-    "Netherlands",
-    "North Macedonia",
-    "Switzerland",
-    "Latvia",
-    "Slovenia",
-    "Bulgaria",
-    "Cyprus",
-    "Croatia",
-    "Czechia",
-    "Isle of Man",
-    "Jersey",
-    "Monaco",
-    "France",
-    "Austria",
-    "Estonia",
-    "Slovakia",
-    "Sweden",
-    "Lithuania",
-    "San Marino",
-    "Denmark",
-    "Belgium",
-    "Russia",
-    "Serbia",
-    "Hungary",
-    "Greece",
-    "Guernsey",
-    "Bosnia and Herzegovina",
-    "Faeroe Islands",
-    "Kosovo",
-    "Gibraltar",
-    "Finland",
-    "Ireland",
-    "Liechtenstein",
-    "Belarus",
-    "Moldova",
-    "Spain",
-    "Poland",
-    "Iceland",
-    "Romania",
-    "Italy",
-    "Andorra",
-    "Malta",
-    "Germany",
-    "Albania",
-    "Montenegro",
-    "Norway",
-    "Luxembourg",
-    "Portugal",
-    "Ukraine",
-    "Vatican",
-    "United Kingdom"
-]
-
 export function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
@@ -342,4 +257,44 @@ export function computeDim(w, h, innerWidth, innerHeight){
     return [ww, hh];
 }
 
-export var geoData = []
+export const countriesNames = [
+    "Netherlands",
+    "Switzerland",
+    "Latvia",
+    "Slovenia",
+    "Bulgaria",
+    "Cyprus",
+    "Croatia",
+    "Czechia",
+    "France",
+    "Austria",
+    "Estonia",
+    "Slovakia",
+    "Sweden",
+    "Lithuania",
+    "Denmark",
+    "Belgium",
+    "Russia",
+    "Serbia",
+    "Hungary",
+    "Greece",
+    "Bosnia and Herzegovina",
+    "Finland",
+    "Ireland",
+    "Belarus",
+    "Moldova",
+    "Spain",
+    "Poland",
+    "Iceland",
+    "Romania",
+    "Italy",
+    "Malta",
+    "Germany",
+    "Albania",
+    "Montenegro",
+    "Norway",
+    "Luxembourg",
+    "Portugal",
+    "Ukraine",
+    "United Kingdom"
+]

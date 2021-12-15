@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
-import { MyTableChart } from './Drawer';
 import { countries_colors } from '../../../utils/utility';
 import * as d3 from 'd3';
 import { CONST } from '../../../utils/const';
 import { prettyCounterHandler } from '../../../utils/utility'
-import "./TableChart.css"
+import "./TableChart.css" 
 
 function TableChart(props) {
 
@@ -61,56 +60,10 @@ function TableChart(props) {
                   tr.append("td").text(Format(country.radarData.median_age))
                   tr.append("td").text(Format(country.radarData.human_development_index))
                   tr.on('click', function (d){
-                    d3.select(this).style("background-color", cfg.colorSelection[1]);
-                    var id = d3.select(this).attr("id").replace(/\s/g, "");
-                    var g = d3.select("#polygons");
-                    var p_selected = d3.select("#polygon"+id);
-                    var r_selected = d3.selectAll("#rect"+id);
-                    var l_selected = d3.selectAll("#path"+id);
-                    var bar = d3.select("#bar_container");
-                    var line = d3.select("#line_container")
-    
-                    g.selectAll("polygon")
-                        .transition(200)
-                        .style("fill-opacity", 0); 
-                    bar.selectAll("rect")
-                        .transition(200)
-                        .style("fill-opacity", 0.2);
-                    line.selectAll("path")
-                        .transition(200)
-                        .style("stroke-opacity", 0.2);
-                    line.selectAll("path.domain")
-                        .transition(200)
-                        .style("stroke-opacity", 1);
-                    p_selected.transition(200)
-                        .style("fill-opacity", cfg.full_opacity);
-                    r_selected.transition(200)
-                        .style("fill-opacity", 1);
-                    l_selected.transition(200)
-                        .style("stroke-opacity", 1);
-
-                    setSelectedCountry(d3.select(this).attr("id"))
+                    onClick(d3.select(this), cfg);
                   });
                   tr.on('mouseout', function(){
-                    d3.select(this).style("background-color", cfg.colorSelection[0]);
-                    var id = d3.select(this).attr("id").replace(/\s/g, "");
-                    var g = d3.select("#polygons");
-                    var bar = d3.select("#bar_container");
-                    var line = d3.select("#line_container");
-                    var tooltipbar = d3.select("#tooltipgeochart");
-    
-                    g.selectAll("polygon")
-                        .transition(200)
-                        .style("fill-opacity", cfg.standard_opacity);
-                    bar.selectAll("rect")
-                        .transition(200)
-                        .style("fill-opacity", 1);
-                    line.selectAll("path")
-                        .transition(200)
-                        .style("stroke-opacity", 1);
-                    //tooltipbar.style("visibility", "hidden");
-                    
-                    setSelectedCountry(null)
+                    onMouseOut(d3.select(this), cfg);
                   });
                 });
               }
@@ -135,68 +88,11 @@ function TableChart(props) {
                   tr.append("td").text(Format(country.radarData.diabetes_prevalence))
                   tr.append("td").text(Format(country.radarData.median_age))
                   tr.on('click', function (d){
-                    d3.select(this).style("background-color", cfg.colorSelection[1]);
-                    var id = d3.select(this).attr("id").replace(/\s/g, "");
-                    var g = d3.select("#polygons");
-                    var p_selected = d3.select("#polygon"+id);
-                    var c_selected = "circle#"+id;
-                    var l_selected = d3.selectAll("#path"+id);
-                    var r_selected = d3.selectAll("#rect"+id);
-                    var pca = d3.select("#pca_container");
-                    var line = d3.select("#line_container")
-                    var bar = d3.select("#bar_container");
-    
-                    g.selectAll("polygon")
-                        .transition(200)
-                        .style("fill-opacity", 0);
-                    bar.selectAll("rect")
-                        .transition(200)
-                        .style("fill-opacity", 0.2);
-                    pca.selectAll("circle")
-                        .transition(200)
-                        .style("fill-opacity", 0); 
-                    pca.selectAll(c_selected)
-                        .transition(200)
-                        .style("fill-opacity", 1);
-                    line.selectAll("path")
-                        .transition(200)
-                        .style("stroke-opacity", 0.2);
-                    line.selectAll("path.domain")
-                        .transition(200)
-                        .style("stroke-opacity", 1);
-    
-                    p_selected.transition(200)
-                        .style("fill-opacity", cfg.full_opacity);
-                    l_selected.transition(200)
-                        .style("stroke-opacity", 1);
-                    r_selected.transition(200)
-                        .style("fill-opacity", 1);
-
-                    setSelectedCountry(d3.select(this).attr("id"))
+                    onClick(d3.select(this), cfg);
                   });
     
                   tr.on('mouseout', function(){
-                    d3.select(this).style("background-color", cfg.colorSelection[0]);
-                    var g = d3.select("#polygons");
-                    var pca = d3.select("#pca_container");
-                    var line = d3.select("#line_container");
-                    var bar = d3.select("#bar_container");
-    
-                    pca.selectAll("circle")
-                        .transition(200)
-                        .style("fill-opacity", 1);
-                    bar.selectAll("rect")
-                        .transition(200)
-                        .style("fill-opacity", 1);
-                    g.selectAll("polygon")
-                        .transition(200)
-                        .style("fill-opacity", cfg.standard_opacity);
-                    line.selectAll("path")
-                        .transition(200)
-                        .style("stroke-opacity", 1);
-                    //tooltipbar.style("visibility", "hidden");
-                    
-                    setSelectedCountry(null)
+                    onMouseOut(d3.select(this), cfg);
                   });
                 });
               }
@@ -204,6 +100,68 @@ function TableChart(props) {
         clean: function(ids){
             d3.select(ids).select("table").remove();
         }
+    }
+
+    function onClick(node, cfg){
+        setSelectedCountry(node.attr("id"))
+        node.style("background-color", cfg.colorSelection[1]);
+        var id = node.attr("id").replace(/\s/g, "");
+        var g = d3.select("#polygons");
+        var p_selected = d3.select("#polygon"+id);
+        var c_selected = "circle#"+id;
+        var l_selected = d3.selectAll("#path"+id);
+        var r_selected = d3.selectAll("#rect"+id);
+        var pca = d3.select("#pca_container");
+        var line = d3.select("#line_container")
+        var bar = d3.select("#bar_container");
+    
+        g.selectAll("polygon")
+            .transition(200)
+            .style("fill-opacity", 0);
+        bar.selectAll("rect")
+            .transition(200)
+            .style("fill-opacity", 0.2);
+        pca.selectAll("circle")
+            .transition(200)
+            .style("fill-opacity", 0); 
+        pca.selectAll(c_selected)
+            .transition(200)
+            .style("fill-opacity", 1);
+        line.selectAll("path")
+            .transition(200)
+            .style("stroke-opacity", 0.2);
+        line.selectAll("path.domain")
+            .transition(200)
+            .style("stroke-opacity", 1);
+    
+        p_selected.transition(200)
+            .style("fill-opacity", cfg.full_opacity);
+        l_selected.transition(200)
+            .style("stroke-opacity", 1);
+        r_selected.transition(200)
+            .style("fill-opacity", 1);
+    }
+    
+    function onMouseOut(node, cfg){
+        setSelectedCountry(null)
+        node.style("background-color", cfg.colorSelection[0]);
+        var g = d3.select("#polygons");
+        var pca = d3.select("#pca_container");
+        var line = d3.select("#line_container");
+        var bar = d3.select("#bar_container");
+    
+        pca.selectAll("circle")
+            .transition(200)
+            .style("fill-opacity", 1);
+        bar.selectAll("rect")
+            .transition(200)
+            .style("fill-opacity", 1);
+        g.selectAll("polygon")
+            .transition(200)
+            .style("fill-opacity", cfg.standard_opacity);
+        line.selectAll("path")
+            .transition(200)
+            .style("stroke-opacity", 1);
     }
 
     function drawChart(europeData, data) {

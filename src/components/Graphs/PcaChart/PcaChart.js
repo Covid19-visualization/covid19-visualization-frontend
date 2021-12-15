@@ -4,9 +4,10 @@ import * as d3 from 'd3'
 import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
-import {mock_pca_data, dbLabelDaily, dbLabelStatic, countries_colors, computeDim} from '../../../utils/utility';
+import {mock_pca_data, countries_colors, computeDim} from '../../../utils/utility';
 import "./PcaChart.css"
-import { MyPcaChart } from './Drawer';
+import { MyPcaChart, dbLabelDaily, dbLabelStatic } from './Drawer';
+import { CONST } from '../../../utils/const';
 
 const PCA = require('pca-js')
 const math = require('mathjs')
@@ -80,11 +81,14 @@ function PcaChart(props) {
     function insertPcaEntries(selectedData, pcaMatrix, countries){
         let countryMatrix = [];
         let pcaEntry = [];
+        console.log(type)
+        let len = type == CONST.CHART_TYPE.VACCINATIONS ? 10 : 6;
+        let count = type == CONST.CHART_TYPE.VACCINATIONS ? 6 : 0;
         for(var z = 0; z < selectedData.data.length; z++){
           for(var i = 0; i < dbLabelStatic.length; i++){
             pcaEntry.push(selectedData[dbLabelStatic[i]])
           }
-          for(var j = 0; j < dbLabelDaily.length; j++){
+          for(var j = count; j < len; j++){
             var value = selectedData.data[z][dbLabelDaily[j]]
             pcaEntry.push(value ? value : 0)
           }
@@ -114,8 +118,8 @@ function PcaChart(props) {
         var cfg = {
             innerWidth: innerWidth,
             innerHeight: innerHeight,
-            range_w: computeDim(500, 250, innerWidth, innerHeight)[0],
-            range_h: computeDim(500, 250, innerWidth, innerHeight)[1],
+            range_w: computeDim(260, 250, innerWidth, innerHeight)[0],
+            range_h: computeDim(400, 220, innerWidth, innerHeight)[1],
             w: computeDim(1000, 400, innerWidth, innerHeight)[0],
             h: computeDim(1000, 400, innerWidth, innerHeight)[1],
             lw: computeDim(250, 250, innerWidth, innerHeight)[0],

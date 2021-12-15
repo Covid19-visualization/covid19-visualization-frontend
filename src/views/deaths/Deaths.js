@@ -4,6 +4,7 @@ import LineChart from "../../components/Graphs/LineChart/LineChart";
 import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
 import BarChart from "../../components/Graphs/BarChart/BarChart";
+import PcaChart from "../../components/Graphs/PcaChart/PcaChart";
 
 import { CONST } from "../../utils/const";
 import "./Deaths.css";
@@ -29,16 +30,21 @@ const Deaths = () => {
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
-                    <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center" }}>
-                        <div className={"top-half"} style={{ width: "100%", height: "70%", backgroundColor: debug ? "azure" : null, justifyContent: "center", alignItems: "center" }}>
-                             <RadarChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth} /> 
+                    <div className={"first-component"} style={{ width: "100%", height: "100%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center"}}>
+                        <div className={"top-half"} style={{ width: "100%", height: "25%", backgroundColor: debug ? "azure" : null, justifyContent: "center", alignItems: "center" }}>
+                            <TableChart type={CONST.CHART_TYPE.VACCINATIONS} />
                         </div>
-                        <div className={"bottom-half"} style={{ width: "100%", height: "30%", backgroundColor: debug ? "grey" : null, justifyContent: "center", alignItems: "center" }}>
-                             <TableChart type={CONST.CHART_TYPE.VACCINATIONS} /> 
+                        <div className={"bottom-half"} style={{ width: "100%", height: "35%", backgroundColor: debug ? "grey" : null, justifyContent: "center", alignItems: "center" }}>
+                            <div className={"half1"} style={{ width: "50%%", height: "0%", backgroundColor: debug ? "orange" : null, justifyContent: "center", alignItems: "center" }}>
+                                <PcaChart type={CONST.CHART_TYPE.DEATHS} innerHeight={innerHeight} innerWidth={innerWidth} />
+                            </div>
+                            <div className={"half2"} style={{ width: "50%", height: "0%", backgroundColor: debug ? "black" : null, justifyContent: "center", alignItems: "center" }}>
+                                <RadarChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                            </div>
                         </div>
-                    </div>
-                    <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        <BarChart type={CONST.CHART_TYPE.DEATHS} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                        <div className={"second-component"} style={{ width: "100%", height: "40%%", backgroundColor: debug ? "purple" : null }}>
+                            <BarChart type={CONST.CHART_TYPE.DEATHS} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                        </div>
                     </div>
                 </div>
             </div>

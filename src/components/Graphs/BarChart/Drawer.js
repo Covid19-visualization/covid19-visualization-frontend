@@ -8,7 +8,7 @@ export const MyBarChart = {
     draw: function(id, data, cfg){
         d3.select(id).select("svg").remove();
 
-        const margin = {top: 10, right: 30, bottom: 20, left: 50};
+        const margin = {top: 30, right: 30, bottom: 20, left: 50};
         const tooltip = d3.select("#tooltipbarchart");
         var max = cfg.type != 0 ? getMaxPerc(data, cfg.type) + 1 : 100;
 
@@ -73,7 +73,7 @@ export const MyBarChart = {
                 .on('mouseover', function (event, d){
                     const mousePosition = d3.pointer(event);
 
-                    var proportion = computeDim(830, 480, cfg.props.innerWidth, cfg.props.innerHeight)
+                    var proportion = computeDim(830, 580, cfg.props.innerWidth, cfg.props.innerHeight)
 
                     var X = mousePosition[0] + proportion[0]
                     var Y = mousePosition[1] + proportion[1]

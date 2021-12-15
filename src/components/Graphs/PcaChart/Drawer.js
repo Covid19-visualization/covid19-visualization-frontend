@@ -2,13 +2,16 @@
 import * as d3 from 'd3';
 import "./PcaChart.css";
 import {computeDim} from '../../../utils/utility';
+import { prettyCounterHandler } from '../../../utils/utility'
+import { CONST } from '../../../utils/const';
 
 
 export const MyPcaChart = {
     draw: function(id, data, legendOptions, cfg){
-        const margin = {top: 40, right: 10, bottom: 0, left: 70};
+        const margin = {top: 40, right: 10, bottom: 0, left: 390};
 
         d3.select(id).select("svg").remove();
+        var FormatLong = (a) => prettyCounterHandler(a, CONST.COUNTER_HANDLER.LONG)
 
         // append the svg object to the body of the page
         var svg = d3.select(id)
@@ -31,7 +34,10 @@ export const MyPcaChart = {
 
         svg.append("g")
             .attr("transform", "translate(0," + cfg.range_h + ")")
-            .call(d3.axisBottom(x));
+            .call(
+                d3.axisBottom(x)
+                .tickFormat(function(d, i) {return i % 2 === 0 ? FormatLong(d) : null;})
+            );
 
         // Add Y axis
         var y = d3.scaleLinear()
@@ -39,7 +45,10 @@ export const MyPcaChart = {
             .range([ cfg.range_h, 0]);
 
         svg.append("g")
-            .call(d3.axisLeft(y));
+            .call(
+                d3.axisLeft(y)
+                .tickFormat(function(d, i) {return i % 2 === 0 ? FormatLong(d) : null;})
+            );
 
         // Add dots
         data.forEach(c => {
@@ -73,78 +82,32 @@ export const MyPcaChart = {
             
             });
         });
-
-        
-        ////////////////////////////////////////////
-        /////////////// LEGEND /////////////////////
-        ////////////////////////////////////////////
-
-        
-        var colorscale = cfg.color;
-
-        //Legend titles
-        var LegendOptions = legendOptions;
-
-        var svgl = d3.select(id)
-        .selectAll('svg')
-        .append('g')
-        .attr("width", cfg.lw)
-        .attr("height", cfg.lh)
-
-        //Create the title for the legend
-        var text = svgl.append("text")
-            .attr("class", "title")
-            .attr('transform', 'translate(90,10)') 
-            .attr("x", cfg.legend_pos_x)
-            .attr("y", cfg.legend_pos_y)
-            .attr("font-size", "15px")
-            .attr("fill", "#404040")
-            .text("Selected:");
-                
-        if(LegendOptions != null){
-            //Initiate Legend	
-            var legend = svgl.append("g")
-                .attr("class", "legend")
-                .attr('transform', 'translate(90,-20)') ;
-            
-            //Create colour squares
-            legend.selectAll('rect')
-            .data(LegendOptions).enter()
-            .append("rect")
-            .attr("x", cfg.lw + computeDim(230, 0, cfg.innerWidth, cfg.innerHeight)[0])
-            .attr("y", function(d, i){ return 70 + (i * 20);})
-            .attr("id", function(d){return (d.country).replace(/\s/g, "");})
-            .attr("width", 10)
-            .attr("height", 10)
-            .style("fill", function(d, i){ return colorscale[d.country];})
-            .on('mouseover', function (c){
-                var id = d3.select(this).attr('id')
-                var z = "circle#"+id;
-                svg.selectAll("circle")
-                .transition(200)
-                .style("fill-opacity", 0); 
-                svg.selectAll(z)
-                .transition(200)
-                .style("fill-opacity", 1);
-            })
-            .on('mouseout', function(){
-                svg.selectAll("circle")
-                .transition(200)
-                .style("fill-opacity", 1);
-            });
-            ;
-            
-
-            //Create text next to squares
-            legend.selectAll('text')
-                .data(LegendOptions).enter()
-                .append("text")
-                .attr("x", cfg.lw + computeDim(250, 0, cfg.innerWidth, cfg.innerHeight)[0])
-                .attr("y", function(d, i){ return 70 + (i * 20 + 9);})
-                .attr("font-size", "12px")
-                .attr("fill", "#737373")
-                .text(function(d) { return d.country; });  
-        }
-        
     }
 }
+
+export const dbLabelStatic = [
+    "population",
+    "total_cases",
+    "population_density",
+    "median_age",
+    "gdp_per_capita",
+    "cardiovasc_death_rate",
+    "diabetes_prevalence",
+    "female_smokers",
+    "male_smokers",
+    "life_expectancy",
+    "human_development_index"
+]
+
+export const dbLabelDaily = [
+    "new_cases",
+    "new_cases_smoothed",
+    "total_deaths",
+    "new_deaths",
+    "new_deaths_smoothed",
+    "stringency_index",
+    "new_vaccinations_smoothed",
+    "people_fully_vaccinated",
+    "people_vaccinated",
+    "total_boosters"
+]

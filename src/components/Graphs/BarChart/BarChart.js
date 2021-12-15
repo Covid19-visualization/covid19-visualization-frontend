@@ -52,7 +52,7 @@ function BarChart(props) {
 
     function drawChart(data) {
 
-        var dim = computeDim(500, 310, innerWidth, innerHeight)
+        var dim = computeDim(500, 210, innerWidth, innerHeight)
         var w = dim[0], h = dim[1];
         
         var cfg = {
