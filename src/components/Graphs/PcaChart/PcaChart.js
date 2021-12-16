@@ -62,7 +62,6 @@ function PcaChart(props) {
         for(var i = 0; i < selectedData.length; i++){
             updateCountryMatrix(countries[i], vectors);
         }  
-
         drawChart(true, countries);
     }
 
@@ -81,7 +80,6 @@ function PcaChart(props) {
     function insertPcaEntries(selectedData, pcaMatrix, countries){
         let countryMatrix = [];
         let pcaEntry = [];
-        console.log(type)
         let len = type == CONST.CHART_TYPE.VACCINATIONS ? 10 : 6;
         let count = type == CONST.CHART_TYPE.VACCINATIONS ? 6 : 0;
         for(var z = 0; z < selectedData.data.length; z++){

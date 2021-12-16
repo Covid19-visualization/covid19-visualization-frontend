@@ -87,7 +87,8 @@ function GeoChart(props) {
       .data(data2)
       .join("path")
       .on("click", (e, feature) => {
-        handleCountrySelection(feature.properties.NAME);
+        if(getType(type, feature).feature != null)
+          handleCountrySelection(feature.properties.NAME);
       })
       .attr("class", "country")
       .transition()
@@ -95,27 +96,15 @@ function GeoChart(props) {
       .attr("fill", feature => colorScale(getType(type, feature).feature))
       .attr("d", feature => pathGenerator(feature));
 
+    /*
     if(selected != null){
-      var tooltip = svg.append("div")
-        .attr("id", "tooltipgeochart")
-        .attr("class", "tooltipgeochart")
-        .append("div")
-        .attr("class", "tooltipgeochart-value")
-        .append("span")
-        .attr("id", "value")
-
+      var tooltip = d3.select(".tooltipgeochart-value")
         tooltipText = `<h3 style='color: ${countries_colors[selected._id]}'>${selected._id}</h3>`;
         tooltip.style("visibility", "visible")
-        tooltip.attr("transform", `translate(0, 0)`)
+        tooltip.attr("transform", `translate(50, 50)`)
         tooltip.select("#value").html(tooltipText);
-        /*
-        `<a style='color: ${cfg.colorSelection[2]}'">Share of <b>positives</b>/population: </a>${Format(d.data.deaths + d.data.cases + d.data.deaths2)}%` +
-        "<br>" + 
-        `<a style='color: ${cfg.colorSelection[1]}'">Share of <b>deaths</b>/positives: </a>${Format(d.data.deaths2 + d.data.deaths)}%` +
-        "<br>" + 
-        `<a style='color: ${cfg.colorSelection[0]}'">Share of <b>deaths</b>/population: </a>${Format(d.data.deaths)}%`;
-        */
     }
+    */
   }
 
   return (

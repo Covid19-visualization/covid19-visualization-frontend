@@ -42,9 +42,6 @@ export function legend({
         .style("display", "block");
     
     let x;
-
-    console.log(ticks)
-    console.log(tickSize)
     
       // Continuous
     if (color.interpolator) {
