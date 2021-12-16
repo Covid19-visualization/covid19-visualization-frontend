@@ -40,7 +40,7 @@ function GeoChart(props) {
     const svg = select(svgRef.current)
       .attr('transform', 'translate(0, -40)')
       .attr("viewBox", [0, 0, width, height])
-
+    
     let data2 = []
     for(let i=0; i<data.features.length; i++) {
       data2.push({
@@ -48,7 +48,7 @@ function GeoChart(props) {
         ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.NAME))}
       );
     }
-
+    
     var tooltipText = "";
 
     //coloring the map
@@ -74,7 +74,7 @@ function GeoChart(props) {
     // projects geo-coordinates on a 2D plane
     var selected = getFeature(data2, selectedCountry)
     var projection = geoMercator()
-      .fitSize([width, height], selected == null ? data : selected) //2.3 1.8
+      .fitSize([width, height], selected == null ? data : selected) 
       .precision(100)
 
     // takes geojson data,
