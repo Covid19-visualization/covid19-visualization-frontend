@@ -64,7 +64,7 @@ function GeoChart(props) {
       feature.total_vaccinations : feature.total_cases);
     const maxProp = max(data2, feature => type === CONST.CHART_TYPE.VACCINATIONS ? 
       feature.total_vaccinations : feature.total_cases);
-    console.log(minProp, maxProp)
+    //console.log(minProp, maxProp)
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
       .range(["#ccc", "red"]);

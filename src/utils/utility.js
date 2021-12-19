@@ -41,8 +41,8 @@ export function differenceBetweenDays(from, to) {
 
 export function prettyCounterHandler(counter, type) {
     return type === CONST.COUNTER_HANDLER.LONG
-        ? (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + " M" : (counter / CONST.THOUSAND).toFixed(1) >= 1 ? (counter / CONST.THOUSAND).toFixed(1) + " k" : (counter / CONST.THOUSAND).toFixed(1)
-        : (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + "M" : (counter / CONST.THOUSAND).toFixed(1) >= 1 ? (counter / CONST.THOUSAND).toFixed(1) + "k" : (counter / CONST.THOUSAND).toFixed(1)
+        ? (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + " M" : (counter / CONST.THOUSAND).toFixed(1) >= 1 ? (counter / CONST.THOUSAND).toFixed(1) + " k" : (counter)
+        : (counter / CONST.MILION).toFixed(1) >= 1 ? (counter / CONST.MILION).toFixed(1) + "M" : (counter / CONST.THOUSAND).toFixed(1) >= 1 ? (counter / CONST.THOUSAND).toFixed(1) + "k" : (counter)
 }
 
 export function parseData(from, to, data) {
@@ -61,7 +61,7 @@ export function parseData(from, to, data) {
                 
                 if (!countries.includes(id.name)) {
                     let radarData = insertRadarEntry(data);
-                    selectedCountriesDataByName.push({ id: id.name, cases: [], vaccinations: [], radarData: radarData })
+                    selectedCountriesDataByName.push({ id: id.name, cases: [], vaccinations: [], deaths: [], radarData: radarData })
                     countries.push(id.name);
                 }
                 if (currentDay >= from && currentDay <= to) {
@@ -89,6 +89,8 @@ export function parseData(from, to, data) {
             selectedCountriesDataByName.map((country) => {
                 country.cases.sort(function (a, b) { return a.date - b.date; });
                 country.vaccinations.sort(function (a, b) { return a.date - b.date; });
+                country.deaths.sort(function (a, b) { return a.date - b.date; });
+
             })
         }
 
@@ -160,21 +162,21 @@ function generateAndInsertEntry(day, country, currentDay, vaccinations, cases, d
     let vaccinationEntry = {
         label: country._id,
         value: value.vaccinations,
-        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: ${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
+        tooltipContent: `<b>Vaccinations</b><br/><b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: ${prettyCounterHandler(value.vaccinations, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     };
 
     let casesEntry = {
         label: country._id,
         value: value.cases,
-        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
+        tooltipContent: `<b>Cases</b><br/><b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.cases, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     }
 
     let deathEntry = {
         label: country._id,
         value: value.deaths,
-        tooltipContent: `<b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.deaths, CONST.COUNTER_HANDLER.LONG)}`,
+        tooltipContent: `<b>Deaths</b><br/><b>${visualizeDate(currentDay)}<br/></b><b>${country._id}</b>: </b>${prettyCounterHandler(value.deaths, CONST.COUNTER_HANDLER.LONG)}`,
         date: currentDay,
     };
 
@@ -201,10 +203,18 @@ function generateAndInsertEntryByCountry(data, currentDay, selectedCountriesData
         date: currentDay,
     }
 
+    let deathsEntry = {
+        label: id.name,
+        value: value.deaths,
+        tooltipContent: `<br/><b>${id.name}</b>: </b>${prettyCounterHandler(value.deaths, CONST.COUNTER_HANDLER.LONG)}`,
+        date: currentDay,
+    }
+
     selectedCountriesData.map((item) => {
         if (item.id == id.name) {
             item.vaccinations.push(vaccinatioEntry);
             item.cases.push(casesEntry);
+            item.deaths.push(deathsEntry);
         }
     })
 
@@ -215,15 +225,16 @@ function valueAssembler(day) {
 }
 
 function newCasesInDate(day) {
-    return day.new_cases ? day.new_cases : day.new_cases_smoothed ? day.new_cases_smoothed : 0;
+    return day.new_cases? day.new_cases : 0;
 }
 
 function newVaccinationsInDate(day) {
-    return day.new_vaccinations_smoothed ? day.new_vaccinations_smoothed : 0;
+
+    return day.new_vaccinations ? day.new_vaccinations : 0;
 }
 
 function newDeathsInDate(day) {
-    return day.new_deaths ? day.new_deaths : day.new_deaths_smoothed ? day.new_deaths_smoothed : 0;
+    return day.new_deaths ? Math.round(day.new_deaths) : 0;
 }
 
 export const mock_pca_data = [

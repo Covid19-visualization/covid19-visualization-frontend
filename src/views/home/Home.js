@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from "react";
-import FlagButton from "../../components/Buttons/flag/FlagButton";
+import FlagButton from "../../components/Buttons/Flag/FlagButton";
 import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
 import Cases from "../cases/Cases";
@@ -55,7 +55,7 @@ const Home = () => {
 
                 </div>
                 <div className="container_graph" style={{ borderRadius: 5, padding: 0 }}>
-                    {isCasesVisualization > 0 ? (isCasesVisualization > 1 ? <Deaths /> : <Vaccinations /> ): <Cases />}
+                    {isCasesVisualization > 0 ? (isCasesVisualization > 1 ? <Deaths /> : <Vaccinations /> ) : <Cases />}
                 </div>
             </div>
         </>

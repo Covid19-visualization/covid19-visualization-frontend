@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../Buttons/Button";
 import './Navbar.css';
-import FlagButton from "../Buttons/flag/FlagButton";
+import FlagButton from "../Buttons/Flag/FlagButton";
 import SearchBar from "../SearchBar/SearchBar";
 import CustomCalendar from "../Calendar/CustomCalendar";
 import { DateHandler, getLastPeriod } from "../../utils/utility";

@@ -15,7 +15,7 @@ function lineWidth() {
 }
 
 
-export function drawChart(europeFiltered, europeDeaths, selectedCountriesFiltered, width, height, type, showEuropeData) {
+export function drawChart(europeFiltered, selectedCountriesFiltered, width, height, type, showEuropeData) {
     const colorscale = d3.scaleOrdinal(d3.schemeCategory10)
 
     const svg =
@@ -49,10 +49,7 @@ export function drawChart(europeFiltered, europeDeaths, selectedCountriesFiltere
     else {
         let maxValue = 0;
         selectedCountriesFiltered.map((country) => {
-            let currentMax =
-                type == CONST.CHART_TYPE.VACCINATIONS
-                    ? d3.max(country.vaccinations, yAccessor)
-                    : d3.max(country.cases, yAccessor)
+            let currentMax = getCurrentMax(type, country, yAccessor)
             if (currentMax > maxValue) maxValue = currentMax;
         })
         yScale = d3
@@ -239,7 +236,9 @@ export function drawChart(europeFiltered, europeDeaths, selectedCountriesFiltere
     function assembleCirclePointerSelectedCountries() {
 
         selectedCountriesFiltered.map((data, index) => {
-            let typedDate = type == CONST.CHART_TYPE.VACCINATIONS ? data.vaccinations : data.cases;
+            let typedDate= filterDataByType(data, type);
+            console.log(typedDate)
+
             if (typedDate.length > 0) {
                 const color = colorscale(index);
                 bounds
@@ -247,7 +246,7 @@ export function drawChart(europeFiltered, europeDeaths, selectedCountriesFiltere
                     .attr("d", lineGenerator(typedDate))
                     .attr("id", "path"+data.id.replace(/\s/g, ""))
                     .attr("fill", "none")
-                    .attr("stroke", color) //TODO will be randomized
+                    .attr("stroke", color)
                     .attr("stroke-width", lineWidth())
                     .attr("stroke-linejoin", "round")
                     .attr("stroke-linecap", "round")
@@ -268,4 +267,31 @@ export function drawChart(europeFiltered, europeDeaths, selectedCountriesFiltere
         });
     }
 
+    function filterDataByType(data, type) {
+        switch (type) {
+            case CONST.CHART_TYPE.VACCINATIONS:
+                return data.vaccinations;
+            case CONST.CHART_TYPE.CASES:
+                return data.cases;
+            case CONST.CHART_TYPE.DEATHS:
+                return data.deaths
+            default:
+                break;
+        }
+    }
+
 }
+function getCurrentMax(type, country, yAccessor) {
+    switch (type) {
+        case CONST.CHART_TYPE.VACCINATIONS:
+            return  d3.max(country.vaccinations, yAccessor);
+        case CONST.CHART_TYPE.CASES:
+            return d3.max(country.cases, yAccessor);
+        case CONST.CHART_TYPE.DEATHS:
+            return d3.max(country.deaths, yAccessor);
+        default:
+            break;
+    }
+ 
+}
+

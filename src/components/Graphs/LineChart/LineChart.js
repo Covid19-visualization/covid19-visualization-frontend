@@ -20,16 +20,14 @@ function LineChart(props) {
     const [showEuropeData, setShowEuropeData] = useState(true)
 
     useEffect(() => {
-        var europeFiltered = type == CONST.CHART_TYPE.VACCINATIONS ? europeData.vaccinations : europeData.cases;
-
+        var europeFiltered = filterDataByType(type, europeData);
         if (europeFiltered.length > 0) {
-            drawChart(europeFiltered, europeData.deaths, selectedCountriesDataByName, width, height, type, showEuropeData);
+            drawChart(europeFiltered, selectedCountriesDataByName, width, height, type, showEuropeData);
         }
 
     }, [selectedCountriesDataByName, showEuropeData]);
 
     function handleShowEuropeData(isVisible) {
-        console.log(isVisible);
         setShowEuropeData(() => isVisible);
     }
 
@@ -53,4 +51,17 @@ function LineChart(props) {
 }
 
 export default LineChart;
+
+function filterDataByType(type, europeData) {
+    switch (type) {
+        case CONST.CHART_TYPE.VACCINATIONS:
+            return europeData.vaccinations;
+        case CONST.CHART_TYPE.CASES:
+            return europeData.cases;
+        case CONST.CHART_TYPE.DEATHS:
+            return europeData.deaths
+        default:
+            break;
+    }
+}
 

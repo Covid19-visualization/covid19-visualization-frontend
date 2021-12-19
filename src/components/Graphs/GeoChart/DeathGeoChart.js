@@ -62,7 +62,7 @@ function GeoChart(props) {
     //coloring the map
     const minProp = min(data2, feature => feature.total_new_deaths);
     const maxProp = max(data2, feature => feature.total_new_deaths);
-    console.log(minProp, maxProp)
+
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
       .range(["#ccc", "red"]);
