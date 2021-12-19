@@ -2,3 +2,9 @@
     /* background-color: aquamarine; */
     border-radius: 5px;
   }
+
+svg .country:hover {
+    stroke: black;
+    stroke-width: 0.3px;
+    cursor: pointer;
+  }

@@ -100,16 +100,17 @@ export function parseData(from, to, data) {
 }
 
 function insertEuropeRadarEntry(country) {
+
     return {
-        life_expectancy: country.life_expectancy / 51,
-        population_density: country.population_density / 51,
-        gdp_per_capita: country.gdp_per_capita / 51,
-        human_development_index: country.human_development_index / 51,
-        cardiovasc_death_rate: country.cardiovasc_death_rate / 51,
-        diabetes_prevalence: country.diabetes_prevalence / 51,
-        male_smokers: country.male_smokers / 51,
-        female_smokers: country.female_smokers / 51,
-        median_age: country.median_age / 51,
+        life_expectancy: country.life_expectancy / 39,
+        population_density: country.population_density / 39,
+        gdp_per_capita: country.gdp_per_capita / 39,
+        human_development_index: country.human_development_index / 39,
+        cardiovasc_death_rate: country.cardiovasc_death_rate / 39,
+        diabetes_prevalence: country.diabetes_prevalence / 39,
+        male_smokers: country.male_smokers / 39,
+        female_smokers: country.female_smokers / 39,
+        median_age: country.median_age / 39,
         population: country.population
     };
 }
@@ -127,6 +128,8 @@ function insertEuropeBarEntry(country) {
     let last_vacc = sortByItem(country, "people_vaccinated")
     let last_fully = sortByItem(country, "people_fully_vaccinated")
     let last_total_d = sortByItem(country, "total_deaths")
+    let last_total_b = sortByItem(country, "total_boosters")
+    let last_total_s = sortByItem(country, "stringency_index")
     
     let reducer = (accumulator, curr) => accumulator + curr;
     let total_cases = last_total_d.total_cases.map(x => parseInt(x))
@@ -137,7 +140,9 @@ function insertEuropeBarEntry(country) {
         people_fully_vaccinated: last_fully.people_fully_vaccinated,
         people_vaccinated: last_vacc.people_vaccinated,
         total_deaths: last_total_d.total_deaths,
-        total_cases: total_cases.reduce(reducer)
+        total_cases: total_cases.reduce(reducer),
+        total_boosters: last_total_b.total_boosters,
+        stringency_index: last_total_s.stringency_index / 39
     };
 }
 
@@ -241,91 +246,6 @@ export const mock_pca_data = [
     { country: "", pca: [[0, 0]] }
 ];
 
-export const dbLabelStatic = [
-    "population",
-    "total_cases",
-    "population_density",
-    "median_age",
-    "gdp_per_capita",
-    "extreme_poverty",
-    "cardiovasc_death_rate",
-    "diabetes_prevalence",
-    "female_smokers",
-    "male_smokers",
-    "life_expectancy",
-    "human_development_index"
-]
-
-export const dbLabelDaily = [
-    "new_cases",
-    "new_cases_smoothed",
-    "total_deaths",
-    "new_deaths",
-    "new_deaths_smoothed",
-    "new_deaths_per_million",
-    "reproduction_rate",
-    "positive_rate",
-    "tests_per_case",
-    "stringency_index",
-    "new_vaccinations_smoothed",
-    "people_fully_vaccinated",
-    "people_vaccinated"
-]
-
-export const countriesNames = [
-    "Netherlands",
-    "North Macedonia",
-    "Switzerland",
-    "Latvia",
-    "Slovenia",
-    "Bulgaria",
-    "Cyprus",
-    "Croatia",
-    "Czechia",
-    "Isle of Man",
-    "Jersey",
-    "Monaco",
-    "France",
-    "Austria",
-    "Estonia",
-    "Slovakia",
-    "Sweden",
-    "Lithuania",
-    "San Marino",
-    "Denmark",
-    "Belgium",
-    "Russia",
-    "Serbia",
-    "Hungary",
-    "Greece",
-    "Guernsey",
-    "Bosnia and Herzegovina",
-    "Faeroe Islands",
-    "Kosovo",
-    "Gibraltar",
-    "Finland",
-    "Ireland",
-    "Liechtenstein",
-    "Belarus",
-    "Moldova",
-    "Spain",
-    "Poland",
-    "Iceland",
-    "Romania",
-    "Italy",
-    "Andorra",
-    "Malta",
-    "Germany",
-    "Albania",
-    "Montenegro",
-    "Norway",
-    "Luxembourg",
-    "Portugal",
-    "Ukraine",
-    "Vatican",
-    "United Kingdom"
-]
-
 export function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
@@ -338,3 +258,51 @@ export function getRandomColor() {
 export var countries_colors = {
     "Europe": "#003399"
 };
+
+export function computeDim(w, h, innerWidth, innerHeight){
+    var ww = (w * innerWidth) / 1440;
+    var hh = (h * innerHeight) / 821;
+    return [ww, hh];
+}
+
+export const countriesNames = [
+    "Netherlands",
+    "Switzerland",
+    "Latvia",
+    "Slovenia",
+    "Bulgaria",
+    "Cyprus",
+    "Croatia",
+    "Czechia",
+    "France",
+    "Austria",
+    "Estonia",
+    "Slovakia",
+    "Sweden",
+    "Lithuania",
+    "Denmark",
+    "Belgium",
+    "Russia",
+    "Serbia",
+    "Hungary",
+    "Greece",
+    "Bosnia and Herzegovina",
+    "Finland",
+    "Ireland",
+    "Belarus",
+    "Moldova",
+    "Spain",
+    "Poland",
+    "Iceland",
+    "Romania",
+    "Italy",
+    "Malta",
+    "Germany",
+    "Albania",
+    "Montenegro",
+    "Norway",
+    "Luxembourg",
+    "Portugal",
+    "Ukraine",
+    "United Kingdom"
+]

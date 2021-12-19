@@ -11,44 +11,49 @@ import { regenerateData, } from "../../utils/utility";
 import "./Cases.css";
 import GeoData from "../Europe.geo.json";
 import GeoChart from "../../components/Graphs/GeoChart/GeoChart";
+import BarChart from "../../components/Graphs/BarChart/BarChart";
+
+import { Row, Col} from 'react-bootstrap';
 
 
 const Cases = () => {
 
     const debug = false;
-    const height = window.innerHeight;
-    const width = window.innerWidth;
+    const innerHeight = window.innerHeight;
+    const innerWidth = window.innerWidth;
     const { selectedCountries } = useContext(Context);
-
 
     return (
         <>
             <div className={"vaccination-container"} style={{ width: "100%", height: "100%", display: "flex", backgroundColor: debug ? "beige" : null }} >
                 <div className={"first-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
                     <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "blue" : null }} >
-                        <GeoChart data={GeoData} type={CONST.CHART_TYPE.CASES} />
+                        <canvas id="my_dataviz" width="583" height="100"></canvas>
+                        <GeoChart data={GeoData} type={CONST.CHART_TYPE.CASES} width = {200} height = {100} />
                     </div>
 
                     <div className={"second-component"} style={{ width: "100%", height: "40%", backgroundColor: debug ? "brown" : null }} >
-                        <LineChart width={600} height={300} type={CONST.CHART_TYPE.CASES} />
+                        <LineChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth} />
                     </div>
                 </div>
                 <div className={"second-half-container"} style={{ width: "50%", height: "100%", backgroundColor: debug ? "green" : null, flex: 0.5 }}>
-                    <div className={"first-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center"}}>
-                        <div className={"top-half"} style={{ width: "100%", height: "70%", backgroundColor: debug ? "azure" : null, justifyContent: "center", alignItems: "center" }}>
-                            <RadarChart type={CONST.CHART_TYPE.CASES} />
-                        </div>
-                        <div className={"bottom-half"} style={{ width: "100%", height: "30%", backgroundColor: debug ? "grey" : null, justifyContent: "center", alignItems: "center" }}>
+                    <div className={"first-component"} style={{ width: "100%", height: "100%", backgroundColor: debug ? "yellow" : null, justifyContent: "center", alignItems: "center"}}>
+                        <div className={"top-half"} style={{ width: "100%", height: "25%", backgroundColor: debug ? "azure" : null, justifyContent: "center", alignItems: "center" }}>
                             <TableChart type={CONST.CHART_TYPE.CASES} />
                         </div>
-                    </div>
-                    <div className={"second-component"} style={{ width: "100%", height: "50%", backgroundColor: debug ? "purple" : null }}>
-                        <PcaChart />
+                        <div className={"bottom-half"} style={{ width: "100%", height: "35%", backgroundColor: debug ? "grey" : null, justifyContent: "center", alignItems: "center" }}>
+                            <div className={"half1"} style={{ width: "50%%", height: "0%", backgroundColor: debug ? "orange" : null, justifyContent: "center", alignItems: "center" }}>
+                                <PcaChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth} />
+                            </div>
+                            <div className={"half2"} style={{ width: "50%", height: "0%", backgroundColor: debug ? "black" : null, justifyContent: "center", alignItems: "center" }}>
+                                <RadarChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                            </div>
+                        </div>
+                        <div className={"second-component"} style={{ width: "100%", height: "40%%", backgroundColor: debug ? "purple" : null }}>
+                            <BarChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                        </div>
                     </div>
                 </div>
-
-                {/* <BarChart data={data} /> */}
-
             </div>
         </>
     );

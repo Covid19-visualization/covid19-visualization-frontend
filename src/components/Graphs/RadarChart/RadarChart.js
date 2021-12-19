@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
-import {countries_colors } from '../../../utils/utility';
+import {countries_colors, computeDim } from '../../../utils/utility';
 import { CONST } from '../../../utils/const';
 import { MyRadarChart } from './Drawer';
 
@@ -10,17 +10,19 @@ import "./RadarChart.css"
 
 function RadarChart(props) {
 
-    const type = props.type;
+    const {type, innerHeight, innerWidth} = props;
 
     const { europeData, selectedCountriesDataByName } = useContext(Context);
     
     useEffect(() => { 
         drawChart(europeData, selectedCountriesDataByName);
     }, [europeData, selectedCountriesDataByName])
-    
 
     function drawChart(europeData, countriesData) {
-        var w = 250, h = 250;
+
+        var dim = computeDim(220, 220, innerWidth, innerHeight)
+        var w = dim[0], h = dim[1];
+
 
         //Options for the Radar chart, other than default
         var cfg = {
@@ -61,7 +63,7 @@ function RadarChart(props) {
                 newData.push({axis: "Population density / 10", value: country.radarData.population_density / 10})
                 newData.push({axis: "Life Expect", value: country.radarData.life_expectancy})
                 newData.push({axis: "GDP per Capita / 1000", value: country.radarData.gdp_per_capita / 1000})
-                newData.push({axis: "Median age", value: country.radarData.median_age})
+                newData.push({axis: "Age", value: country.radarData.median_age})
                 newData.push({axis: "HDI", value: country.radarData.human_development_index * 100})
     
                 radarData.push(newData);
@@ -72,9 +74,9 @@ function RadarChart(props) {
                 var newData = []
                 newData.push({axis: "Population density / 10", value: country.radarData.population_density / 10})
                 newData.push({axis: "Smokers", value: country.radarData.male_smokers + country.radarData.female_smokers})
-                newData.push({axis: "Cardiovasc death rate / 10", value: country.radarData.cardiovasc_death_rate / 5})
+                newData.push({axis: "Cardiovasc death rate / 5", value: country.radarData.cardiovasc_death_rate / 5})
                 newData.push({axis: "Diabetes prevalence", value: country.radarData.diabetes_prevalence })
-                newData.push({axis: "Median age", value: country.radarData.median_age})
+                newData.push({axis: "Age", value: country.radarData.median_age})
     
                 radarData.push(newData);
             });

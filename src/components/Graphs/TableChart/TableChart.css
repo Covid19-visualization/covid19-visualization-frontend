@@ -5,10 +5,10 @@
 .table {
     width: 100%;
     max-width: 85%;
-    max-height:95px;
+    max-height:230px;
 
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
     margin-left: 1rem;
     border-radius: 1rem;
     overflow:auto;

@@ -18,7 +18,6 @@ const SearchBar = (props) => {
 
     useEffect(() => {
         setFilteredList(countries)
-        //console.log(countries)
     }, [countries])
 
 

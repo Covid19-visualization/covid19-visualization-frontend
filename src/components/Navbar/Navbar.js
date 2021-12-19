@@ -110,7 +110,7 @@ function Navbar() {
           </div>
 
           <Link to="/" className="navbar-logo">
-            Covid19 Visualyzer
+            EU CoVis-19
           </Link>
 
           <SearchBar visible={visible} />

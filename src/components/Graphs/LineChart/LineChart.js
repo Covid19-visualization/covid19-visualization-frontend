@@ -7,9 +7,15 @@ import SelectorButton from '../../../components/Buttons/Selector/SelectorButton'
 import './LineChart.css';
 import { compositionDependencies } from 'mathjs';
 import { colors } from '../../../utils/colors';
+import {computeDim } from '../../../utils/utility';
+
 
 function LineChart(props) {
-    const { width, height, type } = props;
+    const { innerWidth, innerHeight, type } = props;
+
+    var width = 600, height=300;
+
+    var dim = computeDim(width, height, innerWidth, innerHeight);
 
     const { europeData, selectedCountriesDataByName } = useContext(Context);
     const europePath = {
@@ -22,7 +28,7 @@ function LineChart(props) {
     useEffect(() => {
         var europeFiltered = filterDataByType(type, europeData);
         if (europeFiltered.length > 0) {
-            drawChart(europeFiltered, selectedCountriesDataByName, width, height, type, showEuropeData);
+            drawChart(europeFiltered, selectedCountriesDataByName, dim[0], dim[1], type, showEuropeData);
         }
 
     }, [selectedCountriesDataByName, showEuropeData]);

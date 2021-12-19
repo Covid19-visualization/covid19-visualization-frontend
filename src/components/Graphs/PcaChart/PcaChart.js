@@ -4,9 +4,10 @@ import * as d3 from 'd3'
 import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
-import {mock_pca_data, dbLabelDaily, dbLabelStatic} from '../../../utils/utility';
+import {mock_pca_data, countries_colors, computeDim} from '../../../utils/utility';
 import "./PcaChart.css"
-import { MyPcaChart } from './Drawer';
+import { MyPcaChart, dbLabelDaily, dbLabelStatic } from './Drawer';
+import { CONST } from '../../../utils/const';
 
 const PCA = require('pca-js')
 const math = require('mathjs')
@@ -14,6 +15,7 @@ const math = require('mathjs')
 
 function PcaChart(props) {
 
+    const {type, innerHeight, innerWidth} = props;
     var pcaData;
 
     var min_x = 0, max_x = 0, min_y = 0, max_y = 0;
@@ -60,7 +62,6 @@ function PcaChart(props) {
         for(var i = 0; i < selectedData.length; i++){
             updateCountryMatrix(countries[i], vectors);
         }  
-
         drawChart(true, countries);
     }
 
@@ -79,11 +80,13 @@ function PcaChart(props) {
     function insertPcaEntries(selectedData, pcaMatrix, countries){
         let countryMatrix = [];
         let pcaEntry = [];
+        let len = type == CONST.CHART_TYPE.VACCINATIONS ? 10 : 6;
+        let count = type == CONST.CHART_TYPE.VACCINATIONS ? 6 : 0;
         for(var z = 0; z < selectedData.data.length; z++){
           for(var i = 0; i < dbLabelStatic.length; i++){
             pcaEntry.push(selectedData[dbLabelStatic[i]])
           }
-          for(var j = 0; j < dbLabelDaily.length; j++){
+          for(var j = count; j < len; j++){
             var value = selectedData.data[z][dbLabelDaily[j]]
             pcaEntry.push(value ? value : 0)
           }
@@ -109,16 +112,23 @@ function PcaChart(props) {
 
     function drawChart(data, countries) {
         //Options for the Radar chart, other than default
+        
         var cfg = {
-            w: 1000,
-            h: 400,
-            lw: 250,
-            lh: 250,
+            innerWidth: innerWidth,
+            innerHeight: innerHeight,
+            range_w: computeDim(260, 250, innerWidth, innerHeight)[0],
+            range_h: computeDim(400, 220, innerWidth, innerHeight)[1],
+            w: computeDim(1000, 400, innerWidth, innerHeight)[0],
+            h: computeDim(1000, 400, innerWidth, innerHeight)[1],
+            lw: computeDim(250, 250, innerWidth, innerHeight)[0],
+            lh: computeDim(250, 250, innerWidth, innerHeight)[1],
+            legend_pos_x: computeDim(480, 20, innerWidth, innerHeight)[0],
+            legend_pos_y: computeDim(480, 20, innerWidth, innerHeight)[1],
             max_x: max_x,
             min_x: min_x,
             max_y: max_y,
             min_y: min_y,
-            color: d3.scaleOrdinal(d3.schemeCategory10)
+            color: countries_colors
         };
         if(data){
             MyPcaChart.draw("#pca_container", pcaData, countries, cfg);
