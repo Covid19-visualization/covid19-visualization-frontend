@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import { CONST } from "./const";
+import * as d3 from 'd3';
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -255,10 +256,6 @@ export function getRandomColor() {
     return color;
 };
 
-export var countries_colors = {
-    "Europe": "#003399"
-};
-
 export function computeDim(w, h, innerWidth, innerHeight){
     var ww = (w * innerWidth) / 1440;
     var hh = (h * innerHeight) / 821;
@@ -306,3 +303,75 @@ export const countriesNames = [
     "Ukraine",
     "United Kingdom"
 ]
+
+export function onClick(id, cfg){
+    d3.select("tr#"+id).style("background-color", cfg.colorInteraction[1]);
+    //var id = node.attr("id").replace(/\s/g, "");
+    var g = d3.select("#polygons");
+    var p_selected = d3.select("#polygon"+id);
+    var c_selected = "circle#"+id;
+    var l_selected = d3.selectAll("#path"+id);
+    var r_selected = d3.selectAll("#rect"+id);
+    var par_selected = d3.selectAll("#line"+id)
+
+    var pca = d3.select("#pca_container");
+    var line = d3.select("#line_container")
+    var bar = d3.select("#bar_container");
+    var par = d3.select("#paral_container")
+
+    g.selectAll("polygon")
+        .transition(200)
+        .style("fill-opacity", 0);
+    bar.selectAll("rect")
+        .transition(200)
+        .style("fill-opacity", 0.2);
+    pca.selectAll("circle")
+        .transition(200)
+        .style("fill-opacity", 0); 
+    pca.selectAll(c_selected)
+        .transition(200)
+        .style("fill-opacity", 1);
+    line.selectAll("path")
+        .transition(200)
+        .style("stroke-opacity", 0.2);
+    line.selectAll("path.domain")
+        .transition(200)
+        .style("stroke-opacity", 1);
+    par.selectAll("path")
+        .transition(200)
+        .style("stroke-opacity", 0.2);
+
+    p_selected.transition(200)
+        .style("fill-opacity", cfg.full_opacity);
+    l_selected.transition(200)
+        .style("stroke-opacity", 1);
+    r_selected.transition(200)
+        .style("fill-opacity", 1);
+    par_selected.transition(200)
+        .style("stroke-opacity", 1);
+}
+
+export function onMouseOut(id, cfg){
+    d3.selectAll("tr").style("background-color", cfg.colorInteraction[0]);
+    var g = d3.select("#polygons");
+    var pca = d3.select("#pca_container");
+    var line = d3.select("#line_container");
+    var bar = d3.select("#bar_container");
+    var par = d3.select("#paral_container")
+
+    pca.selectAll("circle")
+        .transition(200)
+        .style("fill-opacity", 1);
+    bar.selectAll("rect")
+        .transition(200)
+        .style("fill-opacity", 1);
+    g.selectAll("polygon")
+        .transition(200)
+        .style("fill-opacity", cfg.standard_opacity);
+    line.selectAll("path")
+        .transition(200)
+        .style("stroke-opacity", 1);
+    par.selectAll("path")
+        .transition(200)
+        .style("stroke-opacity", 1);
+}

@@ -5,6 +5,7 @@ import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
 import BarChart from "../../components/Graphs/BarChart/BarChart";
 import PcaChart from "../../components/Graphs/PcaChart/PcaChart";
+import ParalChart from "../../components/Graphs/ParalChart/ParalChart";
 
 import { CONST } from "../../utils/const";
 import "./Deaths.css";
@@ -39,7 +40,8 @@ const Deaths = () => {
                                 <PcaChart type={CONST.CHART_TYPE.DEATHS} innerHeight={innerHeight} innerWidth={innerWidth} />
                             </div>
                             <div className={"half2"} style={{ width: "50%", height: "0%", backgroundColor: debug ? "black" : null, justifyContent: "center", alignItems: "center" }}>
-                                <RadarChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                                {/*<RadarChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth}/>*/}
+                                <ParalChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth}/>
                             </div>
                         </div>
                         <div className={"second-component"} style={{ width: "100%", height: "40%%", backgroundColor: debug ? "purple" : null }}>

@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import * as d3 from 'd3';
 import './BarChart.css';
-import {computeDim } from '../../../utils/utility';
+import {computeDim, onClick, onMouseOut } from '../../../utils/utility';
 
 
 export const MyBarChart = {
-    draw: function(id, data, cfg){
+    draw: function(id, data, cfg, setSelectedCountry, isClicked){
         d3.select(id).select("svg").remove();
 
         const margin = {top: 30, right: 30, bottom: 20, left: 50};
@@ -69,6 +69,19 @@ export const MyBarChart = {
                 .attr("height", function(d) { return y(d[0]) - y(d[1]); })
                 .attr("width", x.bandwidth())
                 .attr("text", function(d) {return d[1]})
+
+                .on('click', function(e, d){
+                    if(!isClicked){
+                        setSelectedCountry(d.data.group)
+                        onClick(d.data.group.replace(/\s/g, ""), cfg);
+                        isClicked = true;
+                    }
+                    else{
+                        setSelectedCountry(null)
+                        onMouseOut(d.data.group.replace(/\s/g, ""), cfg);
+                        isClicked = false;
+                    }
+                })
 
                 .on('mouseover', function (event, d){
                     const mousePosition = d3.pointer(event);

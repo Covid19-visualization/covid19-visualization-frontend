@@ -19,6 +19,7 @@ function App() {
   const [europeData, setEuropeData] = useState({vaccinations: [], cases: []});
   const [selectedCountriesDataByName, setSelectedCountriesDataByName] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const isClicked = useState(false);
 
   const [newAccess, setNewAccess] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState({
@@ -42,7 +43,8 @@ function App() {
     selectedCountriesDataByName: selectedCountriesDataByName,
     setSelectedCountriesDataByName: setSelectedCountriesDataByName,
     selectedCountry: selectedCountry,
-    setSelectedCountry: setSelectedCountry
+    setSelectedCountry: setSelectedCountry,
+    isClicked: isClicked
   }
 
 

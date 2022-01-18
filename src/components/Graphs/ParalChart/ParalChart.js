@@ -1,14 +1,15 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
-import {countries_colors, computeDim } from '../../../utils/utility';
+import { computeDim } from '../../../utils/utility';
+import { countries_colors } from '../../../utils/colors';
 import { CONST } from '../../../utils/const';
-import { MyRadarChart } from './Drawer';
+import { MyParalChart } from './Drawer';
 
 
-import "./RadarChart.css"
+import "./ParalChart.css"
 
-function RadarChart(props) {
+function ParalChart(props) {
 
     const {type, innerHeight, innerWidth} = props;
 
@@ -20,7 +21,7 @@ function RadarChart(props) {
 
     function drawChart(europeData, countriesData) {
 
-        var dim = computeDim(220, 220, innerWidth, innerHeight)
+        var dim = computeDim(470, 200, innerWidth, innerHeight)
         var w = dim[0], h = dim[1];
 
 
@@ -46,39 +47,41 @@ function RadarChart(props) {
         if(countriesData != null && countriesData.length != 0){
             radarData = generateRadarData(countriesData, type);
             var countries = generateLegendOptions(countriesData)
-            MyRadarChart.draw("#container2", radarData, cfg, countries);
+            MyParalChart.draw("#paral_container", radarData, cfg, countries);
         }
         else if (europeData.radarData != null && europeData.radarData.length != 0){
             radarData = generateRadarData([europeData], type);
-            MyRadarChart.draw("#container2", radarData, cfg, ["Europe"]);
+            MyParalChart.draw("#paral_container", radarData, cfg, ["Europe"]);
         }
     }
 
     function generateRadarData(data, type){
         var radarData = [];
-    
+
+        console.log(data)
         if(type == CONST.CHART_TYPE.VACCINATIONS){
+            radarData[0] = ["Pop density", "Life Expect",  "GDP per Capita", "Human Develop Idx", "Age", "Countries"]
             data.forEach(country  => {
-                var newData = []
-                newData.push({axis: "Population density / 10", value: country.radarData.population_density / 10})
-                newData.push({axis: "Life Expect", value: country.radarData.life_expectancy})
-                newData.push({axis: "GDP per Capita / 1000", value: country.radarData.gdp_per_capita / 1000})
-                newData.push({axis: "Age", value: country.radarData.median_age})
-                newData.push({axis: "HDI", value: country.radarData.human_development_index * 100})
-    
-                radarData.push(newData);
+                radarData.push({"Pop density": country.radarData.population_density,
+                            "Life Expect": country.radarData.life_expectancy,
+                            "GDP per Capita": country.radarData.gdp_per_capita,
+                            "Human Develop Idx": country.radarData.human_development_index,
+                            "Age": country.radarData.median_age,
+                            "Countries":country.id,
+                });
             });
         }
         else{
+            radarData[0] = ["Pop density", "Smokers", "Life Expect",  "Card death rate", "Diab preval", "Age", "Countries"]
             data.forEach(country  => {
-                var newData = []
-                newData.push({axis: "Population density / 10", value: country.radarData.population_density / 10})
-                newData.push({axis: "Smokers", value: country.radarData.male_smokers + country.radarData.female_smokers})
-                newData.push({axis: "Cardiovasc death rate / 5", value: country.radarData.cardiovasc_death_rate / 5})
-                newData.push({axis: "Diabetes prevalence", value: country.radarData.diabetes_prevalence })
-                newData.push({axis: "Age", value: country.radarData.median_age})
-    
-                radarData.push(newData);
+                radarData.push({"Pop density": country.radarData.population_density,
+                            "Smokers": country.radarData.male_smokers + country.radarData.female_smokers,
+                            "Life Expect": country.radarData.life_expectancy,
+                            "Card death rate": country.radarData.cardiovasc_death_rate,
+                            "Diab preval": country.radarData.diabetes_prevalence,
+                            "Age": country.radarData.median_age,
+                            "Countries":country.id,
+                });
             });
         }
         
@@ -96,8 +99,8 @@ function RadarChart(props) {
         return countries;
     }
 
-    return <div  id="container2" />;
+    return <div  id="paral_container" />;
 	
 }
 
-export default RadarChart;
+export default ParalChart;

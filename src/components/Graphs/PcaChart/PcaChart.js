@@ -4,7 +4,8 @@ import * as d3 from 'd3'
 import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
-import {mock_pca_data, countries_colors, computeDim} from '../../../utils/utility';
+import {mock_pca_data, computeDim} from '../../../utils/utility';
+import { countries_colors } from '../../../utils/colors';
 import "./PcaChart.css"
 import { MyPcaChart, dbLabelDaily, dbLabelStatic } from './Drawer';
 import { CONST } from '../../../utils/const';
@@ -83,9 +84,6 @@ function PcaChart(props) {
         let len = type == CONST.CHART_TYPE.VACCINATIONS ? 10 : 6;
         let count = type == CONST.CHART_TYPE.VACCINATIONS ? 6 : 0;
         for(var z = 0; z < selectedData.data.length; z++){
-          for(var i = 0; i < dbLabelStatic.length; i++){
-            pcaEntry.push(selectedData[dbLabelStatic[i]])
-          }
           for(var j = count; j < len; j++){
             var value = selectedData.data[z][dbLabelDaily[j]]
             pcaEntry.push(value ? value : 0)

@@ -8,7 +8,7 @@ import { CONST } from '../../../utils/const';
 
 export const MyPcaChart = {
     draw: function(id, data, legendOptions, cfg){
-        const margin = {top: 40, right: 10, bottom: 0, left: 390};
+        const margin = {top: 40, right: 10, bottom: 0, left: computeDim(390, 0, cfg.innerWidth, cfg.innerHeight)[0]};
 
         d3.select(id).select("svg").remove();
         var FormatLong = (a) => prettyCounterHandler(a, CONST.COUNTER_HANDLER.LONG)
@@ -33,6 +33,7 @@ export const MyPcaChart = {
             .range([ 0, cfg.range_w ]);
 
         svg.append("g")
+            .attr("id", "x")
             .attr("transform", "translate(0," + cfg.range_h + ")")
             .call(
                 d3.axisBottom(x)
@@ -45,6 +46,7 @@ export const MyPcaChart = {
             .range([ cfg.range_h, 0]);
 
         svg.append("g")
+            .attr("id", "y")
             .call(
                 d3.axisLeft(y)
                 .tickFormat(function(d, i) {return i % 2 === 0 ? FormatLong(d) : null;})
@@ -64,15 +66,19 @@ export const MyPcaChart = {
             .attr("r", 3)
             .style("fill", cfg.color[c.country])
 
+            /*
             .on('mouseover', function (d){
                 d3.select(this).attr("r", 6)
                 tooltip
-                    .attr('x', parseFloat(d3.select(this).attr('cx')) + 10)
+                    .attr('x', parseFloat(d3.select(this).attr('cx')) - 120)
                     .attr('y', parseFloat(d3.select(this).attr('cy')))
-                    .text("("+d3.select(this).attr("valuex") + ", " + d3.select(this).attr("valuey")+")")
+                    .text("("+FormatLong(d3.select(this).attr("valuex")) + ", " + FormatLong(d3.select(this).attr("valuey"))+")")
                     .transition(200)
                     .style('opacity', 1);
         
+            })
+            .on('click', function (d){
+
             })
             .on('mouseout', function(){ 
                 d3.select(this).attr("r", 3) 
@@ -81,6 +87,7 @@ export const MyPcaChart = {
                     .style('opacity', 0);
             
             });
+            */
         });
     }
 }

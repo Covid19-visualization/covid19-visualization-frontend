@@ -12,6 +12,7 @@ import "./Cases.css";
 import GeoData from "../Europe.geo.json";
 import GeoChart from "../../components/Graphs/GeoChart/GeoChart";
 import BarChart from "../../components/Graphs/BarChart/BarChart";
+import ParalChart from "../../components/Graphs/ParalChart/ParalChart";
 
 import { Row, Col} from 'react-bootstrap';
 
@@ -46,7 +47,8 @@ const Cases = () => {
                                 <PcaChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth} />
                             </div>
                             <div className={"half2"} style={{ width: "50%", height: "0%", backgroundColor: debug ? "black" : null, justifyContent: "center", alignItems: "center" }}>
-                                <RadarChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                                <ParalChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth}/>
+                                {/*<RadarChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth}/>*/}
                             </div>
                         </div>
                         <div className={"second-component"} style={{ width: "100%", height: "40%%", backgroundColor: debug ? "purple" : null }}>
