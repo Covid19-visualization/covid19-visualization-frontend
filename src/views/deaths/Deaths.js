@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from "react";
 import LineChart from "../../components/Graphs/LineChart/LineChart";
-import RadarChart from "../../components/Graphs/RadarChart/RadarChart";
 import TableChart from "../../components/Graphs/TableChart/TableChart";
 import BarChart from "../../components/Graphs/BarChart/BarChart";
 import PcaChart from "../../components/Graphs/PcaChart/PcaChart";
