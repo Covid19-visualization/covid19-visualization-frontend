@@ -3,7 +3,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
 import { fetchHandler } from '../../../utils/fetchHandler';
 import { API } from '../../../utils/API';
-import { countries_colors, computeDim } from '../../../utils/utility';
+import { computeDim } from '../../../utils/utility';
+import { countries_colors } from '../../../utils/colors';
 import { MyBarChart } from './Drawer';
 import { CONST } from "../../../utils/const";
 
@@ -14,7 +15,8 @@ function BarChart(props) {
 
     const {type, innerHeight, innerWidth} = props;
 
-    const { europeData, selectedCountriesData, selectedPeriod, selectedCountries } = useContext(Context);
+    const { europeData, selectedCountriesData, selectedPeriod, setSelectedCountry, selectedCountries } = useContext(Context);
+    var isClicked = useContext(Context);
     
     useEffect(() => {
         if(selectedCountries.length != 0){
@@ -66,6 +68,7 @@ function BarChart(props) {
             full_opacity: 0.8,
             colorSelection: ["#0B9B6F", "#034F34"],
             color: countries_colors,
+            colorInteraction: ["#292b2c", "#a9a9a9"],
             props:props
         };
         if(data.length != 0 && props.type == CONST.CHART_TYPE.VACCINATIONS){
@@ -73,21 +76,21 @@ function BarChart(props) {
             cfg["legendOptions"] = ["Booster dose", "Second dose", "First dose"];
             cfg["subgroups"] = ["total_boosters", "people_fully_vaccinated", "people_vaccinated"];
             cfg["type"] = 0;
-            MyBarChart.draw("#bar_container", data, cfg);
+            MyBarChart.draw("#bar_container", data, cfg, setSelectedCountry, isClicked);
         }
         else if(data.length != 0 && props.type == CONST.CHART_TYPE.DEATHS){
             cfg["colorSelection"] =  ["red", "brown", "#ff6666"];
             cfg["legendOptions"] = ["Deaths", "Deaths/Cases", "Cases"];
             cfg["subgroups"] = ["deaths", "deaths2", "cases"];
             cfg["type"] = 1;
-            MyBarChart.draw("#bar_container", data, cfg);
+            MyBarChart.draw("#bar_container", data, cfg, setSelectedCountry, isClicked);
         }
         else{
             cfg["colorSelection"] =  ["black", "#1E90FF", "blue"];
             cfg["legendOptions"] = ["Deaths", "Cases", "Stringency Index"];
             cfg["subgroups"] = ["deaths", "cases2", "stringency_index"];
             cfg["type"] = 2;
-            MyBarChart.draw("#bar_container", data, cfg);
+            MyBarChart.draw("#bar_container", data, cfg, setSelectedCountry, isClicked);
         }
     }
 

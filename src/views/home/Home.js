@@ -9,7 +9,8 @@ import Deaths from "../deaths/Deaths";
 import "./Home.css";
 import { fetchHandler } from '../../utils/fetchHandler';
 import { API } from "../../utils/API";
-import { parseData, countries_colors } from "../../utils/utility";
+import { parseData } from "../../utils/utility";
+import { countries_colors } from "../../utils/colors";
 import * as d3 from 'd3'
 
 

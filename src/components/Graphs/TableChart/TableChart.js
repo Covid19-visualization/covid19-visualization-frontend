@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../../context/Provider';
-import { countries_colors } from '../../../utils/utility';
+import { countries_colors } from '../../../utils/colors';
 import * as d3 from 'd3';
 import { CONST } from '../../../utils/const';
-import { prettyCounterHandler } from '../../../utils/utility'
+import { prettyCounterHandler, onClick, onMouseOut } from '../../../utils/utility'
 import "./TableChart.css" 
 
 function TableChart(props) {
 
-    const { europeData, selectedCountriesDataByName, selectedCountry, setSelectedCountry} = useContext(Context);
+    var { europeData, selectedCountriesDataByName, selectedCountry, setSelectedCountry, isClicked} = useContext(Context);
 
     useEffect(() => {
         drawChart(europeData, selectedCountriesDataByName); 
@@ -49,7 +49,7 @@ function TableChart(props) {
     
               var body =  table.append("tbody")
               data.forEach(country =>{
-                  var tr = body.append("tr").attr("id", country.id);
+                  var tr = body.append("tr").attr("id", country.id.replace(/\s/g, ""));
                   tr.append("th")
                   .attr("scope", "row")
                   .html(`<a style='color: ${cfg.color[country.id]};'>${country.id}</a>`);
@@ -60,10 +60,16 @@ function TableChart(props) {
                   tr.append("td").text(Format(country.radarData.median_age))
                   tr.append("td").text(Format(country.radarData.human_development_index))
                   tr.on('click', function (d){
-                    onClick(d3.select(this), cfg);
-                  });
-                  tr.on('mouseout', function(){
-                    onMouseOut(d3.select(this), cfg);
+                    if(!isClicked){
+                      setSelectedCountry(country.id)
+                      onClick(d3.select(this).attr("id").replace(/\s/g, ""), cfg);
+                      isClicked = true;
+                    }
+                    else{
+                      setSelectedCountry(null)
+                      onMouseOut(d3.select(this).attr("id").replace(/\s/g, ""), cfg);
+                      isClicked = false;
+                    }
                   });
                 });
               }
@@ -77,7 +83,7 @@ function TableChart(props) {
     
               var body =  table.append("tbody")
               data.forEach(country =>{
-                  var tr = body.append("tr").attr("id", country.id);
+                  var tr = body.append("tr").attr("id", country.id.replace(/\s/g, ""));
                   tr.append("th")
                   .attr("scope", "row")
                   .html(`<a style='color: ${cfg.color[country.id]}'>${country.id}</a>`)
@@ -88,11 +94,16 @@ function TableChart(props) {
                   tr.append("td").text(Format(country.radarData.diabetes_prevalence))
                   tr.append("td").text(Format(country.radarData.median_age))
                   tr.on('click', function (d){
-                    onClick(d3.select(this), cfg);
-                  });
-    
-                  tr.on('mouseout', function(){
-                    onMouseOut(d3.select(this), cfg);
+                    if(!isClicked){
+                      setSelectedCountry(country.id)
+                      onClick(d3.select(this).attr("id").replace(/\s/g, ""), cfg);
+                      isClicked = true;
+                    }
+                    else{
+                      setSelectedCountry(null)
+                      onMouseOut(d3.select(this).attr("id").replace(/\s/g, ""), cfg);
+                      isClicked = false;
+                    }
                   });
                 });
               }
@@ -100,68 +111,6 @@ function TableChart(props) {
         clean: function(ids){
             d3.select(ids).select("table").remove();
         }
-    }
-
-    function onClick(node, cfg){
-        setSelectedCountry(node.attr("id"))
-        node.style("background-color", cfg.colorSelection[1]);
-        var id = node.attr("id").replace(/\s/g, "");
-        var g = d3.select("#polygons");
-        var p_selected = d3.select("#polygon"+id);
-        var c_selected = "circle#"+id;
-        var l_selected = d3.selectAll("#path"+id);
-        var r_selected = d3.selectAll("#rect"+id);
-        var pca = d3.select("#pca_container");
-        var line = d3.select("#line_container")
-        var bar = d3.select("#bar_container");
-    
-        g.selectAll("polygon")
-            .transition(200)
-            .style("fill-opacity", 0);
-        bar.selectAll("rect")
-            .transition(200)
-            .style("fill-opacity", 0.2);
-        pca.selectAll("circle")
-            .transition(200)
-            .style("fill-opacity", 0); 
-        pca.selectAll(c_selected)
-            .transition(200)
-            .style("fill-opacity", 1);
-        line.selectAll("path")
-            .transition(200)
-            .style("stroke-opacity", 0.2);
-        line.selectAll("path.domain")
-            .transition(200)
-            .style("stroke-opacity", 1);
-    
-        p_selected.transition(200)
-            .style("fill-opacity", cfg.full_opacity);
-        l_selected.transition(200)
-            .style("stroke-opacity", 1);
-        r_selected.transition(200)
-            .style("fill-opacity", 1);
-    }
-    
-    function onMouseOut(node, cfg){
-        setSelectedCountry(null)
-        node.style("background-color", cfg.colorSelection[0]);
-        var g = d3.select("#polygons");
-        var pca = d3.select("#pca_container");
-        var line = d3.select("#line_container");
-        var bar = d3.select("#bar_container");
-    
-        pca.selectAll("circle")
-            .transition(200)
-            .style("fill-opacity", 1);
-        bar.selectAll("rect")
-            .transition(200)
-            .style("fill-opacity", 1);
-        g.selectAll("polygon")
-            .transition(200)
-            .style("fill-opacity", cfg.standard_opacity);
-        line.selectAll("path")
-            .transition(200)
-            .style("stroke-opacity", 1);
     }
 
     function drawChart(europeData, data) {
@@ -172,7 +121,7 @@ function TableChart(props) {
             standard_opacity: 0.4,
             full_opacity: 0.8,
             color: countries_colors,
-            colorSelection: ["#292b2c", "#3399ff"],
+            colorInteraction: ["#292b2c", "#a9a9a9"],
             type: props.type
         };
     

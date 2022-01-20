@@ -3,7 +3,7 @@ import React, { useContext, useRef, useEffect } from "react";
 import { select, geoPath, geoMercator, min, max, scaleLinear } from "d3";
 import { Context } from '../../../context/Provider';
 import {getFeature, getType, legend, useResizeObserver} from "./GeoUtility"
-import { countries_colors } from "../../../utils/utility";
+import { countries_colors } from '../../../utils/colors';
 import * as d3 from 'd3';
 
 /**
@@ -54,6 +54,7 @@ function GeoChart(props) {
     //coloring the map
     const minProp = min(data2, feature => getType(type, feature).feature);
     const maxProp = max(data2, feature => getType(type, feature).feature);
+    console.log(data2)
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
       .range(["#ccc", getType(type, '').color]);
@@ -62,9 +63,11 @@ function GeoChart(props) {
     .domain([minProp, maxProp])
     .range(["#ccc", getType(type, '').color])
 
-    const svg_legend = select("#legend")
+    d3.select("#legend").remove()
+    const svg_legend = select("#legenddiv")
       .attr('transform', 'translate(-120, -43)')
       .append('g')
+      .attr("id", "legend")
       .attr('transform', 'translate(200, 0)')
       .append(() => legend({color, 
                             title: `Covid-19 ${getType(type, '').id}`,
@@ -86,9 +89,9 @@ function GeoChart(props) {
       .selectAll(".country")
       .data(data2)
       .join("path")
+
       .on("click", (e, feature) => {
-        if(getType(type, feature).feature != null)
-          handleCountrySelection(feature.properties.NAME);
+        handleCountrySelection(feature.properties.NAME);
       })
       .attr("class", "country")
       .transition()
@@ -122,7 +125,7 @@ function GeoChart(props) {
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
       <svg ref={svgRef}></svg>
-      <svg id="legend" width="700" height="80"></svg>
+      <svg id="legenddiv" width="700" height="80"></svg>
     </div>
   );
 }

@@ -1,6 +1,22 @@
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .legend {
     font-family: 'Raleway', sans-serif;
     fill: #333333;
+}
+
+.selection {
+  fill: #ADD8E6;
+  stroke: #ADD8E6;
+  fill-opacity: 0.3;
+  stroke-opacity: 0.7;
+  stroke-width: 2;
+  stroke-dasharray: 5, 5;
 }
 
 /* Tooltip container */
