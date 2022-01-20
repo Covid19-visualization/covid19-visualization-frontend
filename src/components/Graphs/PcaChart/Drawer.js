@@ -65,29 +65,6 @@ export const MyPcaChart = {
             .attr("cy", function (d) { return y(d[1]); } )
             .attr("r", 3)
             .style("fill", cfg.color[c.country])
-
-            /*
-            .on('mouseover', function (d){
-                d3.select(this).attr("r", 6)
-                tooltip
-                    .attr('x', parseFloat(d3.select(this).attr('cx')) - 120)
-                    .attr('y', parseFloat(d3.select(this).attr('cy')))
-                    .text("("+FormatLong(d3.select(this).attr("valuex")) + ", " + FormatLong(d3.select(this).attr("valuey"))+")")
-                    .transition(200)
-                    .style('opacity', 1);
-        
-            })
-            .on('click', function (d){
-
-            })
-            .on('mouseout', function(){ 
-                d3.select(this).attr("r", 3) 
-                tooltip
-                    .transition(200)
-                    .style('opacity', 0);
-            
-            });
-            */
         });
     }
 }

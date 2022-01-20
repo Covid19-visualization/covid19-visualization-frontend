@@ -47,7 +47,6 @@ const Cases = () => {
                             </div>
                             <div className={"half2"} style={{ width: "50%", height: "0%", backgroundColor: debug ? "black" : null, justifyContent: "center", alignItems: "center" }}>
                                 <ParalChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth}/>
-                                {/*<RadarChart type={CONST.CHART_TYPE.CASES} innerHeight={innerHeight} innerWidth={innerWidth}/>*/}
                             </div>
                         </div>
                         <div className={"second-component"} style={{ width: "100%", height: "40%%", backgroundColor: debug ? "purple" : null }}>

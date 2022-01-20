@@ -28,61 +28,6 @@ export const MyParalChart = {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-        /*
-        var selection = svg.append("path")
-            .attr("class", "selection")
-            .attr("visibility", "hidden");
-        
-        var startSelection = function(start) {
-            selection.attr("d", rect(start[0], start[0], 0, 0))
-                .attr("visibility", "visible");
-        };
-        
-        var moveSelection = function(start, moved) {
-            selection.attr("d", rect(start[0], start[1], moved[0]-start[0], moved[1]-start[1]));
-        };
-        
-        var endSelection = function(start, end) {
-            selection.attr("visibility", "hidden");
-        };
-
-        svg.on("mousedown", function(event) {
-            var subject = d3.select(this), parent = subject.node().parentNode, start = d3.pointer(event);
-            
-
-            startSelection(start);
-            subject
-                .on("mousemove.selection", function() {
-                  moveSelection(start, d3.pointer(event));
-                }).on("mouseup.selection", function() {
-                  endSelection(start, d3.pointer(event));
-                  subject.on("mousemove.selection", null).on("mouseup.selection", null);
-                });
-        });
-          
-        svg.on("touchstart", function(event, d) {
-            console.log("QUIII")
-            console.log(event)
-            var subject = d3.select(this), 
-                parent = subject.node().parentNode,
-                id = event.changedTouches[0].identifier, 
-                start = d3.pointer(event, id), pos;
-
-                startSelection(start);
-                subject
-                    .on("touchmove."+id, function() {
-                    if (pos = d3.pointer(event, id)) {
-                        moveSelection(start, pos);
-                    }
-                    }).on("touchend."+id, function() {
-                    if (pos = d3.pointer(event, id)) {
-                        endSelection(start, pos);
-                        subject.on("touchmove."+id, null).on("touchend."+id, null);
-                    }
-                    });
-            });
-        */
-
         // Extract the list of dimensions we want to keep in the plot. Here I keep all except the column called Species
         var dimensions = data[0].filter(function(d) { return d != "Countries" })
 

@@ -47,7 +47,6 @@ const Vaccinations = () => {
                                 <PcaChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth} />
                             </div>
                             <div className={"half2"} style={{ width: "50%", height: "0%", backgroundColor: debug ? "black" : null, justifyContent: "center", alignItems: "center" }}>
-                                {/*<RadarChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth}/>*/}
                                 <ParalChart type={CONST.CHART_TYPE.VACCINATIONS} innerHeight={innerHeight} innerWidth={innerWidth}/>
                             </div>
                         </div>
