@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import React, { useContext, useEffect, useState } from "react";
-import FlagButton from "../../components/Buttons/Flag/FlagButton";
+import FlagButton from "../../components/Buttons/flag/FlagButton";
 import { Context } from "../../context/Provider";
 import { CONST } from "../../utils/const";
 import Cases from "../cases/Cases";

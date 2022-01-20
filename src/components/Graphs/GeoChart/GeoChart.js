@@ -31,7 +31,7 @@ function GeoChart(props) {
     }
     
   }
-
+  //console.log(countries)
   useEffect(() => {
     DrawMap()
   }, [countries, selectedCountries, selectedCountry, data, dimensions]);
@@ -48,7 +48,7 @@ function GeoChart(props) {
         ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.NAME))}
       );
     }
-    
+    //console.log(data2)
     var tooltipText = "";
 
     //coloring the map
@@ -105,6 +105,18 @@ function GeoChart(props) {
         tooltip.select("#value").html(tooltipText);
     }
     */
+    console.log(selectedCountry)
+    svg
+      .selectAll(".label")
+      .data([selectedCountry])
+      .join("text")
+      .attr("class", "label")
+      .text(
+        selectedCountry
+      )
+      .attr("font-size", 5)
+      .attr("x", 10)
+      .attr("y", 95);
   }
 
   return (
