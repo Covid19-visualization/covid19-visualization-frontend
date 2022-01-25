@@ -58,7 +58,6 @@ function ParalChart(props) {
     function generateRadarData(data, type){
         var radarData = [];
 
-        console.log(data)
         if(type == CONST.CHART_TYPE.VACCINATIONS){
             radarData[0] = ["Pop density", "Life Expect",  "GDP per Capita", "Human Develop Idx", "Age", "Countries"]
             data.forEach(country  => {

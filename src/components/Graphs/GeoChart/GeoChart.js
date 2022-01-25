@@ -4,7 +4,12 @@ import { select, geoPath, geoMercator, min, max, scaleLinear } from "d3";
 import { Context } from '../../../context/Provider';
 import {getFeature, getType, legend, useResizeObserver} from "./GeoUtility"
 import { countries_colors } from '../../../utils/colors';
+import { prettyCounterHandler } from '../../../utils/utility'
+import { CONST } from '../../../utils/const';
 import * as d3 from 'd3';
+
+import './GeoChart.css';
+ 
 
 /**
  * Component that renders a map
@@ -31,7 +36,6 @@ function GeoChart(props) {
     }
     
   }
-  //console.log(countries)
   useEffect(() => {
     DrawMap()
   }, [countries, selectedCountries, selectedCountry, data, dimensions]);
@@ -48,19 +52,22 @@ function GeoChart(props) {
         ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.NAME))}
       );
     }
-    //console.log(data2)
+
     var tooltipText = "";
+    const tooltip = d3.select("#tooltipgeochart");
+    tooltip.style("visibility", "hidden")
+
+    var FormatLong = (a) => prettyCounterHandler(a, CONST.COUNTER_HANDLER.LONG)
 
     //coloring the map
     const minProp = min(data2, feature => getType(type, feature).feature);
     const maxProp = max(data2, feature => getType(type, feature).feature);
-    console.log(data2)
     const colorScale = scaleLinear()
       .domain([minProp, maxProp])
       .range(["#ccc", getType(type, '').color]);
 
     const color = d3.scaleSequential()
-    .domain([minProp, maxProp])
+    .domain([0, 100])
     .range(["#ccc", getType(type, '').color])
 
     d3.select("#legend").remove()
@@ -68,7 +75,7 @@ function GeoChart(props) {
       .attr('transform', 'translate(-120, -43)')
       .append('g')
       .attr("id", "legend")
-      .attr('transform', 'translate(200, 0)')
+      .attr('transform', 'translate(180, 0)')
       .append(() => legend({color, 
                             title: `Covid-19 ${getType(type, '').id}`,
                             ticks: 5,
@@ -99,33 +106,28 @@ function GeoChart(props) {
       .attr("fill", feature => colorScale(getType(type, feature).feature))
       .attr("d", feature => pathGenerator(feature));
 
-    /*
+
     if(selected != null){
-      var tooltip = d3.select(".tooltipgeochart-value")
-        tooltipText = `<h3 style='color: ${countries_colors[selected._id]}'>${selected._id}</h3>`;
-        tooltip.style("visibility", "visible")
-        tooltip.attr("transform", `translate(50, 50)`)
-        tooltip.select("#value").html(tooltipText);
+      tooltipText = `<h3 style='color: ${countries_colors[selectedCountry]}'>${selectedCountry}</h3>` + 
+            `<a style='color: #199AFB' >Total cases: </a>${FormatLong(selected.total_cases)}` +
+            "<br>" + 
+            `<a style='color: red' >Total deaths: </a>${FormatLong(selected.total_new_deaths)}` +
+            "<br>" + 
+            `<a style='color: green' >People fully vaccinated: </a>${FormatLong(selected.people_fully_vaccinated)}` ;
+      tooltip.style("visibility", "visible")
+      tooltip.select("#value").html(tooltipText);
     }
-    */
-    console.log(selectedCountry)
-    svg
-      .selectAll(".label")
-      .data([selectedCountry])
-      .join("text")
-      .attr("class", "label")
-      .text(
-        selectedCountry
-      )
-      .attr("font-size", 5)
-      .attr("x", 10)
-      .attr("y", 95);
   }
 
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
       <svg ref={svgRef}></svg>
       <svg id="legenddiv" width="700" height="80"></svg>
+      <div width="100" height="80" id="tooltipgeochart" className="tooltipgeochart">
+          <div className="tooltipgeochart-value">
+              <span id="value"></span>
+          </div>
+      </div>
     </div>
   );
 }

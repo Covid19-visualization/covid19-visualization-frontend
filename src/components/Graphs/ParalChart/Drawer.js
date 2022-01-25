@@ -49,7 +49,6 @@ export const MyParalChart = {
 
         // The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this raw.
         function path(d) {
-            console.log(d)
             return d3.line()(dimensions.map(function(p) { 
                 return [x(p), y[p](d[p])]; 
             }));
@@ -65,7 +64,6 @@ export const MyParalChart = {
             var id = '';
             if(c["Countries"] != null)
                 id = c["Countries"].replace(/\s/g, "")
-            console.log("line"+id)
             return "line"+id
         })
         .style("fill", "none")

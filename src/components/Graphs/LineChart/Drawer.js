@@ -237,7 +237,6 @@ export function drawChart(europeFiltered, selectedCountriesFiltered, width, heig
 
         selectedCountriesFiltered.map((data, index) => {
             let typedDate= filterDataByType(data, type);
-            console.log(typedDate)
 
             if (typedDate.length > 0) {
                 const color = colorscale(index);
