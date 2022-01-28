@@ -4,7 +4,7 @@ import { select, geoPath, geoMercator, min, max, scaleLinear } from "d3";
 import { Context } from '../../../context/Provider';
 import {getFeature, getType, legend, useResizeObserver} from "./GeoUtility"
 import { countries_colors } from '../../../utils/colors';
-import { prettyCounterHandler } from '../../../utils/utility'
+import { prettyCounterHandler, visualizeDate } from '../../../utils/utility'
 import { CONST } from '../../../utils/const';
 import * as d3 from 'd3';
 
@@ -49,7 +49,7 @@ function GeoChart(props) {
     for(let i=0; i<data.features.length; i++) {
       data2.push({
         ...data.features[i], 
-        ...(countries.find((itmInner) => itmInner._id === data.features[i].properties.NAME))}
+        ...(countries.find((itmInner) => itmInner._id.name === data.features[i].properties.NAME))}
       );
     }
 
@@ -67,7 +67,7 @@ function GeoChart(props) {
       .range(["#ccc", getType(type, '').color]);
 
     const color = d3.scaleSequential()
-    .domain([0, 100])
+    .domain([minProp, maxProp])
     .range(["#ccc", getType(type, '').color])
 
     d3.select("#legend").remove()
@@ -82,7 +82,7 @@ function GeoChart(props) {
                             tickFormat: '.0s'}));
     
     // projects geo-coordinates on a 2D plane
-    var selected = getFeature(data2, selectedCountry)
+    var selected = selectedCountry != null ? getFeature(data2, selectedCountry) : null
     var projection = geoMercator()
       .fitSize([width, height], selected == null ? data : selected) 
       .precision(100)
@@ -108,7 +108,9 @@ function GeoChart(props) {
 
 
     if(selected != null){
-      tooltipText = `<h3 style='color: ${countries_colors[selectedCountry]}'>${selectedCountry}</h3>` + 
+      tooltipText = `<h3 style='color: ${countries_colors[selectedCountry]}'>${selectedCountry}</h3>` +
+            `<b style='text-align: center'> ${visualizeDate(new Date(selected._id.date))}</b>` + 
+            "<br>" +  
             `<a style='color: #199AFB' >Total cases: </a>${FormatLong(selected.total_cases)}` +
             "<br>" + 
             `<a style='color: red' >Total deaths: </a>${FormatLong(selected.total_new_deaths)}` +

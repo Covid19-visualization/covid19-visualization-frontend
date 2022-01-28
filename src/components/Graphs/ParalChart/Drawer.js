@@ -36,8 +36,8 @@ export const MyParalChart = {
         for (var i in dimensions) {
             var name = dimensions[i]
             y[name] = d3.scaleLinear()
-                //.domain( d3.extent(data, function(d) { return d[name]; }))
-                .domain(domains[name])
+                .domain( d3.extent(data, function(d) { return d[name]; }))
+                //.domain(domains[name])
                 .range([cfg.h + 50, 0])
         }
 

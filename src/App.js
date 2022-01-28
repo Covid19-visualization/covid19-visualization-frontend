@@ -21,10 +21,12 @@ function App() {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const isClicked = useState(false);
 
+  
   const [newAccess, setNewAccess] = useState(true);
+
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date("2021-06-01"),
-    to: new Date()
+    to: new Date(Date.now() - 86400000)
   });
 
   const AppContext = {

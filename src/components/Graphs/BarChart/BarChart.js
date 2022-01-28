@@ -37,6 +37,7 @@ function BarChart(props) {
         if(selectedData[0] != null){
             selectedData.forEach(data => {
                 var entryData = {}
+                entryData["date"] = data._id
                 entryData["group"] = data.name;
                 entryData["total_boosters"] = Math.floor((data.total_boosters * 100) / data.population)
                 entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population) - entryData["total_boosters"];
@@ -46,6 +47,7 @@ function BarChart(props) {
                 entryData["cases"] = (parseInt(data.total_cases) * 100) / data.population - entryData["deaths2"] - entryData["deaths"];
                 entryData["cases2"] = (parseInt(data.total_cases) * 100) / data.population - entryData["deaths"];
                 entryData["stringency_index"] = data.stringency_index - entryData["deaths"] - entryData["cases2"];
+
                 resData.push(entryData);
             })
         }

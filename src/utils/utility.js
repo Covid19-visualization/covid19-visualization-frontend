@@ -125,7 +125,6 @@ function sortByItem(country, item){
 }
 
 function insertEuropeBarEntry(country) {
-
     let last_vacc = sortByItem(country, "people_vaccinated")
     let last_fully = sortByItem(country, "people_fully_vaccinated")
     let last_total_d = sortByItem(country, "total_deaths")
@@ -134,9 +133,9 @@ function insertEuropeBarEntry(country) {
     
     let reducer = (accumulator, curr) => accumulator + curr;
     let total_cases = last_total_d.total_cases.map(x => parseInt(x))
-
     return {
         name: "Europe",
+        _id: last_total_d._id,
         population: last_vacc.population,
         people_fully_vaccinated: last_fully.people_fully_vaccinated,
         people_vaccinated: last_vacc.people_vaccinated,

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import * as d3 from 'd3';
 import './BarChart.css';
-import {computeDim, onClick, onMouseOut } from '../../../utils/utility';
+import {computeDim, onClick, onMouseOut, visualizeDate} from '../../../utils/utility';
 
 
 export const MyBarChart = {
@@ -159,6 +159,8 @@ function generateTooltipText(d, cfg){
     var tooltipText = ''
     if(cfg.type == 0){
         tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
+            `<b style='text-align: center'> ${visualizeDate(new Date(d.data.date))}</b>` + 
+            "<br>" +  
             `<a style='color: ${cfg.colorSelection[2]}'">People with <b>1 dose</b> of vaccine: </a>${d.data.people_fully_vaccinated + d.data.people_vaccinated + d.data.total_boosters}%` +
             "<br>" + 
             `<a style='color: ${cfg.colorSelection[1]}'">People with <b>2 doses</b> of vaccine: </a>${d.data.people_fully_vaccinated + d.data.total_boosters}%` + 
@@ -167,6 +169,8 @@ function generateTooltipText(d, cfg){
     }
     else if(cfg.type == 1){
         tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
+            `<b style='text-align: center'> ${visualizeDate(new Date(d.data.date))}</b>` + 
+            "<br>" +  
             `<a style='color: ${cfg.colorSelection[2]}'">Share of <b>positives</b>/population: </a>${Format(d.data.deaths + d.data.cases + d.data.deaths2)}%` +
             "<br>" + 
             `<a style='color: ${cfg.colorSelection[1]}'">Share of <b>deaths</b>/positives: </a>${Format(d.data.deaths2 + d.data.deaths)}%` +
@@ -175,6 +179,8 @@ function generateTooltipText(d, cfg){
     }
     else{
         tooltipText = `<h3 style='color: ${cfg.color[d.data.group]}'>${d.data.group}</h3>` + 
+            `<b style='text-align: center'> ${visualizeDate(new Date(d.data.date))}</b>` + 
+            "<br>" +  
             `<a style='color: ${cfg.colorSelection[2]}'">Stringency index: </a>${Format(d.data.stringency_index + d.data.deaths + d.data.cases2)}%` +
             "<br>" + 
             `<a style='color: ${cfg.colorSelection[1]}'">Share of <b>positives</b>: </a>${Format(d.data.deaths + d.data.cases2)}%` +

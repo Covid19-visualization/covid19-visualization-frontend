@@ -7,22 +7,19 @@ import ResizeObserver from "resize-observer-polyfill";
 
 export function getType(type, feature){
     if(type === CONST.CHART_TYPE.VACCINATIONS){
-        console.log((feature.p*100) / feature.population)
-        return {id: "Vaccinations", feature:(feature.people_fully_vaccinated*100) / feature.population, color:"green"}
+        return {id: "Vaccinations", feature:((feature.people_fully_vaccinated*100) / feature.population), color:"green"}
     }
     else if(type === CONST.CHART_TYPE.CASES) {
-        console.log((feature.total_cases*100) / feature.population)
-        return {id: "Cases", feature:(feature.total_cases*100) / feature.population, color:"blue"}
+        return {id: "Cases", feature:((feature.total_cases*100) / feature.population), color:"blue"}
     }
     else {
-        console.log((feature.total_new_deaths*100) / feature.population)
-        return {id: "Deaths", feature:(feature.total_new_deaths*100) / feature.population, color:"red"}
+        return {id: "Deaths", feature:((feature.total_new_deaths*100) / feature.population), color:"red"}
     }
   }
   
 export function getFeature(data, country){
     for(var i = 0; i < data.length; i++){
-        if(String(country) == String(data[i]._id)){
+        if(String(country) == String(data[i]._id.name)){
             return data[i];
         }
     }
