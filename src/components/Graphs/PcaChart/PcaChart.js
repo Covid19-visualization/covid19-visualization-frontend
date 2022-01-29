@@ -41,8 +41,10 @@ function PcaChart(props) {
         let pcaMatrix = []
         let countries = []
 
-        for(var i = 0; i < selectedData.length; i++){
-            insertPcaEntries(selectedData[i], pcaMatrix, countries);
+        console.log(selectedCountries)
+
+        for(var i = 0; i < selectedCountries.length; i++){
+            insertPcaEntries(selectedData, pcaMatrix, countries, selectedCountries[i]);
         }  
 
         // Generate Eigen vectors
@@ -60,7 +62,7 @@ function PcaChart(props) {
 
         pcaData = countries;
 
-        for(var i = 0; i < selectedData.length; i++){
+        for(var i = 0; i < selectedCountries.length; i++){
             updateCountryMatrix(countries[i], vectors);
         }  
         drawChart(true, countries);
@@ -78,22 +80,27 @@ function PcaChart(props) {
         }
     }
 
-    function insertPcaEntries(selectedData, pcaMatrix, countries){
+    function insertPcaEntries(selectedData, pcaMatrix, countries, country){
         let countryMatrix = [];
         let pcaEntry = [];
         let len = type == CONST.CHART_TYPE.VACCINATIONS ? 10 : 6;
         let count = type == CONST.CHART_TYPE.VACCINATIONS ? 6 : 0;
-        for(var z = 0; z < selectedData.data.length; z++){
-          for(var j = count; j < len; j++){
-            var value = selectedData.data[z][dbLabelDaily[j]]
-            pcaEntry.push(value ? value : 0)
-          }
-          pcaMatrix.push(pcaEntry);
-          countryMatrix.push(pcaEntry);
-          pcaEntry = []
+        for(var z = 0; z < selectedData.length; z++){
+            if(selectedData[z]._id.name === country){
+                for(var j = count; j < len; j++){
+                    var value = selectedData[z][dbLabelDaily[j]]
+                    pcaEntry.push(value[0] != null ? value[0] : 0)
+                }
+                pcaMatrix.push(pcaEntry);
+                countryMatrix.push(pcaEntry);
+                pcaEntry = []
+            }
         }
 
-        countries.push({"country": selectedData["name"], "pca" : countryMatrix});
+        countries.push({"country": country, "pca" : countryMatrix});
+        console.log(countries)
+        console.log(pcaMatrix)
+
       }
 
       function updateCountryMatrix(country, vectors){

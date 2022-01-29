@@ -7,13 +7,13 @@ import ResizeObserver from "resize-observer-polyfill";
 
 export function getType(type, feature){
     if(type === CONST.CHART_TYPE.VACCINATIONS){
-        return {id: "Vaccinations", feature:((feature.people_fully_vaccinated*100) / feature.population), color:"green"}
+        return {id: "Vaccinations", feature:((feature.new_vaccinations*100) / feature.population), color:"green"}
     }
     else if(type === CONST.CHART_TYPE.CASES) {
-        return {id: "Cases", feature:((feature.total_cases*100) / feature.population), color:"blue"}
+        return {id: "Cases", feature:((feature.new_cases*100) / feature.population), color:"blue"}
     }
     else {
-        return {id: "Deaths", feature:((feature.total_new_deaths*100) / feature.population), color:"red"}
+        return {id: "Deaths", feature:((feature.new_deaths*100) / feature.population), color:"red"}
     }
   }
   

@@ -26,7 +26,7 @@ function App() {
 
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date("2021-06-01"),
-    to: new Date(Date.now() - 86400000)
+    to: new Date()
   });
 
   const AppContext = {

@@ -49,7 +49,7 @@ function GeoChart(props) {
     for(let i=0; i<data.features.length; i++) {
       data2.push({
         ...data.features[i], 
-        ...(countries.find((itmInner) => itmInner._id.name === data.features[i].properties.NAME))}
+        ...(countries.find((itmInner) => itmInner.name === data.features[i].properties.NAME))}
       );
     }
 
@@ -109,13 +109,11 @@ function GeoChart(props) {
 
     if(selected != null){
       tooltipText = `<h3 style='color: ${countries_colors[selectedCountry]}'>${selectedCountry}</h3>` +
-            `<b style='text-align: center'> ${visualizeDate(new Date(selected._id.date))}</b>` + 
-            "<br>" +  
-            `<a style='color: #199AFB' >Total cases: </a>${FormatLong(selected.total_cases)}` +
+            `<a style='color: #199AFB' >Total cases: </a>${FormatLong(selected.new_cases)}` +
             "<br>" + 
-            `<a style='color: red' >Total deaths: </a>${FormatLong(selected.total_new_deaths)}` +
+            `<a style='color: red' >Total deaths: </a>${FormatLong(selected.new_deaths)}` +
             "<br>" + 
-            `<a style='color: green' >People fully vaccinated: </a>${FormatLong(selected.people_fully_vaccinated)}` ;
+            `<a style='color: green' >People fully vaccinated: </a>${FormatLong(selected.new_vaccinations)}` ;
       tooltip.style("visibility", "visible")
       tooltip.select("#value").html(tooltipText);
     }

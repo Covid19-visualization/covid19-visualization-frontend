@@ -37,7 +37,7 @@ function BarChart(props) {
         if(selectedData[0] != null){
             selectedData.forEach(data => {
                 var entryData = {}
-                entryData["date"] = data._id
+                entryData["date"] = data._id.date != null ? data._id.date : data._id;
                 entryData["group"] = data.name;
                 entryData["total_boosters"] = Math.floor((data.total_boosters * 100) / data.population)
                 entryData["people_fully_vaccinated"] = Math.floor((data.people_fully_vaccinated * 100) / data.population) - entryData["total_boosters"];
