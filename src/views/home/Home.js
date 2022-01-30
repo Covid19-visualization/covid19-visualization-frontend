@@ -15,7 +15,7 @@ import * as d3 from 'd3'
 
 
 const Home = () => {
-    const { selectedPeriod, selectedCountries, isCasesVisualization, setEuropeData, setSelectedCountriesData, setSelectedCountriesDataByName } = useContext(Context);
+    const { selectedPeriod, selectedCountries, visualization, setEuropeData, setSelectedCountriesData, setSelectedCountriesDataByName } = useContext(Context);
 
     useEffect(() => {
         let data = {
@@ -56,7 +56,7 @@ const Home = () => {
 
                 </div>
                 <div className="container_graph" style={{ borderRadius: 5, padding: 0 }}>
-                    {isCasesVisualization > 0 ? (isCasesVisualization > 1 ? <Deaths /> : <Vaccinations /> ) : <Cases />}
+                    {getCurrentVisualization(visualization)}
                 </div>
             </div>
         </>
@@ -64,3 +64,8 @@ const Home = () => {
 }
 
 export default Home;
+
+function getCurrentVisualization(visualization) {
+    return visualization > 0 ? (visualization > 1 ? <Deaths /> : <Vaccinations />) : <Cases />;
+}
+

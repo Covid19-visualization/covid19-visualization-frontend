@@ -12,7 +12,7 @@ import { API } from "./utils/API";
 
 function App() {
 
-  const [isCasesVisualization, setIsCasesVisualization] = useState(false)
+  const [visualization, setVisualization] = useState(false)
   const [countries, setCountries] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedCountriesData, setSelectedCountriesData] = useState({vaccinations: [], cases: []});
@@ -40,8 +40,8 @@ function App() {
     setEuropeData: setEuropeData,
     selectedPeriod: selectedPeriod,
     setSelectedPeriod: setSelectedPeriod,
-    isCasesVisualization: isCasesVisualization,
-    setIsCasesVisualization: setIsCasesVisualization,
+    visualization: visualization,
+    setVisualization: setVisualization,
     selectedCountriesDataByName: selectedCountriesDataByName,
     setSelectedCountriesDataByName: setSelectedCountriesDataByName,
     selectedCountry: selectedCountry,

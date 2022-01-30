@@ -8,6 +8,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import CustomCalendar from "../Calendar/CustomCalendar";
 import { DateHandler, getLastPeriod } from "../../utils/utility";
 import { CONST } from "../../utils/const";
+import { colors } from "../../utils/colors";
 import { Context } from "../../context/Provider";
 
 var height = window.innerHeight;
@@ -16,7 +17,7 @@ var width = window.innerWidth;
 //rfce
 function Navbar() {
 
-  const { selectedPeriod, setSelectedPeriod, isCasesVisualization, setIsCasesVisualization } = useContext(Context);
+  const { selectedPeriod, setSelectedPeriod, visualization, setVisualization } = useContext(Context);
 
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(false);
@@ -97,8 +98,9 @@ function Navbar() {
   };
 
   const toggleVisualzation = (type) => {
-    setIsCasesVisualization(type)
+    setVisualization(type)
   };
+
 
   window.addEventListener('resize', handleResize)
   return (
@@ -127,6 +129,8 @@ function Navbar() {
                 to="/"
                 className="nav-links"
                 onClick={() => toggleVisualzation(CONST.VISUALZATION.DEATHS.VALUE)}
+                style={visualization == CONST.VISUALZATION.DEATHS.VALUE ? {color: colors.deathRed} : {color: "white"}}
+
               >
                 {CONST.VISUALZATION.DEATHS.LABEL}
               </Link>
@@ -136,6 +140,8 @@ function Navbar() {
                 to="/"
                 className="nav-links"
                 onClick={() => toggleVisualzation(CONST.VISUALZATION.CASES.VALUE)}
+                style={visualization == CONST.VISUALZATION.CASES.VALUE ? {color: colors.europeBlue} : {color: "white"}}
+
               >
                 {CONST.VISUALZATION.CASES.LABEL}
               </Link>
@@ -145,6 +151,7 @@ function Navbar() {
                 to="/"
                 className="nav-links"
                 onClick={() => toggleVisualzation(CONST.VISUALZATION.VACCINATIONS.VALUE)}
+                style={visualization == CONST.VISUALZATION.VACCINATIONS.VALUE ? {color: colors.vaccinationGreen} : {color: "white"}}
               >
                 {CONST.VISUALZATION.VACCINATIONS.LABEL}
               </Link>

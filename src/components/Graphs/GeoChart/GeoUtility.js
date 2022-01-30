@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars, no-loop-func, no-redeclare, eqeqeq, react-hooks/exhaustive-deps, array-callback-return */
 import { CONST } from "../../../utils/const";
+import { colors } from "../../../utils/colors";
+
 import * as d3 from 'd3';
 import { useEffect, useState } from "react";
 import ResizeObserver from "resize-observer-polyfill";
@@ -7,13 +9,13 @@ import ResizeObserver from "resize-observer-polyfill";
 
 export function getType(type, feature){
     if(type === CONST.CHART_TYPE.VACCINATIONS){
-        return {id: "Vaccinations", feature:((feature.new_vaccinations*100) / feature.population), color:"green"}
+        return {id: "Vaccinations", feature:((feature.new_vaccinations*100) / feature.population), color: colors.vaccinationGreen }
     }
     else if(type === CONST.CHART_TYPE.CASES) {
-        return {id: "Cases", feature:((feature.new_cases*100) / feature.population), color:"blue"}
+        return {id: "Cases", feature:((feature.new_cases*100) / feature.population), color: colors.casesBlue}
     }
     else {
-        return {id: "Deaths", feature:((feature.new_deaths*100) / feature.population), color:"red"}
+        return {id: "Deaths", feature:((feature.new_deaths*100) / feature.population), color: colors.deathRed}
     }
   }
   
