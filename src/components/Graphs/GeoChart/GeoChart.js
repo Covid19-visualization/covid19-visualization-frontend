@@ -44,6 +44,8 @@ function GeoChart(props) {
     const svg = select(svgRef.current)
       .attr('transform', 'translate(0, -40)')
       .attr("viewBox", [0, 0, width, height])
+
+    d3.select("#geo").select("text").remove()
     
     let data2 = []
     for(let i=0; i<data.features.length; i++) {
@@ -52,6 +54,11 @@ function GeoChart(props) {
         ...(countries.find((itmInner) => itmInner.name === data.features[i].properties.NAME))}
       );
     }
+
+    var tooltip2 = svg.append('text')
+                .style('opacity', 0)
+                .style('font-family', 'sans-serif')
+                .style('font-size', '13px');
 
     var tooltipText = "";
     const tooltip = d3.select("#tooltipgeochart");
@@ -100,6 +107,26 @@ function GeoChart(props) {
       .on("click", (e, feature) => {
         handleCountrySelection(feature.properties.NAME);
       })
+      .on('mouseover', function (e, feature){
+        var X = pathGenerator.centroid(feature)[0]
+        var Y = pathGenerator.centroid(feature)[1]
+
+        tooltip2
+            .attr("x", X)
+            .attr("y", Y)
+            .text(feature.properties.NAME)
+            .style('opacity', 1)
+            .style('font-size', 4)
+            //.style("font-weight", "bold")
+            .transition(200);
+      })
+      .on('mouseout', function(){ 
+          d3.select("#geo").select("text").style('opacity', 0);
+          tooltip2
+              .transition(200)
+              .style('opacity', 0);
+      })
+
       .attr("class", "country")
       .transition()
       .duration(1000)
@@ -121,7 +148,7 @@ function GeoChart(props) {
 
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
-      <svg ref={svgRef}></svg>
+      <svg id="geo" ref={svgRef}></svg>
       <svg id="legenddiv" width="700" height="80"></svg>
       <div width="100" height="80" id="tooltipgeochart" className="tooltipgeochart">
           <div className="tooltipgeochart-value">
