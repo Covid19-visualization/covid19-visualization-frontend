@@ -1,4 +1,4 @@
-#EU CoVis-19 - Frontend
+# EU CoVis-19 - Frontend
 
 This repository contains the frontend of the platform EU CoVis-19. This project is made for the Visual Analytics class of the course Engineering in Computer Science of the University of Rome "La Sapienza".
 
@@ -15,7 +15,7 @@ It is made in React.
     npm start
     ```
 
-# Authors
+## Authors
 
 **[Valerio Coretti](https://www.linkedin.com/in/valerio-coretti-2913721a3/)**
 
